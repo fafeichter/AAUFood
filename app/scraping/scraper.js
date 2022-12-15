@@ -50,15 +50,24 @@ function parseUniwirt(html) {
 
     var $ = cheerio.load(html);
 
-    var dayEntries = $("body").find(".slideContent"); // better search for vc_row? look at changes
-
     // Get Monday Date
-    let mondayDate = moment(dayEntries.find("h3:contains(Montag)").text().split(" ")[1], "DD.MM.YY");
+    const mondayString = $("h3:contains(Montag)").text().split(" ")[1];
+    const mondayDate = moment(mondayString, "DD.MM.YY");
+
+    // Set outdated
+    if (mondayDate.isValid() && mondayDate.format("D.M") !== timeHelper.getMondayDate()) {
+        for (let i = 0; i < 6; i++) {
+            let outdatedMenu = new Menu();
+            outdatedMenu.outdated = true;
+            weekPlan[i] = outdatedMenu;
+        }
+        return weekPlan;
+    }
 
     var date = mondayDate;
     for (let dayInWeek = 0; dayInWeek < 6; dayInWeek++) {
         var dateString = date.format("DD.MM.YY");
-        var dayEntry = dayEntries.find(`h3:contains(${dateString})`).parent();
+        var dayEntry = $(`h3:contains(${dateString})`).parent();
         try {
             weekPlan[dayInWeek] = createUniwirtDayMenu(dayEntry);
         } catch (ex) {
@@ -126,7 +135,7 @@ function createUniwirtDayMenu(dayEntry) {
 }
 
 function getMensaWeekPlan() {
-    return request.getAsync({url: MensaUrl, jar: true})
+    return request.getAsync({ url: MensaUrl, jar: true })
         .then(res => res.body)
         .then(body => parseMensa(body));
 }
@@ -153,7 +162,6 @@ function parseMensa(html) {
 
     var leftMenuElements = $("#leftColumn .menu-left .menu-category > *");
     var rightMenuElements = $("#middleColumn .menu-category > *");
-    rightMenuElements = rightMenuElements.filter((i, x) => !/grillcorner/i.test($(x).text())); // Filter Grillcorner
 
     var menuElements = $.merge(leftMenuElements, rightMenuElements);
     var menuElementsGroupedByName = _.groupBy(menuElements, e => $(e).find("> :header").text());
@@ -174,21 +182,7 @@ function parseMensa(html) {
             menu.mains.push(food);
         }
 
-        var x = 3;
-        var pos = 2;
-
-        if(i !== 0) {
-            x = 2;
-            pos = 1;
-        }
-
-        var temp = menu.mains[x];
-        var j;
-        for (j = x; j >= pos; j--) {
-            menu.mains[j] = menu.mains[j - 1];
-        }
-
-        menu.mains[pos] = temp;
+        orderMensaMenusOfDay(menu, i);
 
         scraperHelper.setErrorOnEmpty(menu);
     }
@@ -204,19 +198,13 @@ function createMensaFoodMenuFromElement($, e, name) {
     e = $(e);
 
     let foodNames = e.find("> p:not(:contains(€))").toArray()
-        .map(x => $(x).text()
-            .trim()
-            .replace("&nbsp;", " ")
-            .replace("ohne Suppe und Salat", "")
-            .replace("UNSERE ÖFFNUNGSZEITEN:", "")
-            .replace("11:00 - 14:00 Uhr", "")
-            .replace("Gerne auch für Abholungen :-)", "")
-            .trim()
-        );
+        .map(x => $(x).text().trim().replace("&nbsp;", " "));
 
-    foodNames = foodNames.filter(function (str) {
-        return /\S/.test(str);
-    });
+    // remove additional entries that does not contain dishes (= everything from "ohne Suppe und Salat" on)
+    let start = foodNames.indexOf('ohne Suppe und Salat');
+    if (start >= 0) {
+        foodNames.splice(start, foodNames.length - start);
+    }
 
     // If Mensa changes to splitting foods by <br> again, look in git history for this section how to handle this 
     let priceStr = e.find("> p:contains(€)").text();
@@ -225,6 +213,28 @@ function createMensaFoodMenuFromElement($, e, name) {
     let food = new Food(name, price);
     food.entries = foodNames.map(n => new Food(n));
     return food;
+}
+
+/**
+ * Changes the order of a menu to "Veggie - Herzhaft - Wochen-Angebote".
+ */
+function orderMensaMenusOfDay(menu, dayIndex) {
+    let from = 3; // move element from this index
+    let to = 2; // ... to this index
+
+    // I don't know why first day of week is special ¯\_(ツ )_/¯
+    if (dayIndex !== 0) {
+        from = 2;
+        to = 1;
+    }
+
+    const temp = menu.mains[from];
+    // shift elements to the left
+    for (let j = from; j >= to; j--) {
+        menu.mains[j] = menu.mains[j - 1];
+    }
+
+    menu.mains[to] = temp;
 }
 
 function createWochenspecialFoodMenusFromElements($, elements) {
@@ -389,45 +399,40 @@ function parseHotspot(html) {
     var result = new Array(7);
     let closedMenu = new Menu();
     closedMenu.closed = true;
-    result[5] = result[6] = closedMenu;
+    result[4] = result[5] = result[6] = closedMenu;
 
     var $ = cheerio.load(html);
 
     var mainContent = $("section > .content");
-    var dateText = mainContent.find("h1:contains(Restaurant Hotspot)").eq(0).text() || "";
-    dateText = dateText.replace(".0", "."); // workaround, 22.07 != 22.7
-    var weekIsOutdated = dateText.indexOf(timeHelper.getMondayDate()) == -1;
+    var heading = mainContent.find("h1:contains(Restaurant Hotspot)").eq(0).text() || "";
+    var weekIsOutdated = heading.indexOf(timeHelper.getMondayDate()) === -1;
 
     var menuForWeek = new Menu();
-    menuForWeek.outdated = false;
+    menuForWeek.outdated = weekIsOutdated;
 
     var contentTable = mainContent.find("> table > tbody");
 
     // Hauptspeisen
     const contentTableDict = []
-    let found = false;
+    let isMainDish = false;
     contentTable.find('tr').each((ind, itm) => {
+        // filter out soups and salats and menu sets ("MENÜ-SET-PREIS")
         if ($(itm).find("td:contains(MENÜ-SET-PREIS)").length === 1) {
-            found = false;
+            isMainDish = false;
         } else {
-            if (found) {
-                if ($(itm).text().trim() == "") {
-                } else if ($(itm).has('li').length) {
+            if (isMainDish) {
+                if ($(itm).text().trim() !== "" && $(itm).has('li').length) {
                     contentTableDict.push(itm);
-                } else {
-
                 }
             } else {
-                if ($(itm).find("td:contains(MENÜHAUPTSPEISEN)").length === 0) {
-                    return;
-                } else {
-                    found = true;
+                if ($(itm).find("td:contains(MENÜHAUPTSPEISEN)").length > 0) {
+                    isMainDish = true;
                 }
             }
         }
     })
 
-    for (let dayInWeek = 0; dayInWeek < 5; dayInWeek++) {
+    for (let dayInWeek = 0; dayInWeek < 4; dayInWeek++) { // Hotspot currently only MON-THU
         var menuForDay = new Menu();
         var menuct = 0;
         if (Object.keys(contentTableDict).length) {
@@ -462,34 +467,29 @@ function parseBitsnBytes(html) {
     var $ = cheerio.load(html);
 
     var mainContent = $("section > .content");
-    var dateText = mainContent.find("h1:contains(Bits & Bytes Marketplace)").eq(0).text() || "";
-    dateText = dateText.replace(".0", "."); // workaround, 22.07 != 22.7
-    var weekIsOutdated = dateText.indexOf(timeHelper.getMondayDate()) == -1;
+    var heading = mainContent.find("h1:contains(Bits & Bytes Marketplace)").eq(0).text() || "";
+    var weekIsOutdated = heading.indexOf(timeHelper.getMondayDate()) === -1;
 
     var menuForWeek = new Menu();
-    menuForWeek.outdated = false;
+    menuForWeek.outdated = weekIsOutdated;
 
     var contentTable = mainContent.find("> table > tbody");
 
     // Hauptspeisen
     const contentTableDict = []
-    let found = false;
+    let isMainDish = false;
     contentTable.find('tr').each((ind, itm) => {
+        // filter out pizza and wok
         if ($(itm).find("td:contains(WOK)").length === 1) {
-            found = false;
+            isMainDish = false;
         } else {
-            if (found) {
-                if ($(itm).text().trim() == "") {
-                } else if ($(itm).has('li').length) {
+            if (isMainDish) {
+                if ($(itm).text().trim() !== "" && $(itm).has('li').length) {
                     contentTableDict.push(itm);
-                } else {
-
                 }
             } else {
-                if ($(itm).find("td:contains(HEISSE THEKE)").length === 0) {
-                    return;
-                } else {
-                    found = true;
+                if ($(itm).find("td:contains(HEISSE THEKE)").length > 0) {
+                    isMainDish = true;
                 }
             }
         }
