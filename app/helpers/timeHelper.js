@@ -25,7 +25,7 @@ function determineLastMonday() {
 }
 
 function dateStringShort(date) {
-    return date.getDate() + "." + (date.getMonth() + 1);
+    return ("0" + date.getDate()).slice(-2) + "." + ("0" + (date.getMonth() + 1)).slice(-2);
 }
 
 function getMondayDate() {

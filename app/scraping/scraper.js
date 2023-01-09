@@ -55,7 +55,7 @@ function parseUniwirt(html) {
     const mondayDate = moment(mondayString, "DD.MM.YY");
 
     // Set outdated
-    if (mondayDate.isValid() && mondayDate.format("D.M") !== timeHelper.getMondayDate()) {
+    if (mondayDate.isValid() && mondayDate.format("DD.MM") !== timeHelper.getMondayDate()) {
         for (let i = 0; i < 6; i++) {
             let outdatedMenu = new Menu();
             outdatedMenu.outdated = true;
@@ -405,7 +405,7 @@ function parseHotspot(html) {
 
     var mainContent = $("section > .content");
     var heading = mainContent.find("h1:contains(Restaurant Hotspot)").eq(0).text() || "";
-    var weekIsOutdated = heading.indexOf(timeHelper.getMondayDate()) === -1;
+    var weekIsOutdated = !timeHelper.checkInputForCurrentWeek(heading)
 
     if (weekIsOutdated) {
         return scraperHelper.invalidateMenus(result);
@@ -469,7 +469,7 @@ function parseBitsnBytes(html) {
 
     var mainContent = $("section > .content");
     var heading = mainContent.find("h1:contains(Bits & Bytes Marketplace)").eq(0).text() || "";
-    var weekIsOutdated = heading.indexOf(timeHelper.getMondayDate()) === -1;
+    var weekIsOutdated = !timeHelper.checkInputForCurrentWeek(heading)
 
     if (weekIsOutdated) {
         return scraperHelper.invalidateMenus(result);
