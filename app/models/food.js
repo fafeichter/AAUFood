@@ -18,25 +18,33 @@ class Food {
         this.extractAllergens();
     }
 
-    extractAllergens() {
+    extractAllergens(extractFrom = null) {
         this.allergens = null;
 
-        if (this.isInfo || !this.name)
+        extractFrom = extractFrom || this.name;
+        let extractedFromName = extractFrom === this.name;
+
+        if (this.isInfo || !extractFrom)
             return;
 
-        var allergenMatch = allergenRegex.exec(this.name);
+        var allergenMatch = allergenRegex.exec(extractFrom);
         if (allergenMatch != null) {
             // Cleanup allergens: Remove all irrelevant chars, uppercase them, separate them by ','
             this.allergens = allergenMatch[0].replace(/[^A-Za-z]/ig, "").toUpperCase().replace(/(.)(?=.)/g, '$1,');
-            this.name = this.name.substring(0, allergenMatch.index).trim();
+
+            if (extractedFromName) {
+                this.name = this.name.substring(0, allergenMatch.index).trim();
+            }
             return;
         }
 
-        allergenMatch = fullCapsAllergenRegex.exec(this.name);
+        allergenMatch = fullCapsAllergenRegex.exec(extractFrom);
         if (allergenMatch != null) {
             // Separate allergens by ','
             this.allergens = allergenMatch[0].split("").join(",");
-            this.name = this.name.substring(0, allergenMatch.index).trim();
+            if (extractedFromName) {
+                this.name = this.name.substring(0, allergenMatch.index).trim();
+            }
         }
 
     }
