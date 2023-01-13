@@ -58,6 +58,7 @@ body {
     font-family: $headingFont;
     font-size: 14px;
     font-weight: 600;
+    color: $bgColor;
   }
 
   .allergens {
@@ -89,10 +90,6 @@ body {
     &:hover {
       color: $fontColor;
     }
-  }
-
-  .menu-title {
-    color: $bgColor;
   }
 }
 
