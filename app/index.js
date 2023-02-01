@@ -62,7 +62,7 @@ app.use('/', indexRoutes);
 app.use('/food', foodRoutes);
 
 app.use(function (err, req, res, next) {
-    console.log("Im finalen Error Handler!");
+    console.log(err);
     res.status(500);
     res.json({error: err.message});
 });
