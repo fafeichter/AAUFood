@@ -1,4 +1,6 @@
 FROM node:16.19.0-alpine
+
+RUN apk add --no-cache tzdata
 ENV TZ="/usr/share/zoneinfo/Europe/Vienna"
 
 RUN mkdir -p /usr/src/aaufood/app
