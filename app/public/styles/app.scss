@@ -38,6 +38,7 @@ body {
 /*Restaurant cards*/
 .restaurant {
   margin-bottom: $outerPadding + 4px;
+
   .card-header {
     border-bottom: 0;
     line-height: 1;
@@ -70,7 +71,7 @@ body {
   }
 }
 
-@mixin mainsItem(){
+@mixin mainsItem() {
   ul.combined-menu-list-group li.list-group-item, ul.mains li.list-group-item {
     @content
   }
@@ -102,11 +103,11 @@ body {
   }
 }
 
-.villa-lido{
+.villa-lido {
   @include restaurantColors($villalidoBg, white)
 }
 
-.bits-and-bytes{
+.bits-and-bytes {
   @include restaurantColors($bitsAndBytesBg, white)
 }
 
@@ -153,13 +154,14 @@ ul.combined-menu-list-group {
   li.list-group-item {
     margin-top: $menuItemSpacing;
   }
+
   li.menu-title + li.list-group-item {
     margin-top: 0;
   }
 }
 
 /* Infos */
-ul.info-elements{
+ul.info-elements {
   margin-top: $menuSpacing * 1.2;
   font-style: italic;
 }
@@ -175,6 +177,7 @@ ul.info-elements{
   p {
     margin-bottom: $menuItemSpacing;
   }
+
   p:last-child {
     margin-bottom: 0;
   }
@@ -248,6 +251,7 @@ footer {
         text-decoration: none;
       }
     }
+
     i {
       vertical-align: middle;
       font-size: 1.25em;
@@ -267,6 +271,7 @@ footer {
       &.fa-star {
         color: gold;
       }
+
       &.fa-space-shuttle {
         color: #0093ff;
       }
@@ -274,9 +279,11 @@ footer {
       &.fa-hand-lizard {
         color: #377f31;
       }
+
       &.fa-hand-paper {
         color: #ffe4c4;
       }
+
       &.fa-snowflake {
         color: #0093ff;
       }

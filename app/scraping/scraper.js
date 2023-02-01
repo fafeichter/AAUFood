@@ -135,7 +135,7 @@ function createUniwirtDayMenu(dayEntry) {
 }
 
 function getMensaWeekPlan() {
-    return request.getAsync({ url: MensaUrl, jar: true })
+    return request.getAsync({url: MensaUrl, jar: true})
         .then(res => res.body)
         .then(body => parseMensa(body));
 }

@@ -12,19 +12,19 @@ const MenuState = {
 
 function getMenuState(restaurant, menu) {
     let isOnBreak = breakHelper.isOnBreak(restaurant);
-    if(isOnBreak)
+    if (isOnBreak)
         return MenuState.OnBreak;
 
-    if(menu == null || menu.error)
+    if (menu == null || menu.error)
         return MenuState.Error;
 
-    if(menu.closed)
+    if (menu.closed)
         return MenuState.Closed;
 
-    if(menu.outdated)
+    if (menu.outdated)
         return MenuState.Outdated;
 
-    if(menu.noMenu)
+    if (menu.noMenu)
         return MenuState.NoMenu;
 
     return MenuState.Normal;

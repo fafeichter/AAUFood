@@ -8,8 +8,8 @@ services:
     build: .
     restart: always
     ports:
-     - "${FOOD_PORT}:3000"
+      - "${FOOD_PORT}:3000"
     depends_on:
-     - redis
+      - redis
     links:
-     - redis
+      - redis

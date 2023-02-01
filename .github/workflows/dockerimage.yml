@@ -1,6 +1,6 @@
 name: Build Docker image
 
-on: [push]
+on: [ push ]
 
 jobs:
 
@@ -9,6 +9,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Build the Docker image
-      run: make build
+      - uses: actions/checkout@v2
+      - name: Build the Docker image
+        run: make build

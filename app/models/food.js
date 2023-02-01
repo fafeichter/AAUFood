@@ -7,12 +7,12 @@ class Food {
     constructor(name, price, isInfo) {
         this.name = name;
         if (price != null) {
-            if (typeof price === 'number' && !isNaN(price)){
+            if (typeof price === 'number' && !isNaN(price)) {
                 this.price = price;
-            } else if(typeof price === "string") {
+            } else if (typeof price === "string") {
                 this.price = price.replace(/ +€?$/, ""); // trim leading spaces and € signs
             }
-        } 
+        }
         this.isInfo = isInfo === true;
 
         this.extractAllergens();

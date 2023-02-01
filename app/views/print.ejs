@@ -52,11 +52,15 @@
     }
 
     @media print {
-        @page {size: landscape}
+        @page {
+            size: landscape
+        }
+
         .namecol {
             vertical-align: middle !important;
             padding: 0.25rem !important;
         }
+
         td > .name {
             display: flex;
             -webkit-transform: rotate(-90deg);
@@ -65,6 +69,7 @@
             font-weight: bold;
             width: 2rem !important;
         }
+
         .print-hidden {
             display: none;
         }
@@ -87,13 +92,15 @@
             <label class="custom-control-label" for="hotspot">Hotspot</label>
         </div>
         <div class="custom-control custom-checkbox print-hidden">
-            <input type="checkbox" class="custom-control-input" id="uni-pizzeria" checked onclick="toggleRow('uni-pizzeria');">
+            <input type="checkbox" class="custom-control-input" id="uni-pizzeria" checked
+                   onclick="toggleRow('uni-pizzeria');">
             <label class="custom-control-label" for="uni-pizzeria">Uni-Pizzeria</label>
-        </div>      
+        </div>
         <div class="custom-control custom-checkbox print-hidden">
-            <input type="checkbox" class="custom-control-input" id="bits-and-bytes" checked onclick="toggleRow('bits-and-bytes');">
+            <input type="checkbox" class="custom-control-input" id="bits-and-bytes" checked
+                   onclick="toggleRow('bits-and-bytes');">
             <label class="custom-control-label" for="bits-and-bytes">Bits & Bytes</label>
-        </div>       
+        </div>
     </div>
     <h2 class="mx-auto">Wochenplan
         <%= moment().day(1).format('DD.MM') %> - <%= moment().day(5).format('DD.MM.YYYY') %> </h2>
@@ -115,16 +122,16 @@
         <td class="namecol"><span class="name">Mensa</span></td>
 
         <% for(let i = 0; i < 5; i++) { %>
-        <td class="datacol">
-            <ul>
-                <% mensa[i].mains.forEach(function (menu) { %>
-                <% menu.entries.forEach(function (menuItem) { if (menuItem.name !="") { %>
-                <li><%= menuItem.name %></li>
-                <% }}); %>
-                <br>
-                <% }); %>
-            </ul>
-        </td>
+            <td class="datacol">
+                <ul>
+                    <% mensa[i].mains.forEach(function (menu) { %>
+                        <% menu.entries.forEach(function (menuItem) { if (menuItem.name != "") { %>
+                            <li><%= menuItem.name %></li>
+                        <% }}); %>
+                        <br>
+                    <% }); %>
+                </ul>
+            </td>
         <% } %>
     </tr>
 
@@ -132,19 +139,19 @@
         <td class="namecol"><span class="name">Uniwirt</span></td>
 
         <% for(let i = 0; i < 5; i++) { %>
-        <td class="datacol">
-            <ul class="starters">
-                <% uniwirt[i].starters.forEach(function (food) { if (food.name!="") { %>
-                <li><%= food.name %></li>
-                <% }}); %>
-            </ul>
+            <td class="datacol">
+                <ul class="starters">
+                    <% uniwirt[i].starters.forEach(function (food) { if (food.name != "") { %>
+                        <li><%= food.name %></li>
+                    <% }}); %>
+                </ul>
 
-            <ul class="mains">
-                <% uniwirt[i].mains.forEach(function (food) { if (food.name!="") { %>
-                <li><%= food.name %></li>
-                <% }}); %>
-            </ul>
-        </td>
+                <ul class="mains">
+                    <% uniwirt[i].mains.forEach(function (food) { if (food.name != "") { %>
+                        <li><%= food.name %></li>
+                    <% }}); %>
+                </ul>
+            </td>
         <% } %>
     </tr>
 
@@ -154,8 +161,8 @@
         <td class="datacol">
             <ul class="starters">
                 <li><strong>Suppen für gesamte Woche</strong></li>
-                <% hotspot[0].starters.forEach(function (food) { if (food.name!="") { %>
-                <li><%= food.name %></li>
+                <% hotspot[0].starters.forEach(function (food) { if (food.name != "") { %>
+                    <li><%= food.name %></li>
                 <% }}); %>
             </ul>
         </td>
@@ -166,11 +173,11 @@
                         <ul class="mains">
                             <li><strong>Hauptspeisen für gesamte Woche</strong></li>
                             <% hotspot[0].mains.forEach(function (menu) { %>
-                                <% if(menu.name == "Wochenhit") {%>
-                                    <li><%=menu.entries[0].name %></li>
-                                <%} else {%>
+                                <% if(menu.name == "Wochenhit") { %>
+                                    <li><%= menu.entries[0].name %></li>
+                                <% } else { %>
                                     <li><%= menu.name + " " + menu.entries[0].name %></li>
-                                <%}%>
+                                <% } %>
                             <% }); %>
                         </ul>
                     </td>
@@ -182,19 +189,19 @@
         <td class="namecol"><span class="name">Uni-Pizzeria</span></td>
 
         <% for(let i = 0; i < 5; i++) { %>
-        <td class="datacol">
-            <ul class="starters">
-                <% uniPizzeria[i].starters.forEach(function (food) { if (food.name!="") { %>
-                <li><%= food.name %></li>
-                <% }}); %>
-            </ul>
+            <td class="datacol">
+                <ul class="starters">
+                    <% uniPizzeria[i].starters.forEach(function (food) { if (food.name != "") { %>
+                        <li><%= food.name %></li>
+                    <% }}); %>
+                </ul>
 
-            <ul class="mains">
-                <% uniPizzeria[i].mains.forEach(function (food) { if (food.name!="") { %>
-                <li><%= food.name %></li>
-                <% }}); %>
-            </ul>
-        </td>
+                <ul class="mains">
+                    <% uniPizzeria[i].mains.forEach(function (food) { if (food.name != "") { %>
+                        <li><%= food.name %></li>
+                    <% }}); %>
+                </ul>
+            </td>
         <% } %>
     </tr>
     <tr class="bits-and-bytes">
@@ -217,12 +224,12 @@
     </tbody>
 </table>
 
-<script>  
+<script>
     function toggleRow(name) {
         var cb = document.getElementById(name);
         var row = document.getElementsByClassName(name)[0];
 
-        if(!cb || !row)
+        if (!cb || !row)
             return;
 
         row.style.display = cb.checked ? '' : 'none';

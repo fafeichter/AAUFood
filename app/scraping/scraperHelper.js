@@ -69,6 +69,7 @@ function capitalizeFirstLetter(string, delim, exceptionList) {
 }
 
 const priceRegex = /(\d+[,\.]?\d*)/
+
 function parsePrice(str) {
     if (!str) {
         return null;
@@ -112,7 +113,9 @@ function isInCurrentWeek(date) {
 
 function findKW(str) {
     let match = str.match(/KW\s*(\d{1,2})$/);
-    if (!match) { return null; }
+    if (!match) {
+        return null;
+    }
     return match[1];
 }
 
@@ -122,10 +125,10 @@ function isCurrentKW(kw) {
 
 function findDate(str) {
     let match = str.match(/(\d{1,2}\.\d{1,2})/);
-    if (!match){
+    if (!match) {
         return null;
     }
-    
+
     let dateStr = match[1].replace(/(^|[^\d])0(\d)/g, "$1$2");
     return moment(dateStr, "D.M.YYYY")
 }

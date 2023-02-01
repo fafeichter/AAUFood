@@ -28,10 +28,10 @@ socket.on('newVisitor', function (data) {
     overallVisitors.text(data.overallVisitors);
 });
 
-$(document).ready(function() {
+$(document).ready(function () {
     // Both slider and snowfall depend on window size
     // This messy setup was the only way to get both working correctly
-    requestAnimationFrame(function() {
+    requestAnimationFrame(function () {
         initSlider();
         snowFall.initSnowFall();
     });

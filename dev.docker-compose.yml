@@ -2,6 +2,6 @@ version: '2'
 services:
   node:
     volumes:
-     - ./app:/usr/src/aaufood/app
+      - ./app:/usr/src/aaufood/app
     environment:
       "FOODDEV": "yes"
