@@ -9,17 +9,17 @@
     </div>
     <div class="row restaurants-row">
         <div class="col-xl-3 col-lg-6 col-md-12">
-            <%- include('restaurant', {restaurant: 'mensa', restaurantName: 'Mensa', menu: mensa ? mensa[day] : null, combinedMenuList: true}) %>
+            <%- include('restaurant', {restaurant: 'mensa', restaurantName: 'Mensa', menu: mensa ? mensa[day] : null, combinedMenuList: true, day: day}) %>
         </div>
         <div class="col-xl-3 col-lg-6 col-md-12">
             <%- include('restaurant', {restaurant: 'uniwirt', restaurantName: 'Uniwirt', menu: uniwirt ? uniwirt[day] : null}) %>
-            <%- include('restaurant', {restaurant: 'uni-pizzeria', restaurantName: 'Uni-Pizzeria', menu: uniPizzeria ? uniPizzeria[day] : null}) %>
+            <%- include('restaurant', {restaurant: 'uni-pizzeria', restaurantName: 'Uni-Pizzeria', menu: uniPizzeria ? uniPizzeria[day] : null, day: day}) %>
         </div>
         <div class="col-xl-3 col-lg-6 col-md-12">
-            <%- include('restaurant', {restaurant: 'bits-and-bytes', restaurantName: 'Bits & Bytes', menu: bitsAndBytes ? bitsAndBytes[day] : null, combinedMenuList: true}) %>
+            <%- include('restaurant', {restaurant: 'bits-and-bytes', restaurantName: 'Bits & Bytes', menu: bitsAndBytes ? bitsAndBytes[day] : null, combinedMenuList: true, day: day}) %>
         </div>
         <div class="col-xl-3 col-lg-6 col-md-12">
-            <%- include('restaurant', {restaurant: 'hotspot', restaurantName: 'Hotspot', menu: hotspot ? hotspot[day] : null, combinedMenuList: true}) %>
+            <%- include('restaurant', {restaurant: 'hotspot', restaurantName: 'Hotspot', menu: hotspot ? hotspot[day] : null, combinedMenuList: true, day: day}) %>
         </div>
     </div>
 </div>

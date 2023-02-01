@@ -1,0 +1,19 @@
+<form action="/food/hotspot/today/pasta-des-tages" method="POST" enctype="multipart/form-data">
+    <div class="form-group">
+        <label class="mb-0 font-italic font-size-90" for="image">
+            Foto vom Aushang mit der Pasta des Tages hochladen
+        </label>
+        <div class="custom-file form-control-sm">
+            <input type="file" accept="image/*" capture="environment" id="image" name="image"
+                   class="custom-file-input" onchange="form.submit()"/>
+            <label class="custom-file-label" for="image">
+                Tipp: Kamera auf Smartphone öffnen
+            </label>
+        </div>
+        <small class="form-text text-muted">
+            <a href="/food/hotspot/today/pasta-des-tages/delete" class="text-muted">
+                hochgeladenes Foto löschen
+            </a>
+        </small>
+    </div>
+</form>

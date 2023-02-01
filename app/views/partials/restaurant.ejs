@@ -1,7 +1,7 @@
 <!-- Parameters: restaurant, restaurantName, menu, combinedMenuList (optional) -->
-<% combinedMenuList = typeof(combinedMenuList) === 'boolean' && combinedMenuList /* handling optional parameter */ %>
+<% combinedMenuList = typeof (combinedMenuList) === 'boolean' && combinedMenuList /* handling optional parameter */ %>
 
-<div class="card restaurant <%= restaurant %>">
+<div class="card restaurant <%= restaurant %>" id="<%= restaurant %>">
     <h3 class="card-header">
         <span><%= restaurantName %></span>
         <a class="link-icon" target="_blank" href="<%= userFriendlyUrl(restaurant) %>">
@@ -15,6 +15,17 @@
             <%- include('infos/infos', { restaurant, menuState }) %>
         <% } else if(combinedMenuList){ %>
             <%- include('menu-lists/combined-menu-list', { menu }) %>
+            <% if(restaurant === 'hotspot' && day === moment().day() - 1) { %>
+                <ul class="list-group combined-menu-list-group mt-3">
+                    <li class="menu-title">
+                        Pasta des Tages (Community)
+                    </li>
+                    <li class="list-group-item">
+                        <%- include('hotspot-special/image') %>
+                        <%- include('hotspot-special/upload') %>
+                    </li>
+                </ul>
+            <% } %>
         <% } else { %>
             <%- include('menu-lists/menu-list', { menu }) %>
         <% } %>

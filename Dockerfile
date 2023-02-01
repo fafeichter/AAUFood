@@ -1,8 +1,8 @@
 FROM node:16.19.0-alpine
 ENV TZ="/usr/share/zoneinfo/Europe/Vienna"
 
-RUN mkdir -p /usr/src/aaufood
 RUN mkdir -p /usr/src/aaufood/app
+RUN mkdir -p /usr/src/aaufood/upload
 WORKDIR /usr/src/aaufood
 
 COPY package.json /usr/src/aaufood

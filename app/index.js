@@ -24,7 +24,18 @@ bluebird.promisifyAll(redis.Multi.prototype);
 const session = require('express-session');
 const RedisStore = require('connect-redis')(session);
 const redisClient = redis.createClient({host: 'redis'});
+const fileUpload = require('express-fileupload');
 const app = express();
+
+// use the express-fileupload middleware
+app.use(
+    fileUpload({
+        limits: {
+            fileSize: 10000000, // 10MB
+        },
+        abortOnLimit: true,
+    })
+);
 
 winston.add(winston.transports.File, {filename: 'logfile.log'});
 
