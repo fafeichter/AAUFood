@@ -53,14 +53,6 @@ body {
     }
   }
 
-  .menu-title, .price-tag {
-    list-style: none;
-    font-family: $headingFont;
-    font-size: 14px;
-    font-weight: 600;
-    color: $bgColor;
-  }
-
   .allergens {
     color: $allergensColor;
     font-size: 12px;
@@ -90,6 +82,13 @@ body {
     &:hover {
       color: $fontColor;
     }
+  }
+  .menu-title, .price-tag {
+    list-style: none;
+    font-family: $headingFont;
+    font-size: 14px;
+    font-weight: 600;
+    color: $bgColor;
   }
 }
 
