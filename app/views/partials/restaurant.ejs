@@ -16,10 +16,7 @@
         <% } else if(combinedMenuList){ %>
             <%- include('menu-lists/combined-menu-list', { menu }) %>
             <% if(restaurant === 'hotspot' && day === moment().day() - 1) { %>
-                <ul class="list-group combined-menu-list-group mt-3">
-                    <li class="menu-title">
-                        Pasta des Tages (Community)
-                    </li>
+                <ul class="list-group combined-menu-list-group">
                     <li class="list-group-item">
                         <%- include('hotspot-special/image') %>
                         <%- include('hotspot-special/upload') %>
