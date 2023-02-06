@@ -208,11 +208,15 @@ function parseMensa(html) {
     var menuElements = $.merge(leftMenuElements, rightMenuElements);
     var menuElementsGroupedByName = _.groupBy(menuElements, e => $(e).find("> :header").text());
 
-    var foodsPerWeekday = [[], [], [], [], []]; //.fill only works with primitive values
+    var foodsPerWeekday = [[], [], [], [], [], [], []]; //.fill only works with primitive values
     _.forOwn(menuElementsGroupedByName, (menusForWeek, name) => {
         var foodsForWeek = menusForWeek.map(m => createMensaFoodMenuFromElement($, m, name));
         for (let i = 0; i < foodsForWeek.length; i++) {
-            foodsPerWeekday[i].push(foodsForWeek[i]);
+            let dayEntry = foodsPerWeekday[i];
+            if (!dayEntry)
+                continue;
+
+            dayEntry.push(foodsForWeek[i]);
         }
     });
 
@@ -225,6 +229,10 @@ function parseMensa(html) {
         }
 
         orderMensaMenusOfDay(menu, i);
+
+        menu.starters = menu.starters.filter(m => m && m.name);
+        menu.mains = menu.mains.filter(m => m && m.name);
+        menu.alacarte = menu.alacarte.filter(m => m && m.name);
 
         scraperHelper.setErrorOnEmpty(menu);
     }
