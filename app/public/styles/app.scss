@@ -400,3 +400,10 @@ footer {
 .font-size-90 {
   font-size: 90%;
 }
+
+.hotspot-pasta-des-tages-image-responsive {
+  width: 35%;
+  @include media-breakpoint-down(sm) {
+    width: 45%;
+  }
+}
