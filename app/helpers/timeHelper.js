@@ -32,6 +32,14 @@ function getMondayDate() {
     return dateStringShort(determineLastMonday());
 }
 
+function getMondayRegex() {
+    var mon = determineLastMonday();
+    var day = mon.getDate().toString();
+    var month = (mon.getMonth() + 1).toString();
+    // Get regex for a given date with optional leading zero
+    return new RegExp(`${day.padStart(2, 'X')}\\.${month.padStart(2, 'X')}`.replace(/X/g, '0?'));
+}
+
 function checkInputForCurrentWeek(str) {
     var mon = determineLastMonday();
     for (var i = 0; i <= 6; i++) {
@@ -48,14 +56,34 @@ function checkInputForWeekday(str, weekDay) {
     str = str.replace(".0", "."); //handle leading zero
     if (str.indexOf(dateStringShort(date)) !== -1) {
         return true;
-    } else
+    } else {
         return false;
+    }
+}
+
+function getMidnight() {
+    var newDate = new Date();
+    newDate.setDate(newDate.getDate() + 1);
+    newDate.setHours(0);
+    newDate.setMinutes(0);
+    newDate.setSeconds(0);
+    newDate.setMilliseconds(0);
+
+    return newDate;
+}
+
+function getMsUntilMidnight() {
+    var midnightTime = getMidnight();
+    return midnightTime - new Date();
 }
 
 module.exports = {
-    sanitizeDay: sanitizeDay,
-    weekDayName: weekDayName,
-    getMondayDate: getMondayDate,
-    checkInputForCurrentWeek: checkInputForCurrentWeek,
-    checkInputForWeekday: checkInputForWeekday
+    sanitizeDay,
+    weekDayName,
+    getMondayDate,
+    getMondayRegex,
+    checkInputForCurrentWeek,
+    checkInputForWeekday,
+    getMidnight,
+    getMsUntilMidnight
 };

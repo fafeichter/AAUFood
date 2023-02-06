@@ -2,7 +2,6 @@ const express = require('express');
 const bluebird = require('bluebird');
 const path = require('path');
 const redis = require('redis');
-const moment = require('moment');
 const bodyParser = require('body-parser');
 const compression = require('compression');
 const logger = require('morgan');
@@ -17,6 +16,10 @@ const footerPunHelper = require('./helpers/footerPunHelper');
 const breakHelper = require('./helpers/breakHelper');
 const placeKittenHelper = require('./helpers/placeKittenHelper');
 const menuStateHelper = require('./helpers/menuStateHelper');
+const moment = require('moment');
+
+require('moment/locale/de');
+moment.locale('de');
 
 bluebird.promisifyAll(redis.RedisClient.prototype);
 bluebird.promisifyAll(redis.Multi.prototype);

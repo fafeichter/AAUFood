@@ -1,4 +1,5 @@
 "use strict";
+const { stubArray } = require('lodash');
 const moment = require('moment');
 const Menu = require("../models/menu");
 
@@ -26,6 +27,7 @@ function sanitizeName(val) {
         val = val.replace(/^[1-9]./, ""); // Replace '1.', '2.'
         val = val.replace(/^[,\.\-\\\? ]+/, "");
         val = val.replace(/[,\.\-\\\? ]+$/, "");
+        val = trimTrailingPrice(val);
         return val.trim();
     } else if (typeof val === "object" && val.length > 0) {
         for (let i = 0; i < val.length; i++) {
@@ -68,19 +70,27 @@ function capitalizeFirstLetter(string, delim, exceptionList) {
     }
 }
 
-const priceRegex = /(\d+[,\.]?\d*)/
-
+const priceRegex = /(\d+[,\.]?\d*)/ig;
 function parsePrice(str) {
     if (!str) {
         return null;
     }
 
-    let match = priceRegex.exec(str);
+    let match = str.match(priceRegex);
     if (match) {
-        return +match[0].replace(',', '.');
+        return +match[match.length - 1].replace(',', '.');
     } else {
         return null;
     }
+}
+
+const trailingPriceRegex = /\s*€?\s*\d+[,\.]?\d*\s*€?\s*$/;
+function trimTrailingPrice(str) {
+    if (!str) {
+        return str;
+    }
+
+    return str.replace(trailingPriceRegex, "").trim();
 }
 
 function stripHtml(str) {
@@ -113,9 +123,7 @@ function isInCurrentWeek(date) {
 
 function findKW(str) {
     let match = str.match(/KW\s*(\d{1,2})$/);
-    if (!match) {
-        return null;
-    }
+    if (!match) { return null; }
     return match[1];
 }
 
@@ -133,6 +141,14 @@ function findDate(str) {
     return moment(dateStr, "D.M.YYYY")
 }
 
+function getWeekErrorModel() {
+    return new Array(7).fill(1).map(() => {
+        let m = new Menu();
+        m.error = true;
+        return m;
+    });
+}
+
 module.exports = {
     setErrorOnEmpty,
     invalidateMenus,
@@ -140,10 +156,12 @@ module.exports = {
     capitalizeFirstLetter,
     decapitalize,
     parsePrice,
+    trimTrailingPrice,
     stripHtml,
     contains,
     isInCurrentWeek,
     isCurrentKW,
     findKW,
     findDate,
+    getWeekErrorModel,
 };
