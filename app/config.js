@@ -21,7 +21,7 @@ module.exports = {
     },
     scraper: {
         mensaUrl: "https://menu.mensen.at/index/index/locid/45",
-        uniwirtUrl: "https://www.uniwirt.at/wp/",
+        uniwirtUrl: "https://www.uniwirt.at/wp/home/mittagsmenues/",
         hotspotUrl: "https://www.lakeside-scitec.com/services/gastronomie/hotspot",
         unipizzeriaUrl: "https://uni-pizzeria.at/essen/mittagsteller-2/",
         lapastaUrl: "https://lapasta.at/wochenmenue.html",
