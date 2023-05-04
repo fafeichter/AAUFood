@@ -21,7 +21,7 @@ function invalidateMenus(weekPlan) {
 
 function sanitizeName(val) {
     if (typeof val === "string") {
-        val = val.replace(/  +/g, " "); // multiple spaces to one
+        val = val.replace(/\s\s+/g, ' '); // Replace tabs, newlines, multiple spaces etc. into a single space
         val = val.replace(/€?\s[0-9]+(,|.)[0-9]+/, ""); // Replace '€ 00.00'
         val = val.replace(/^[1-9].\s/, ""); // Replace '1. ', '2. '
         val = val.replace(/^[1-9]./, ""); // Replace '1.', '2.'
@@ -71,6 +71,7 @@ function capitalizeFirstLetter(string, delim, exceptionList) {
 }
 
 const priceRegex = /(\d+[,\.]?\d*)/ig;
+
 function parsePrice(str) {
     if (!str) {
         return null;
@@ -85,6 +86,7 @@ function parsePrice(str) {
 }
 
 const trailingPriceRegex = /\s*€?\s*\d+[,\.]?\d*\s*€?\s*$/;
+
 function trimTrailingPrice(str) {
     if (!str) {
         return str;
@@ -123,7 +125,9 @@ function isInCurrentWeek(date) {
 
 function findKW(str) {
     let match = str.match(/KW\s*(\d{1,2})$/);
-    if (!match) { return null; }
+    if (!match) {
+        return null;
+    }
     return match[1];
 }
 

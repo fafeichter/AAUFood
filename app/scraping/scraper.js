@@ -79,11 +79,10 @@ function parseUniwirt(html) {
 
     const weekSpecials = [];
     for (let specialNameElement of weekSpecialNodes) {
-        let name = scraperHelper.sanitizeName(specialNameElement.text());
         let infoText = specialNameElement.parent().text().trim();
         let price = scraperHelper.parsePrice(infoText);
 
-        let special = new Food(name, price);
+        let special = new Food(specialNameElement.text(), price);
         if (!special.allergens || special.allergens.length === 0) {
             special.extractAllergens(infoText);
         }
@@ -150,14 +149,13 @@ function createUniwirtDayMenu(dayEntry) {
             let pEntry = paragraphs.eq(i);
 
             let text = pEntry.text().trim();
-            let name = scraperHelper.sanitizeName(text);
 
             let price = scraperHelper.parsePrice(text);
 
             //If it has a price, it is a main course, otherwise a starter
-            let hasName = !!name.trim();
+            let hasName = !!text.trim();
             if (hasName) {
-                foodEntries.push([name, price, !!price]);
+                foodEntries.push([text, price, !!price]);
             }
         }
 
@@ -374,15 +372,13 @@ function getUniPizzeriaDayPlan(weekMenu, day) {
 
             if (starterExists) {
                 //There is a starter
-                let name = scraperHelper.sanitizeName(splitted[0]);
-                let starter = new Food(name);
+                let starter = new Food(splitted[0]);
                 menu.starters.push(starter);
             }
 
             let i = starterExists ? 1 : 0;
             for (; i < splitted.length; i++) {
-                let name = scraperHelper.sanitizeName(splitted[i]);
-                let main = new Food(name, combinedFood.price);
+                let main = new Food(splitted[i], combinedFood.price);
                 menu.mains.push(main);
             }
         }

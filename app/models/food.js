@@ -2,6 +2,7 @@
 
 const allergenRegex = /(\(?\s*(\s*.\s*,|.\s*,\s*.)+,?\s*\)?|\(.\))\s*$/i;
 const fullCapsAllergenRegex = /([A-Z]+)$/;
+const scraperHelper = require('../scraping/scraperHelper')
 
 class Food {
     name = "";
@@ -10,7 +11,7 @@ class Food {
     allergens = [];
 
     constructor(name, price, isInfo) {
-        this.name = name;
+        this.name = scraperHelper.sanitizeName(name);
         if (price != null) {
             if (typeof price === 'number' && !isNaN(price)) {
                 this.price = price;
