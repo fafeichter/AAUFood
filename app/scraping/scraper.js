@@ -134,7 +134,7 @@ function createUniwirtDayMenu(dayEntry) {
         let pText = paragraphs.length === 0 ? dateParagraph.text() : paragraphs.text();
         pText = pText.replace(/\d\d\.\d\d\.\d+/, "").trim();
 
-        if (scraperHelper.contains(pText, true, ["feiertag", "ruhetag", "wir machen pause", "wir haben geschlossen", "closed"])) {
+        if (scraperHelper.contains(pText, true, ["feiertag", "ruhetag", "pause", "geschlossen", "closed"])) {
             dayMenu.closed = true;
         } else if (scraperHelper.contains(pText, true, ["Empfehlung"])) {
             dayMenu.noMenu = true;
