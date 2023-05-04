@@ -31,7 +31,7 @@ module.exports = {
     },
     userFriendlyUrls: {
         //Usually the same as the scraper ones
-        mensa: "http://menu.mensen.at/index/index/locid/45",
+        mensa: "https://menu.mensen.at/index/index/locid/45",
         uniwirt: "https://www.uniwirt.at/wp/home/mittagsmenues/",
         hotspot: "https://www.lakeside-scitec.com/services/gastronomie/hotspot",
         "uni-pizzeria": "https://uni-pizzeria.at/essen/mittagsteller-2/",
