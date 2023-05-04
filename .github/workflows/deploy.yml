@@ -1,4 +1,4 @@
-name: deployment
+name: Deployment
 
 on:
   push:
@@ -6,16 +6,35 @@ on:
       - master
 
 jobs:
-  deploy:
-
+  artifact:
+    name: Create artifact
     runs-on: ubuntu-latest
-
+    environment: Production
     steps:
-      - name: deploy via ssh
-        uses: fifsky/ssh-action@master
+      - name: Checkout git branch
+        uses: actions/checkout@v3
+      - name: Log in to private container registry
+        uses: azure/docker-login@v1
         with:
-          command: echo test
-          host: ${{ secrets.SSH_DEPLOY_TARGET }}
-          user: ${{ secrets.SSH_DEPLOY_USER }}
-          key: ${{ secrets.SSH_DEPLOY_KEY }}
-          args: ${{ secrets.SSH_EXTRA_ARGS }}
+          login-server: ${{ vars.REGISTRY_HOST }}
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
+      - name: Build and push Docker image
+        env:
+          registry_host: ${{ vars.REGISTRY_HOST }}
+        run: |
+          docker build . -t $registry_host/food:latest
+          docker push $registry_host/food:latest
+  deploy:
+    name: Deploy with Docker Compose
+    needs: [ artifact ]
+    runs-on: ubuntu-latest
+    environment: Production
+    steps:
+      - name: Run deployment script on Droplet on DigitalOcean via SSH
+        uses: garygrossgarten/github-action-ssh@0.7.0
+        with:
+          host: ${{ secrets.SSH_HOST}}
+          username: ${{ secrets.SSH_USERNAME}}
+          privateKey: ${{ secrets.SSH_PRIVATE_KEY}}
+          command: ${{ vars.SSH_COMMAND}}
