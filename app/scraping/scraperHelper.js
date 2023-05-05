@@ -27,6 +27,7 @@ function sanitizeName(val) {
         val = val.replace(/^[1-9]./, ""); // Replace '1.', '2.'
         val = val.replace(/^[,\.\-\\\? ]+/, "");
         val = val.replace(/[,\.\-\\\? ]+$/, "");
+        val = val.replace('***', "");
         val = trimTrailingPrice(val);
         return val.trim();
     } else if (typeof val === "object" && val.length > 0) {
