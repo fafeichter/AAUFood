@@ -7,11 +7,12 @@ const scraperHelper = require('../scraping/scraperHelper')
 class Food {
     name = "";
     price = null;
+    isMain = false;
     isInfo = false;
     allergens = [];
 
-    constructor(name, price, isInfo) {
-        this.name = scraperHelper.sanitizeName(name);
+    constructor(name, price, isMain, isInfo) {
+        this.name = !isMain ? scraperHelper.sanitizeName(name) : name;
         if (price != null) {
             if (typeof price === 'number' && !isNaN(price)) {
                 this.price = price;
@@ -19,6 +20,7 @@ class Food {
                 this.price = price.replace(/ +€?$/, ""); // trim leading spaces and € signs
             }
         }
+        this.isMain = isMain;
         this.isInfo = isInfo === true;
 
         this.extractAllergens();

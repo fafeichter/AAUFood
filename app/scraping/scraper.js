@@ -90,7 +90,7 @@ function parseUniwirt(html) {
         weekSpecials.push(special);
     }
 
-    const weekSpecialMenu = new Food("Wochenangebote");
+    const weekSpecialMenu = new Food("Wochenangebote", null, true);
     weekSpecialMenu.entries = weekSpecials;
 
     // Daily menus
@@ -139,7 +139,7 @@ function createUniwirtDayMenu(dayEntry) {
             dayMenu.noMenu = true;
         } else {
             pText = pText.charAt(0).toUpperCase() + pText.slice(1);
-            let info = new Food(pText, null, true);
+            let info = new Food(pText, null, false, true);
             dayMenu.mains.push(info);
         }
     } else {
@@ -163,7 +163,7 @@ function createUniwirtDayMenu(dayEntry) {
         const mainCourses = foodEntries.filter(x => x[2]);
 
         const menus = mainCourses.map(([name, price], i) => {
-            let main = new Food(`Menü ${i + 1}`, price);
+            let main = new Food(`Menü ${i + 1}`, price, true);
             main.entries = [...starters, new Food(name)]
             return main;
         })
@@ -322,7 +322,7 @@ function createWochenspecialFoodMenuFromElement($, e) { // Kept here in case men
         .split(")") //Split at end of allergens, don't worry about missing closing )
         .map(s => s.trim());
 
-    let food = new Food("Wochenspecial", price);
+    let food = new Food("Wochenspecial", price, true);
     food.entries = foodNames.map(n => new Food(n));
     return food;
 }
@@ -378,7 +378,7 @@ function getUniPizzeriaDayPlan(weekMenu, day) {
 
             let i = starterExists ? 1 : 0;
             for (; i < splitted.length; i++) {
-                let main = new Food(splitted[i], combinedFood.price);
+                let main = new Food(splitted[i], combinedFood.price, true);
                 menu.mains.push(main);
             }
         }
@@ -412,7 +412,7 @@ function parseUniPizzeria(html) {
             if (currentFood != null) {
                 result.mains.push(currentFood);
             }
-            currentFood = new Food("", _uniPizzeriaPrice);
+            currentFood = new Food("", _uniPizzeriaPrice, true);
         }
         if (currentFood != null) {
             currentFood.name += _normalizeFood(content);
@@ -505,7 +505,7 @@ function parseHotspot(html) {
                 let title = `Menü ${++menuct}`;
                 let priceField = $(entry).find("> td:contains(€)");
                 let price = scraperHelper.parsePrice(priceField.text());
-                let mainCourse = new Food(title, price);
+                let mainCourse = new Food(title, price, true);
                 mainCourse.entries = [new Food(description)];
                 menuForDay.mains.push(mainCourse);
             }
@@ -569,7 +569,7 @@ function parseBitsnBytes(html) {
                 let title = `Menü ${++menuct}`;
                 let priceField = $(entry).find("> td:contains(€)");
                 let price = scraperHelper.parsePrice(priceField.text());
-                let mainCourse = new Food(title, price);
+                let mainCourse = new Food(title, price, true);
                 mainCourse.entries = [new Food(description)];
                 menuForDay.mains.push(mainCourse);
             }
@@ -617,7 +617,7 @@ function parseVillaLidoDay(html, weekDay) {
             let description = currentField.text();
             let price = titleRaw.substring(titleRaw.indexOf("€")).replace("€ ", "");
             price = parseFloat(price.replace(",", ".").trim());
-            let mainCourse = new Food(courseName, price);
+            let mainCourse = new Food(courseName, price, true);
             mainCourse.entries = [new Food(description)];
             dayMenu.mains.push(mainCourse);
         } else {
@@ -685,7 +685,7 @@ function parsePrinceDayMenu(menuString) {
     dayMenu.starters.push(starter);
 
     menuString.splice(0, 1);
-    let main = new Food(menuString.join("").replace(/\s*\|/g, ","), 8.70);
+    let main = new Food(menuString.join("").replace(/\s*\|/g, ","), 8.70, true);
     dayMenu.mains.push(main);
 
     return dayMenu;
