@@ -16,12 +16,12 @@ jobs:
       - name: Log in to private container registry
         uses: azure/docker-login@v1
         with:
-          login-server: ${{ vars.REGISTRY_HOST }}
+          login-server: ${{ secrets.REGISTRY_HOST }}
           username: ${{ secrets.REGISTRY_USERNAME }}
           password: ${{ secrets.REGISTRY_PASSWORD }}
       - name: Build and push Docker image
         env:
-          registry_host: ${{ vars.REGISTRY_HOST }}
+          registry_host: ${{ secrets.REGISTRY_HOST }}
         run: |
           docker build . -t $registry_host/food:latest
           docker push $registry_host/food:latest
@@ -37,4 +37,4 @@ jobs:
           host: ${{ secrets.SSH_HOST}}
           username: ${{ secrets.SSH_USERNAME}}
           privateKey: ${{ secrets.SSH_PRIVATE_KEY}}
-          command: ${{ vars.SSH_COMMAND}}
+          command: ${{ secrets.SSH_COMMAND}}
