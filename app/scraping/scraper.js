@@ -66,7 +66,7 @@ function parseUniwirt(html) {
 
     // Week specials
     // Get last entry including "wochen"
-    var weekHeading = $($("#mittagsmenues .wpb_row").toArray().filter(x => $(x).find("h2").text().toLowerCase().includes("wochen")));
+    var weekHeading = $($("#mittagsmenues .wpb_row").toArray().filter(x => $(x).find("h2").text().toLowerCase().includes("woche")));
 
     // Get all names (first <p> in each column)
     var allWeekSpecialNodes = weekHeading.nextAll().find("p:first-of-type");
@@ -123,7 +123,7 @@ function parseUniwirt(html) {
 
 function createUniwirtDayMenu(dayEntry) {
     var dayMenu = new Menu();
-    var paragraphs = dayEntry.find("p");
+    var paragraphs = dayEntry.find("p, li");
     //Omit first <p> as it is the date
     var dateParagraph = paragraphs.eq(0);
     paragraphs = paragraphs.filter(":not(:empty)");
