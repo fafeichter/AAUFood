@@ -1,21 +1,21 @@
-<!-- Parameters: restaurant, restaurantName, menu, combinedMenuList (optional) -->
+<!-- Parameters: restaurantId, restaurantName, restaurantFriendlyUrl, menu, combinedMenuList (optional) -->
 <% combinedMenuList = typeof (combinedMenuList) === 'boolean' && combinedMenuList /* handling optional parameter */ %>
 
-<div class="card restaurant <%= restaurant %>" id="<%= restaurant %>">
+<div class="card restaurant <%= restaurantId %>" id="<%= restaurantId %>">
     <h3 class="card-header">
         <span><%= restaurantName %></span>
-        <a class="link-icon" target="_blank" href="<%= userFriendlyUrl(restaurant) %>">
+        <a class="link-icon" target="_blank" href="<%= restaurantFriendlyUrl %>">
             <i class="fa fa-globe-americas" aria-hidden="true"></i>
         </a>
     </h3>
 
     <div class="card-body">
-        <% menuState = menuStateHelper.getMenuState(restaurant, menu) %>
+        <% menuState = menuStateHelper.getMenuState(restaurantId, menu) %>
         <% if(!menuStateHelper.isDefaultState(menuState)) { %>
-            <%- include('infos/infos', { restaurant, menuState }) %>
+            <%- include('infos/infos', { restaurantId, restaurantFriendlyUrl, menuState }) %>
         <% } else if(combinedMenuList){ %>
             <%- include('menu-lists/combined-menu-list', { menu }) %>
-            <% if(restaurant === 'hotspot' && day === moment().day() - 1) { %>
+            <% if(restaurantId === 'hotspot' && day === moment().day() - 1) { %>
                 <ul class="list-group combined-menu-list-group">
                     <li class="list-group-item">
                         <%- include('hotspot-special/image') %>

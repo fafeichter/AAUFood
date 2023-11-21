@@ -5,63 +5,62 @@
 'use strict';
 
 const EventEmitter = require('events');
-const config = require('../config');
 const scraper = require('../scraping/scraper');
+const restaurants = require('../config').restaurants;
 const winston = require('winston');
 
+const menuKeyPrefix = "menu";
+
 class MenuCache extends EventEmitter {
+
     init(redisClient) {
         this.client = redisClient;
-        this.update();
-        winston.info('Initialized Logger.');
+        // give the url cache a few seconds to finish first
+        setTimeout(() => {
+            this.update();
+        }, 10000);
     }
 
     update() {
+        winston.info('Updating menu caches...');
+
         scraper.getMensaWeekPlan()
-            .then(weekPlan => this._updateIfInvalid('mensa', weekPlan));
+            .then(weekPlan => this._updateIfNewer(restaurants.mensa.id, weekPlan));
 
         scraper.getHotspotWeekPlan()
-            .then(weekPlan => this._updateIfInvalid('hotspot', weekPlan));
+            .then(weekPlan => this._updateIfNewer(restaurants.hotspot.id, weekPlan));
 
-        scraper.getUniwirtWeekPlan()
-            .then(weekPlan => this._updateIfInvalid('uniwirt', weekPlan));
+        scraper.getUniWirtWeekPlan()
+            .then(weekPlan => this._updateIfNewer(restaurants.uniWirt.id, weekPlan));
 
         scraper.getUniPizzeriaWeekPlan()
-            .then(weekPlan => this._updateIfInvalid('uniPizzeria', weekPlan));
-
-        scraper.getLapastaWeekPlan()
-            .then(weekPlan => this._updateIfInvalid('lapasta', weekPlan));
-
-        scraper.getVillaLidoWeekPlan()
-            .then(weekPlan => this._updateIfInvalid('villaLido', weekPlan));
+            .then(weekPlan => this._updateIfNewer(restaurants.uniPizzeria.id, weekPlan));
 
         scraper.getBitsAndBytesWeekPlan()
-            .then(weekPlan => this._updateIfInvalid('bitsAndBytes', weekPlan));
+            .then(weekPlan => this._updateIfNewer(restaurants.bitsAndBytes.id, weekPlan));
 
-        //scraper.getPrincsWeekPlan()
-        //    .then(weekPlan => this._updateIfInvalid('princs', weekPlan));
-
-        winston.info('Updating caches.');
+        scraper.getIntersparWeekPlan()
+            .then(weekPlan => this._updateIfNewer(restaurants.interspar.id, weekPlan));
     }
 
-    _updateIfInvalid(restaurantName, newWeekPlan) {
+    _updateIfNewer(restaurantId, newWeekPlan) {
         var newWeekPlanJson = JSON.stringify(newWeekPlan);
 
-        this.getMenu(restaurantName).then(cachedMenu => {
+        this.getMenu(restaurantId).then(cachedMenu => {
             if (cachedMenu !== newWeekPlanJson) {
-                this._cacheMenu(restaurantName, newWeekPlan, newWeekPlanJson);
-                this.emit(`menu:${restaurantName}`, newWeekPlanJson); //Should we emit all single menus?
-                winston.info(`${restaurantName} has changed the menu. -> Cache updated.`)
+                this._cacheMenu(restaurantId, newWeekPlan, newWeekPlanJson);
+                this.emit(`${menuKeyPrefix}:${restaurantId}`, newWeekPlanJson); //Should we emit all single menus?
+                winston.info(`"${restaurantId}" has changed the menu -> cache updated`)
             }
         });
     }
 
-    _cacheMenu(restaurantName, weekPlan, weekPlanJson) {
+    _cacheMenu(restaurantId, weekPlan, weekPlanJson) {
         var promises = [];
-        promises.push(this.client.setAsync(`menu:${restaurantName}`, weekPlanJson)); //Store whole weekPlan
+        promises.push(this.client.setAsync(`${menuKeyPrefix}:${restaurantId}`, weekPlanJson)); //Store whole weekPlan
 
         for (let day = 0; day < weekPlan.length; day++) {
-            let key = `menu:${restaurantName}:${day}`;
+            let key = `${menuKeyPrefix}:${restaurantId}:${day}`;
             let menuJson = JSON.stringify(weekPlan[day]);
             promises.push(this.client.setAsync(key, menuJson));
         }
@@ -70,7 +69,7 @@ class MenuCache extends EventEmitter {
     }
 
     getMenu(menuName, day) {
-        var key = day != null ? `menu:${menuName}:${day}` : `menu:${menuName}`;
+        var key = day != null ? `${menuKeyPrefix}:${menuName}:${day}` : `${menuKeyPrefix}:${menuName}`;
         return this.client.getAsync(key);
     }
 }

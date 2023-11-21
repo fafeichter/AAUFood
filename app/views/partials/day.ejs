@@ -9,17 +9,18 @@
     </div>
     <div class="row restaurants-row">
         <div class="col-xl-3 col-lg-6 col-md-12">
-            <%- include('restaurant', {restaurant: 'mensa', restaurantName: 'Mensa', menu: mensa ? mensa[day] : null, combinedMenuList: true, day: day}) %>
+            <%- include('restaurant', {restaurantId: restaurants.mensa.id, restaurantName: restaurants.mensa.name, restaurantFriendlyUrl: mensa.userFriendlyUrl, menu: mensa.menu ? mensa.menu[day] : null, combinedMenuList: true, day: day}) %>
+            <%- include('restaurant', {restaurantId: restaurants.interspar.id, restaurantName: restaurants.interspar.name, restaurantFriendlyUrl: interspar.userFriendlyUrl, menu: interspar.menu ? interspar.menu[day] : null, day: day}) %>
         </div>
         <div class="col-xl-3 col-lg-6 col-md-12">
-            <%- include('restaurant', {restaurant: 'uniwirt', restaurantName: 'Uniwirt', menu: uniwirt ? uniwirt[day] : null, combinedMenuList: true, day: day}) %>
-            <%- include('restaurant', {restaurant: 'uni-pizzeria', restaurantName: 'Uni-Pizzeria', menu: uniPizzeria ? uniPizzeria[day] : null, day: day}) %>
+            <%- include('restaurant', {restaurantId: restaurants.uniWirt.id, restaurantName: restaurants.uniWirt.name, restaurantFriendlyUrl: uniWirt.userFriendlyUrl, menu: uniWirt.menu ? uniWirt.menu[day] : null, combinedMenuList: true, day: day}) %>
+            <%- include('restaurant', {restaurantId: restaurants.uniPizzeria.id, restaurantName: restaurants.uniPizzeria.name, restaurantFriendlyUrl: uniPizzeria.userFriendlyUrl, menu: uniPizzeria.menu ? uniPizzeria.menu[day] : null, day: day}) %>
         </div>
         <div class="col-xl-3 col-lg-6 col-md-12">
-            <%- include('restaurant', {restaurant: 'bits-and-bytes', restaurantName: 'Bits & Bytes', menu: bitsAndBytes ? bitsAndBytes[day] : null, combinedMenuList: true, day: day}) %>
+            <%- include('restaurant', {restaurantId: restaurants.bitsAndBytes.id, restaurantName: restaurants.bitsAndBytes.name, restaurantFriendlyUrl: bitsAndBytes.userFriendlyUrl, menu: bitsAndBytes.menu ? bitsAndBytes.menu[day] : null, combinedMenuList: true, day: day}) %>
         </div>
         <div class="col-xl-3 col-lg-6 col-md-12">
-            <%- include('restaurant', {restaurant: 'hotspot', restaurantName: 'Hotspot', menu: hotspot ? hotspot[day] : null, combinedMenuList: true, day: day}) %>
+            <%- include('restaurant', {restaurantId: restaurants.hotspot.id, restaurantName: restaurants.hotspot.name, restaurantFriendlyUrl: hotspot.userFriendlyUrl, menu: hotspot.menu ? hotspot.menu[day] : null, combinedMenuList: true, day: day}) %>
         </div>
     </div>
 </div>

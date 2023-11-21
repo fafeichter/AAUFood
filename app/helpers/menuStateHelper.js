@@ -7,16 +7,20 @@ const MenuState = {
     Closed: 2,
     Outdated: 3,
     OnBreak: 4,
-    Error: 5,
+    ScrapingNotImplemented: 5,
+    Error: 6,
 }
 
-function getMenuState(restaurant, menu) {
-    let isOnBreak = breakHelper.isOnBreak(restaurant);
+function getMenuState(restaurantId, menu) {
+    let isOnBreak = breakHelper.isOnBreak(restaurantId);
     if (isOnBreak)
         return MenuState.OnBreak;
 
     if (menu == null || menu.error)
         return MenuState.Error;
+
+    if (menu.scrapingNotImplemented)
+        return MenuState.ScrapingNotImplemented;
 
     if (menu.closed)
         return MenuState.Closed;

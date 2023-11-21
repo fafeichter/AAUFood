@@ -10,7 +10,7 @@ const config = require('../config');
 const timeHelper = require('../helpers/timeHelper');
 const scraperHelper = require('./scraperHelper')
 
-var LapastaUrl = config.scraper.lapastaUrl;
+var LapastaUrl = config.scraper.lapastaUrl();
 
 function _getWeekPlan() {
     return request.getAsync(LapastaUrl)

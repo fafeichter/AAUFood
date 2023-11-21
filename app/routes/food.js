@@ -8,6 +8,7 @@ const winston = require("winston");
 const moment = require("moment/moment");
 const uploadDirectory = "/usr/src/aaufood/upload/";
 const fileNameFormat = 'DD-MM-YYYY';
+const restaurants = require('../config').restaurants;
 
 /* GET users listing. */
 router.get('/uniwirt/:day?', function (req, res) {
@@ -15,7 +16,7 @@ router.get('/uniwirt/:day?', function (req, res) {
      scraper.getUniwirtPlan(day)
      .then(result => res.json(result));*/
     res.setHeader('Content-Type', 'application/json');
-    cache.getMenu('uniwirt', timeHelper.sanitizeDay(req.params.day))
+    cache.getMenu(restaurants.uniWirt.id, timeHelper.sanitizeDay(req.params.day))
         .then(menu => res.send(menu));
 });
 
@@ -24,7 +25,7 @@ router.get('/hotspot/:day?', function (req, res) {
      scraper.getHotspotPlan(day)
      .then(result => res.json(result));*/
     res.setHeader('Content-Type', 'application/json');
-    cache.getMenu('hotspot', timeHelper.sanitizeDay(req.params.day))
+    cache.getMenu(restaurants.hotspot.id, timeHelper.sanitizeDay(req.params.day))
         .then(menu => res.send(menu));
 });
 
@@ -90,34 +91,7 @@ router.get('/mensa/:day?', function (req, res) {
      scraper.getuniwirtMensaPlan(day)
      .then(result => res.json(result));*/
     res.setHeader('Content-Type', 'application/json');
-    cache.getMenu('mensa', timeHelper.sanitizeDay(req.params.day))
-        .then(menu => res.send(menu));
-});
-
-router.get('/unipizzeria/:day?', function (req, res) {
-    /* var day = +req.params.day;
-     scraper.getMensaPlan(day)
-     .then(result => res.json(result));*/
-    res.setHeader('Content-Type', 'application/json');
-    cache.getMenu('uniPizzeria', timeHelper.sanitizeDay(req.params.day))
-        .then(menu => res.send(menu));
-});
-
-router.get('/lapasta/:day?', function (req, res) {
-    /* var day = +req.params.day;
-     scraper.getMensaPlan(day)
-     .then(result => res.json(result));*/
-    res.setHeader('Content-Type', 'application/json');
-    cache.getMenu('lapasta', timeHelper.sanitizeDay(req.params.day))
-        .then(menu => res.send(menu));
-});
-
-router.get('/villalido/:day?', function (req, res) {
-    /* var day = +req.params.day;
-     scraper.getMensaPlan(day)
-     .then(result => res.json(result));*/
-    res.setHeader('Content-Type', 'application/json');
-    cache.getMenu('villaLido', timeHelper.sanitizeDay(req.params.day))
+    cache.getMenu(restaurants.mensa.id, timeHelper.sanitizeDay(req.params.day))
         .then(menu => res.send(menu));
 });
 
@@ -126,7 +100,7 @@ router.get('/bitsandbytes/:day?', function (req, res) {
      scraper.getMensaPlan(day)
      .then(result => res.json(result));*/
     res.setHeader('Content-Type', 'application/json');
-    cache.getMenu('bitsAndBytes', timeHelper.sanitizeDay(req.params.day))
+    cache.getMenu(restaurants.bitsAndBytes.id, timeHelper.sanitizeDay(req.params.day))
         .then(menu => res.send(menu));
 });
 

@@ -14,31 +14,39 @@ module.exports = {
         // mensa: new BreakInfo("Wir befinden uns für den Zeitraum", "28.7", "2.9", "in Sommerpause."),
     },
     cache: {
-        // Time in miliseconds -> 20 min.
-        intervall: 1200000,
+        // Time in milliseconds -> 20 min.
+        menuCacheIntervall: 1200000,
+        // Time in milliseconds -> 10 min.
+        urlCacheIntervall: 600000,
         overallVisitorKey: "overallVisitors",
         dailyVisitorKey: "dailyVisitors"
     },
-    scraper: {
-        mensaUrl: "https://menu.mensen.at/index/index/locid/45",
-        uniwirtUrl: "https://www.uniwirt.at/wp/home/mittagsmenues/",
-        hotspotUrl: "https://www.lakeside-scitec.com/services/gastronomie/hotspot",
-        unipizzeriaUrl: "https://uni-pizzeria.at/essen/mittagsteller-2/",
-        lapastaUrl: "https://lapasta.at/wochenmenue.html",
-        princsUrl: "http://www.princs.com/",
-        villaLidoUrl: "https://www.villa-lido.at/",
-        bitsAndBytesUrl: "https://www.lakeside-scitec.com/services/gastronomie/bits-bytes"
-    },
-    userFriendlyUrls: {
-        //Usually the same as the scraper ones
-        mensa: "https://menu.mensen.at/index/index/locid/45",
-        uniwirt: "https://www.uniwirt.at/wp/home/mittagsmenues/",
-        hotspot: "https://www.lakeside-scitec.com/services/gastronomie/hotspot",
-        "uni-pizzeria": "https://uni-pizzeria.at/essen/mittagsteller-2/",
-        "la-pasta": "https://lapasta.at/wochenmenue.html",
-        princs: "http://www.princs.com/",
-        "villa-lido": "https://www.villa-lido.at/",
-        "bits-and-bytes": "https://www.lakeside-scitec.com/services/gastronomie/bits-bytes"
+    restaurants: {
+        mensa: {
+            id: "mensa",
+            name: "Mensa"
+        },
+        interspar: {
+            id: "interspar",
+            name: "Interspar"
+        },
+        uniWirt: {
+            id: "uni-wirt",
+            name: "Uniwirt"
+        },
+        uniPizzeria: {
+            id: "uni-pizzeria",
+            name: "Uni-Pizzeria"
+        },
+        bitsAndBytes: {
+            id: "bits-and-bytes",
+            name: "Bits & Bytes"
+        },
+        hotspot: {
+            id: "hotspot",
+            name: "Hotspot"
+        }
+
     },
     cookie: {
         // 30 days in milliseconds

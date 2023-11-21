@@ -9,6 +9,7 @@ class Menu {
         this.closed = false;
         this.error = false;
         this.noMenu = false;
+        this.scrapingNotImplemented = false;
     }
 }
 

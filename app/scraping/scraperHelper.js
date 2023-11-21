@@ -1,5 +1,5 @@
 "use strict";
-const { stubArray } = require('lodash');
+const {stubArray} = require('lodash');
 const moment = require('moment');
 const Menu = require("../models/menu");
 
@@ -14,6 +14,15 @@ function invalidateMenus(weekPlan) {
     for (let i = 0; i < 6; i++) {
         let outdatedMenu = new Menu();
         outdatedMenu.outdated = true;
+        weekPlan[i] = outdatedMenu;
+    }
+    return weekPlan;
+}
+
+function scrapingNotImplementedMenus(weekPlan) {
+    for (let i = 0; i < 7; i++) {
+        let outdatedMenu = new Menu();
+        outdatedMenu.scrapingNotImplemented = true;
         weekPlan[i] = outdatedMenu;
     }
     return weekPlan;
@@ -157,6 +166,7 @@ function getWeekErrorModel() {
 module.exports = {
     setErrorOnEmpty,
     invalidateMenus,
+    scrapingNotImplementedMenus,
     sanitizeName,
     capitalizeFirstLetter,
     decapitalize,

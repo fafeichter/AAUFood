@@ -99,10 +99,6 @@ body {
   }
 }
 
-.villa-lido {
-  @include restaurantColors($villalidoBg, white)
-}
-
 .bits-and-bytes {
   @include restaurantColors($bitsAndBytesBg, white)
 }
@@ -111,7 +107,7 @@ body {
   @include restaurantColors($mensaOrange, white);
 }
 
-.uniwirt {
+.uni-wirt {
   @include restaurantColors($uniwirtPurple, white);
 }
 
@@ -119,12 +115,8 @@ body {
   @include restaurantColors($uniPizzeriaBg, white);
 }
 
-.la-pasta {
-  @include restaurantColors($laPastaBg, white);
-}
-
-.princs {
-  @include restaurantColors($princsBg, white);
+.interspar {
+  @include restaurantColors($intersparGreen, white);
 }
 
 /* Menu Lists */

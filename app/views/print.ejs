@@ -80,26 +80,27 @@
         <a class="mt-1 ml-1 btn btn-dark btn-sm print-hidden" href="/">Zurück zur Tagesansicht</a>
 
         <div class="custom-control custom-checkbox print-hidden">
-            <input type="checkbox" class="custom-control-input" id="mensa" checked onclick="toggleRow('mensa');">
-            <label class="custom-control-label" for="mensa">Mensa</label>
+            <input type="checkbox" class="custom-control-input" id="<%= restaurants.mensa.id %>" checked
+                   onclick="toggleRow('<%= restaurants.mensa.id %>');">
+            <label class="custom-control-label" for="<%= restaurants.mensa.id %>"><%= restaurants.mensa.name %></label>
         </div>
         <div class="custom-control custom-checkbox print-hidden">
-            <input type="checkbox" class="custom-control-input" id="uniwirt" checked onclick="toggleRow('uniwirt');">
-            <label class="custom-control-label" for="uniwirt">Uniwirt</label>
+            <input type="checkbox" class="custom-control-input" id="<%= restaurants.uniWirt.id %>" checked
+                   onclick="toggleRow('<%= restaurants.uniWirt.id %>');">
+            <label class="custom-control-label"
+                   for="<%= restaurants.uniWirt.id %>"><%= restaurants.uniWirt.name %></label>
         </div>
         <div class="custom-control custom-checkbox print-hidden">
-            <input type="checkbox" class="custom-control-input" id="hotspot" checked onclick="toggleRow('hotspot');">
-            <label class="custom-control-label" for="hotspot">Hotspot</label>
+            <input type="checkbox" class="custom-control-input" id="<%= restaurants.hotspot.id %>" checked
+                   onclick="toggleRow('<%= restaurants.hotspot.id %>');">
+            <label class="custom-control-label"
+                   for="<%= restaurants.hotspot.id %>"><%= restaurants.hotspot.name %></label>
         </div>
         <div class="custom-control custom-checkbox print-hidden">
-            <input type="checkbox" class="custom-control-input" id="uni-pizzeria" checked
-                   onclick="toggleRow('uni-pizzeria');">
-            <label class="custom-control-label" for="uni-pizzeria">Uni-Pizzeria</label>
-        </div>
-        <div class="custom-control custom-checkbox print-hidden">
-            <input type="checkbox" class="custom-control-input" id="bits-and-bytes" checked
-                   onclick="toggleRow('bits-and-bytes');">
-            <label class="custom-control-label" for="bits-and-bytes">Bits & Bytes</label>
+            <input type="checkbox" class="custom-control-input" id="<%= restaurants.bitsAndBytes.id %>" checked
+                   onclick="toggleRow('<%= restaurants.bitsAndBytes.id %>');">
+            <label class="custom-control-label"
+                   for="<%= restaurants.bitsAndBytes.id %>"><%= restaurants.bitsAndBytes.name %></label>
         </div>
     </div>
     <h2 class="mx-auto">Wochenplan
@@ -118,8 +119,8 @@
     </tr>
     </thead>
     <tbody>
-    <tr class="mensa">
-        <td class="namecol"><span class="name">Mensa</span></td>
+    <tr class="<%= restaurants.mensa.id %>">
+        <td class="namecol"><span class="name"><%= restaurants.mensa.name %></span></td>
 
         <% for(let i = 0; i < 5; i++) { %>
             <td class="datacol">
@@ -135,19 +136,19 @@
         <% } %>
     </tr>
 
-    <tr class="uniwirt">
-        <td class="namecol"><span class="name">Uniwirt</span></td>
+    <tr class="<%= restaurants.uniWirt.id %>">
+        <td class="namecol"><span class="name"><%= restaurants.uniWirt.name %></span></td>
 
         <% for(let i = 0; i < 5; i++) { %>
             <td class="datacol">
                 <ul class="starters">
-                    <% uniwirt[i].starters.forEach(function (food) { if (food.name != "") { %>
+                    <% uniWirt[i].starters.forEach(function (food) { if (food.name != "") { %>
                         <li><%= food.name %></li>
                     <% }}); %>
                 </ul>
 
                 <ul class="mains">
-                    <% uniwirt[i].mains.forEach(function (food) { if (food.name != "") { %>
+                    <% uniWirt[i].mains.forEach(function (food) { if (food.name != "") { %>
                         <li><%= food.name %></li>
                     <% }}); %>
                 </ul>
@@ -155,8 +156,8 @@
         <% } %>
     </tr>
 
-    <tr class="hotspot">
-        <td class="namecol"><span class="name">Hotspot</span></td>
+    <tr class="<%= restaurants.hotspot.id %>">
+        <td class="namecol"><span class="name"><%= restaurants.hotspot.name %></span></td>
 
         <td class="datacol">
             <ul class="starters">
@@ -185,8 +186,8 @@
             </table>
         </td>
     </tr>
-    <tr class="uni-pizzeria">
-        <td class="namecol"><span class="name">Uni-Pizzeria</span></td>
+    <tr class="<%= restaurants.uniPizzeria.id %>">
+        <td class="namecol"><span class="name"><%= restaurants.uniPizzeria.name %></span></td>
 
         <% for(let i = 0; i < 5; i++) { %>
             <td class="datacol">
@@ -204,8 +205,8 @@
             </td>
         <% } %>
     </tr>
-    <tr class="bits-and-bytes">
-        <td class="namecol"><span class="name">Bits & Bytes</span></td>
+    <tr class="<%= restaurants.bitsAndBytes.id %>">
+        <td class="namecol"><span class="name"><%= restaurants.bitsAndBytes.name %></span></td>
         <td class="datacol" colSpan="5">
             <table>
                 <tr>

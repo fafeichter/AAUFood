@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');
 const compression = require('compression');
 const logger = require('morgan');
 const menuCache = require('./caching/menuCache');
+const urlCache = require('./caching/urlCache');
 const visitorCache = require('./caching/visitorCache');
 const config = require('./config');
 const indexRoutes = require('./routes/index');
@@ -74,7 +75,6 @@ app.use(function (err, req, res, next) {
 app.locals.moment = moment;
 app.locals.timeHelper = timeHelper;
 app.locals.getFooterPun = footerPunHelper.getFooterPun;
-app.locals.userFriendlyUrl = restaurant => config.userFriendlyUrls[restaurant];
 app.locals.isOnBreak = breakHelper.isOnBreak;
 app.locals.getBreakInfo = breakHelper.getBreakInfo;
 app.locals.menuStateHelper = menuStateHelper;
@@ -83,11 +83,13 @@ app.locals.isWinterThemeEnabled = () => config.settings.winterTheme;
 
 var server = app.listen(config.settings.nodePort, function () {
     console.log('AAU Food listening on port ' + config.settings.nodePort + '!');
+
+    const io = require('socket.io')(server);
+
+    urlCache.init(redisClient);
+    menuCache.init(redisClient);
+    visitorCache.init(redisClient, io);
+
+    setInterval(() => menuCache.update(), config.cache.menuCacheIntervall);
+    setInterval(() => urlCache.update(), config.cache.urlCacheIntervall);
 });
-
-const io = require('socket.io')(server);
-
-menuCache.init(redisClient);
-visitorCache.init(redisClient, io);
-
-setInterval(() => menuCache.update(), config.cache.intervall);

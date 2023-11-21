@@ -12,18 +12,10 @@ const _ = require('lodash');
 const Food = require("../models/food");
 const Menu = require("../models/menu");
 const config = require('../config');
+const restaurants = config.restaurants;
 const timeHelper = require('../helpers/timeHelper');
 const scraperHelper = require('./scraperHelper')
-
-const laPastaScraper = require('./lapasta-scraper');
-
-var MensaUrl = config.scraper.mensaUrl;
-var UniwirtUrl = config.scraper.uniwirtUrl;
-var HotspotUrl = config.scraper.hotspotUrl;
-var PizzeriaUrl = config.scraper.unipizzeriaUrl;
-var BitsAndBytesUrl = config.scraper.bitsAndBytesUrl;
-var VillaLidoUrl = config.scraper.villaLidoUrl;
-let PrincsUrl = config.scraper.princsUrl;
+const urlCache = require('../caching/urlCache');
 
 function parseWeek(input, parseFunction) {
     var menus = [];
@@ -34,8 +26,9 @@ function parseWeek(input, parseFunction) {
     return menus;
 }
 
-function getUniwirtWeekPlan() {
-    return request.getAsync(UniwirtUrl)
+function getUniWirtWeekPlan() {
+    return urlCache.getUrls(restaurants.uniWirt.id)
+        .then(urls => request.getAsync(JSON.parse(urls).scraperUrl))
         .then(res => res.body)
         .then(body => parseUniwirt(body));
 }
@@ -175,7 +168,8 @@ function createUniwirtDayMenu(dayEntry) {
 }
 
 function getMensaWeekPlan() {
-    return request.getAsync({url: MensaUrl, jar: true})
+    return urlCache.getUrls(restaurants.mensa.id)
+        .then(urls => request.getAsync({url: JSON.parse(urls).scraperUrl, jar: true}))
         .then(res => res.body)
         .then(body => parseMensa(body));
 }
@@ -328,13 +322,12 @@ function createWochenspecialFoodMenuFromElement($, e) { // Kept here in case men
 }
 
 function getUniPizzeriaWeekPlan() {
-    return request.getAsync(PizzeriaUrl)
-        .then(res => res.body)
-        .then(body => parseWeek(parseUniPizzeria(body), getUniPizzeriaDayPlan));
+    return Promise.resolve(scraperHelper.scrapingNotImplementedMenus(new Array(7)));
 }
 
 function getUniPizzeriaPlan(day) {
-    return request.getAsync(PizzeriaUrl)
+    return urlCache.getUrls(restaurants.uniPizzeria.id)
+        .then(urls => request.getAsync(JSON.parse(urls).scraperUrl))
         .then(res => res.body)
         .then(body => {
             var weekMenu = parseUniPizzeria(body);
@@ -453,7 +446,8 @@ function parseUniPizzeria(html) {
 }
 
 function getHotspotWeekPlan() {
-    return request.getAsync(HotspotUrl)
+    return urlCache.getUrls(restaurants.hotspot.id)
+        .then(urls => request.getAsync(JSON.parse(urls).scraperUrl))
         .then(res => res.body)
         .then(body => parseHotspot(body));
 }
@@ -517,12 +511,13 @@ function parseHotspot(html) {
 }
 
 function getBitsAndBytesWeekPlan() {
-    return request.getAsync(BitsAndBytesUrl)
+    return urlCache.getUrls(restaurants.bitsAndBytes.id)
+        .then(urls => request.getAsync(JSON.parse(urls).scraperUrl))
         .then(res => res.body)
-        .then(body => parseBitsnBytes(body));
+        .then(body => parseBitsAndBytes(body));
 }
 
-function parseBitsnBytes(html) {
+function parseBitsAndBytes(html) {
     var result = new Array(7);
     let closedMenu = new Menu();
     closedMenu.closed = true;
@@ -580,125 +575,16 @@ function parseBitsnBytes(html) {
     return result;
 }
 
-async function getVillaLidoWeekPlan() {
-    var result = new Array(7);
-    let alacarte = new Menu();
-    alacarte.noMenu = true;
-    result[5] = result[6] = alacarte;
-    let weekdays = ["montag", "dienstag", "mittwoch", "donnerstag", "freitag"];
-    for (var i = 0; i < 5; i++) {
-        result[i] = await request.getAsync(VillaLidoUrl + weekdays[i] + "/")
-            .then(res => res.body)
-            .then(body => parseVillaLidoDay(body, i))
-    }
-    return Promise.resolve(result);
-}
-
-function parseVillaLidoDay(html, weekDay) {
-    var dayMenu = new Menu();
-
-    var $ = cheerio.load(html);
-    var mainContent = $(".mkdf-smi-content-holder");
-
-    if ($("h2").eq(0).text().toLowerCase().includes("nicht gefunden")) {
-        dayMenu.noMenu = true;
-        return dayMenu;
-    }
-
-    var currentField = $(mainContent).children().eq(0); // Date, check for validity
-    dayMenu.outdated = !timeHelper.checkInputForWeekday(currentField.text(), weekDay)
-
-    while ((currentField = $(currentField).next()).length > 0 && !currentField.text().includes("Lebensmittelinformationsverordnung")) {
-        let titleRaw = currentField.text()
-        let isMainCourse = titleRaw.includes("€");
-        if (isMainCourse) {
-            let courseName = titleRaw.substring(0, titleRaw.indexOf("€"));
-            currentField = $(currentField).next();
-            let description = currentField.text();
-            let price = titleRaw.substring(titleRaw.indexOf("€")).replace("€ ", "");
-            price = parseFloat(price.replace(",", ".").trim());
-            let mainCourse = new Food(courseName, price, true);
-            mainCourse.entries = [new Food(description)];
-            dayMenu.mains.push(mainCourse);
-        } else {
-            currentField = $(currentField).next();
-            let name = currentField.text();
-            let starter = new Food(name);
-            dayMenu.starters.push(starter)
-        }
-    }
-
-    scraperHelper.setErrorOnEmpty(dayMenu);
-    return dayMenu;
-}
-
-function getPrincsWeekPlan() {
-    return request.getAsync(PrincsUrl)
-        .then(res => res.body)
-        .then(function (body) {
-            let $ = cheerio.load(body);
-            let pdfurl = PrincsUrl + $("a:contains('WOCHENKARTE')").attr('href');
-            return PDFJS.getDocument(pdfurl).then(
-                pdf => pdf.getPage(1).then(
-                    page => page.getTextContent().then(
-                        textContent => parsePrincsPDFContent(textContent)
-                    )
-                )
-            );
-        });
-}
-
-function parsePrincsPDFContent(content) {
-    let result = new Array(7);
-
-    let closedMenu = new Menu();
-    closedMenu.closed = true;
-    result[5] = result[6] = closedMenu;
-
-    let contentString = "";
-    content.items.forEach(itm => contentString += itm.str + (itm.str == ' ' ? '\n' : ''));
-
-    let pos = ["MONTAG", "DIENSTAG", "MITTWOCH", "DONNERSTAG", "FREITAG", "WOCHENMENÜ"]
-        .map(day => contentString.indexOf(day));
-    for (let i = 0; i < 5; i++) {
-        result[i] = parsePrinceDayMenu(contentString.slice(pos[i], pos[i + 1]));
-    }
-
-    return result;
-}
-
-function parsePrinceDayMenu(menuString) {
-    let dayMenu = new Menu();
-    if (menuString.toLowerCase().indexOf("feiertag") > -1) {
-        dayMenu.closed = true;
-        return dayMenu;
-    }
-
-    // assumed menuString structure at this point:
-    // 1st + 2nd line: DAY, DATE \n YEAR
-    // 3rd line: starter
-    // remaining lines: food, separated by |
-    menuString = menuString.split("\n");
-    menuString.splice(0, 2);
-
-    let starter = new Food(menuString[0]);
-    dayMenu.starters.push(starter);
-
-    menuString.splice(0, 1);
-    let main = new Food(menuString.join("").replace(/\s*\|/g, ","), 8.70, true);
-    dayMenu.mains.push(main);
-
-    return dayMenu;
+function getIntersparWeekPlan() {
+    return Promise.resolve(scraperHelper.scrapingNotImplementedMenus(new Array(7)));
 }
 
 module.exports = {
-    getUniwirtWeekPlan: getUniwirtWeekPlan,
+    getUniWirtWeekPlan: getUniWirtWeekPlan,
     getHotspotWeekPlan: getHotspotWeekPlan,
     getMensaWeekPlan: getMensaWeekPlan,
     getUniPizzeriaPlan: getUniPizzeriaPlan,
     getUniPizzeriaWeekPlan: getUniPizzeriaWeekPlan,
-    getLapastaWeekPlan: laPastaScraper.getWeekPlan,
-    getPrincsWeekPlan: getPrincsWeekPlan,
-    getVillaLidoWeekPlan: getVillaLidoWeekPlan,
-    getBitsAndBytesWeekPlan: getBitsAndBytesWeekPlan
+    getBitsAndBytesWeekPlan: getBitsAndBytesWeekPlan,
+    getIntersparWeekPlan: getIntersparWeekPlan
 };
