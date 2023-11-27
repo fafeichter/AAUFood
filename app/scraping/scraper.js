@@ -322,7 +322,13 @@ function createWochenspecialFoodMenuFromElement($, e) { // Kept here in case men
 }
 
 function getUniPizzeriaWeekPlan() {
-    return Promise.resolve(scraperHelper.scrapingNotImplementedMenus(new Array(7)));
+    const menu = scraperHelper.scrapingNotImplementedMenus(new Array(7));
+    menu[5].alacarte = true;
+    menu[5].scrapingNotImplemented = false;
+    menu[6].alacarte = true;
+    menu[6].scrapingNotImplemented = false;
+
+    return Promise.resolve(menu);
 }
 
 function getUniPizzeriaPlan(day) {
@@ -576,14 +582,19 @@ function parseBitsAndBytes(html) {
 }
 
 function getIntersparWeekPlan() {
-    return Promise.resolve(scraperHelper.scrapingNotImplementedMenus(new Array(7)));
+    const menu = scraperHelper.scrapingNotImplementedMenus(new Array(7));
+    menu[5].closed = true;
+    menu[5].scrapingNotImplemented = false;
+    menu[6].closed = true;
+    menu[6].scrapingNotImplemented = false;
+
+    return Promise.resolve(menu);
 }
 
 module.exports = {
     getUniWirtWeekPlan: getUniWirtWeekPlan,
     getHotspotWeekPlan: getHotspotWeekPlan,
     getMensaWeekPlan: getMensaWeekPlan,
-    getUniPizzeriaPlan: getUniPizzeriaPlan,
     getUniPizzeriaWeekPlan: getUniPizzeriaWeekPlan,
     getBitsAndBytesWeekPlan: getBitsAndBytesWeekPlan,
     getIntersparWeekPlan: getIntersparWeekPlan
