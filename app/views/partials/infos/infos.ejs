@@ -6,8 +6,8 @@ case menuStateHelper.MenuState.OnBreak: %>
 case menuStateHelper.MenuState.Closed: %>
 <%- include('closed', {restaurantId}) %>
 <% break;
-case menuStateHelper.MenuState.NoMenu: %>
-<%- include('no-menu', {restaurantId}) %>
+case menuStateHelper.MenuState.ALaCarte: %>
+<%- include('a-la-carte', {restaurantId}) %>
 <% break;
 case menuStateHelper.MenuState.Outdated: %>
 <%- include('outdated', {restaurantId, restaurantFriendlyUrl}) %>

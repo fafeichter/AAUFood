@@ -3,7 +3,7 @@ const breakHelper = require('./breakHelper');
 
 const MenuState = {
     Normal: 0,
-    NoMenu: 1,
+    ALaCarte: 1,
     Closed: 2,
     Outdated: 3,
     OnBreak: 4,
@@ -28,8 +28,8 @@ function getMenuState(restaurantId, menu) {
     if (menu.outdated)
         return MenuState.Outdated;
 
-    if (menu.noMenu)
-        return MenuState.NoMenu;
+    if (menu.alacarte)
+        return MenuState.ALaCarte;
 
     return MenuState.Normal;
 }

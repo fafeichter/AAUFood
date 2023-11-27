@@ -4,7 +4,7 @@ const moment = require('moment');
 const Menu = require("../models/menu");
 
 function setErrorOnEmpty(menu) {
-    if (!menu.closed && !menu.noMenu && (menu.starters.length + menu.mains.length + menu.alacarte.length === 0)) {
+    if (!menu.closed && !menu.alacarte && (menu.starters.length + menu.mains.length + menu.alacarte.length === 0)) {
         menu.error = true;
     }
     return menu;

@@ -109,7 +109,7 @@ function parseUniwirt(html) {
     }
 
     // Saturday a la carte
-    weekPlan[5].noMenu = true;
+    weekPlan[5].alacarte = true;
 
     return weekPlan;
 }
@@ -129,7 +129,7 @@ function createUniwirtDayMenu(dayEntry) {
         if (scraperHelper.contains(pText, true, ["feiertag", "ruhetag", "pause", "geschlossen", "closed"])) {
             dayMenu.closed = true;
         } else if (scraperHelper.contains(pText, true, ["Empfehlung"])) {
-            dayMenu.noMenu = true;
+            dayMenu.alacarte = true;
         } else {
             pText = pText.charAt(0).toUpperCase() + pText.slice(1);
             let info = new Food(pText, null, false, true);
@@ -224,7 +224,6 @@ function parseMensa(html) {
 
         menu.starters = menu.starters.filter(m => m && m.name);
         menu.mains = menu.mains.filter(m => m && m.name);
-        menu.alacarte = menu.alacarte.filter(m => m && m.name);
 
         scraperHelper.setErrorOnEmpty(menu);
     }
@@ -322,127 +321,13 @@ function createWochenspecialFoodMenuFromElement($, e) { // Kept here in case men
 }
 
 function getUniPizzeriaWeekPlan() {
-    return Promise.resolve(scraperHelper.scrapingNotImplementedMenus(new Array(7)));
-}
+    const menu = scraperHelper.scrapingNotImplementedMenus(new Array(7));
+    menu[5].alacarte = true;
+    menu[5].scrapingNotImplemented = false;
+    menu[6].alacarte = true;
+    menu[6].scrapingNotImplemented = false;
 
-function getUniPizzeriaPlan(day) {
-    return urlCache.getUrls(restaurants.uniPizzeria.id)
-        .then(urls => request.getAsync(JSON.parse(urls).scraperUrl))
-        .then(res => res.body)
-        .then(body => {
-            var weekMenu = parseUniPizzeria(body);
-            return getUniPizzeriaDayPlan(weekMenu, day);
-        });
-}
-
-function getUniPizzeriaDayPlan(weekMenu, day) {
-    var dayInWeek;
-    if (day === null || day === undefined) {
-        dayInWeek = ((new Date()).getDay() + 6) % 7;
-    } else {
-        dayInWeek = day;
-    }
-
-    var menu = new Menu();
-
-    if (weekMenu.outdated) {
-        menu.outdated = true;
-        return menu;
-    }
-
-    if (dayInWeek > 4) {
-        menu.noMenu = true;
-    } else if (dayInWeek < weekMenu.mains.length) {
-        let combinedFood = weekMenu.mains[dayInWeek];
-
-        //Handle holidays (no menu)
-        if (scraperHelper.contains(combinedFood.name, true, ["feiertag"])) {
-            menu.noMenu = true;
-        } else {
-
-            let splitted = combinedFood.name.split("<br>");
-            let starterExists = splitted.length > 1;
-
-            if (starterExists) {
-                //There is a starter
-                let starter = new Food(splitted[0]);
-                menu.starters.push(starter);
-            }
-
-            let i = starterExists ? 1 : 0;
-            for (; i < splitted.length; i++) {
-                let main = new Food(splitted[i], combinedFood.price, true);
-                menu.mains.push(main);
-            }
-        }
-    }
-
-    return scraperHelper.setErrorOnEmpty(menu);
-}
-
-function parseUniPizzeria(html) {
-
-    var result = new Menu();
-
-    var $ = cheerio.load(html);
-    var _days = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'je Mittagsteller € 7,90'];
-    var _uniPizzeriaPrice = 7.90;
-
-    var $menuContent = $('[itemprop="articleBody"]');
-
-    if (!timeHelper.checkInputForCurrentWeek($menuContent.find('p > strong').text())) {
-        result.outdated = true;
-        return result;
-    }
-
-    var currentFood = null;
-    $menuContent.find('p').each((index, item) => {
-
-        var content = $(item).text().trim();
-
-        // When the content of <p> is a weekday, start new food
-        if (_checkWeekday(content)) {
-            if (currentFood != null) {
-                result.mains.push(currentFood);
-            }
-            currentFood = new Food("", _uniPizzeriaPrice, true);
-        }
-        if (currentFood != null) {
-            currentFood.name += _normalizeFood(content);
-        }
-
-    });
-
-    if (currentFood != null && currentFood.name.length > 0) {
-        result.mains.push(currentFood);
-    }
-    return scraperHelper.setErrorOnEmpty(result);
-
-    function _replaceWeekday(str) {
-        for (var index in _days) {
-            str = str.replace(_days[index], "");
-        }
-        return str;
-    }
-
-    function _checkWeekday(str) {
-        var weekday = false;
-        for (var index in _days) {
-            if (str.indexOf(_days[index]) >= 0) {
-                weekday = true;
-            }
-        }
-        return weekday;
-    }
-
-    function _normalizeFood(str) {
-
-        str = _replaceWeekday(str);
-        str = str.replace(/\*+/, '<br>');
-
-        return str;
-    }
-
+    return Promise.resolve(menu);
 }
 
 function getHotspotWeekPlan() {
@@ -576,14 +461,19 @@ function parseBitsAndBytes(html) {
 }
 
 function getIntersparWeekPlan() {
-    return Promise.resolve(scraperHelper.scrapingNotImplementedMenus(new Array(7)));
+    const menu = scraperHelper.scrapingNotImplementedMenus(new Array(7));
+    menu[5].closed = true;
+    menu[5].scrapingNotImplemented = false;
+    menu[6].closed = true;
+    menu[6].scrapingNotImplemented = false;
+
+    return Promise.resolve(menu);
 }
 
 module.exports = {
     getUniWirtWeekPlan: getUniWirtWeekPlan,
     getHotspotWeekPlan: getHotspotWeekPlan,
     getMensaWeekPlan: getMensaWeekPlan,
-    getUniPizzeriaPlan: getUniPizzeriaPlan,
     getUniPizzeriaWeekPlan: getUniPizzeriaWeekPlan,
     getBitsAndBytesWeekPlan: getBitsAndBytesWeekPlan,
     getIntersparWeekPlan: getIntersparWeekPlan
