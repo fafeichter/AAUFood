@@ -9,7 +9,7 @@ Verfügbar unter [food.felf.io](https://food.felf.io/)
 * Uniwirt
 * Hotspot
 * Bits&Bytes
-* Uni-Pizzeria
+* Uni-Pizzeria 
 
 ## Info
 
