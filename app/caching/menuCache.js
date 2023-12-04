@@ -8,6 +8,7 @@ const EventEmitter = require('events');
 const scraper = require('../scraping/scraper');
 const restaurants = require('../config').restaurants;
 const winston = require('winston');
+const moment = require('moment');
 
 const menuKeyPrefix = "menu";
 
@@ -39,8 +40,10 @@ class MenuCache extends EventEmitter {
         scraper.getBitsAndBytesWeekPlan()
             .then(weekPlan => this._updateIfNewer(restaurants.bitsAndBytes.id, weekPlan));
 
-        scraper.getIntersparWeekPlan()
-            .then(weekPlan => this._updateIfNewer(restaurants.interspar.id, weekPlan));
+        if (moment().hour() === 0) {
+            scraper.getIntersparWeekPlan()
+                .then(weekPlan => this._updateIfNewer(restaurants.interspar.id, weekPlan));
+        }
     }
 
     _updateIfNewer(restaurantId, newWeekPlan) {

@@ -10,7 +10,7 @@
     <div class="row restaurants-row">
         <div class="col-xl-3 col-lg-6 col-md-12">
             <%- include('restaurant', {restaurantId: restaurants.mensa.id, restaurantName: restaurants.mensa.name, restaurantFriendlyUrl: mensa.userFriendlyUrl, menu: mensa.menu ? mensa.menu[day] : null, combinedMenuList: true, day: day}) %>
-            <%- include('restaurant', {restaurantId: restaurants.interspar.id, restaurantName: restaurants.interspar.name, restaurantFriendlyUrl: interspar.userFriendlyUrl, menu: interspar.menu ? interspar.menu[day] : null, day: day}) %>
+            <%- include('restaurant', {restaurantId: restaurants.interspar.id, restaurantName: restaurants.interspar.name, restaurantFriendlyUrl: interspar.userFriendlyUrl, menu: interspar.menu ? interspar.menu[day] : null, combinedMenuList: true, day: day}) %>
         </div>
         <div class="col-xl-3 col-lg-6 col-md-12">
             <%- include('restaurant', {restaurantId: restaurants.uniWirt.id, restaurantName: restaurants.uniWirt.name, restaurantFriendlyUrl: uniWirt.userFriendlyUrl, menu: uniWirt.menu ? uniWirt.menu[day] : null, combinedMenuList: true, day: day}) %>

@@ -11,7 +11,7 @@ class Food {
     isInfo = false;
     allergens = [];
 
-    constructor(name, price, isMain, isInfo) {
+    constructor(name, price, isMain, isInfo, allergens) {
         this.name = !isMain ? scraperHelper.sanitizeName(name) : name;
         if (price != null) {
             if (typeof price === 'number' && !isNaN(price)) {
@@ -23,7 +23,14 @@ class Food {
         this.isMain = isMain;
         this.isInfo = isInfo === true;
 
-        this.extractAllergens();
+        if (allergens) {
+            if (Array.isArray(allergens)) {
+                allergens = allergens.join(',');
+            }
+            this.allergens = allergens.replace(/\s/g, '')
+        } else {
+            this.extractAllergens();
+        }
     }
 
     extractAllergens(extractFrom = null) {

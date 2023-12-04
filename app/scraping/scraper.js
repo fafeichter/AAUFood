@@ -8,6 +8,8 @@ global.XMLHttpRequest = require('xhr2');
 const moment = require('moment');
 const he = require('he');
 const _ = require('lodash');
+const crawler = require('crawler-request');
+const axios = require('axios');
 
 const Food = require("../models/food");
 const Menu = require("../models/menu");
@@ -460,14 +462,97 @@ function parseBitsAndBytes(html) {
     return result;
 }
 
-function getIntersparWeekPlan() {
+async function getIntersparWeekPlan() {
     const menu = scraperHelper.scrapingNotImplementedMenus(new Array(7));
+    const currentWeekNumber = moment().format('W');
+
+    const pdfHttpResult = await crawler(`https://flugblatt.interspar.at/menuplane/menuplan-kw${currentWeekNumber}/GetPDF.ashx`);
+
+    console.log(pdfHttpResult);
+
+    const gptResponse = await processTextWithGpt(pdfHttpResult.text, "...");
+    const gptJsonAnswer = JSON.parse(gptResponse.data.choices[0].message.content);
+
+    console.log(gptJsonAnswer);
+
+    for (let i = 0; i < 5; i++) {
+        let klassischGptDish, vegetarischGptDish;
+        switch (i) {
+            case 0: {
+                klassischGptDish = gptJsonAnswer.dishes[1];
+                vegetarischGptDish = gptJsonAnswer.dishes[2];
+                break;
+            }
+            case 1: {
+                klassischGptDish = gptJsonAnswer.dishes[4];
+                vegetarischGptDish = gptJsonAnswer.dishes[5];
+                break;
+            }
+            case 2: {
+                klassischGptDish = gptJsonAnswer.dishes[8];
+                vegetarischGptDish = gptJsonAnswer.dishes[9];
+                break;
+            }
+            case 3: {
+                klassischGptDish = gptJsonAnswer.dishes[6];
+                vegetarischGptDish = gptJsonAnswer.dishes[7];
+                break;
+            }
+            case 4: {
+                klassischGptDish = gptJsonAnswer.dishes[3];
+                vegetarischGptDish = gptJsonAnswer.dishes[0];
+                break;
+            }
+        }
+
+        const klassischMain = new Food('Menü Klassisch', 8.4);
+        const klassischFood = new Food(klassischGptDish.description, null, false, false, klassischGptDish.allergenes);
+        klassischMain.entries = [klassischFood];
+
+        const vegetarischMain = new Food('Menü Vegetarisch', 7.9);
+        const vegetarischFood = new Food(vegetarischGptDish.description, null, false, false, vegetarischGptDish.allergenes);
+        vegetarischMain.entries = [vegetarischFood];
+
+        let monatsHitMain = undefined
+        const monatsHitGptDish = gptJsonAnswer.monats_hit || gptJsonAnswer["monats-hit"] || gptJsonAnswer.monatsHit;
+        if (monatsHitGptDish) {
+            monatsHitMain = new Food('Monats-Hit', 10.9);
+            const monatsHitFood = new Food(monatsHitGptDish.description, null, false, false, monatsHitGptDish.allergenes);
+            monatsHitMain.entries = [monatsHitFood];
+        }
+
+        menu[i].mains.push(klassischMain)
+        menu[i].mains.push(vegetarischMain)
+        if (monatsHitMain) {
+            menu[i].mains.push(monatsHitMain)
+        }
+        menu[i].scrapingNotImplemented = false;
+    }
+
     menu[5].closed = true;
     menu[5].scrapingNotImplemented = false;
     menu[6].closed = true;
     menu[6].scrapingNotImplemented = false;
 
     return Promise.resolve(menu);
+}
+
+async function processTextWithGpt(text, apiKey) {
+    const gptUrl = 'https://api.openai.com/v1/chat/completions';
+    const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`,
+    };
+
+    const payload = {
+        model: "gpt-3.5-turbo",
+        messages: [{
+            role: "user",
+            content: `parse this dishes and the monats-hit into json containing only the description of the dishes and the allergenes: ${text}`
+        }]
+    };
+
+    return await axios.post(gptUrl, payload, {headers});
 }
 
 module.exports = {
