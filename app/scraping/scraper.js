@@ -464,13 +464,16 @@ function parseBitsAndBytes(html) {
 
 async function getIntersparWeekPlan() {
     const menu = scraperHelper.scrapingNotImplementedMenus(new Array(7));
-    const currentWeekNumber = moment().format('W');
+    const currentWeekNumber = 50;
 
-    const pdfHttpResult = await crawler(`https://flugblatt.interspar.at/menuplane/menuplan-kw${currentWeekNumber}/GetPDF.ashx`);
+    const pdfHttpResult = await urlCache.getUrls(restaurants.interspar.id)
+        .then(urls => {
+            return crawler(JSON.parse(urls).scraperUrl);
+        });
 
     console.log(pdfHttpResult);
 
-    const gptResponse = await processTextWithGpt(pdfHttpResult.text, "...");
+    const gptResponse = await processIntersparPdfTextWithGpt(pdfHttpResult.text, process.env.FOOD_CHAT_GPT_API_KEY);
     const gptJsonAnswer = JSON.parse(gptResponse.data.choices[0].message.content);
 
     console.log(gptJsonAnswer);
@@ -505,19 +508,22 @@ async function getIntersparWeekPlan() {
             }
         }
 
-        const klassischMain = new Food('Menü Klassisch', 8.4);
-        const klassischFood = new Food(klassischGptDish.description, null, false, false, klassischGptDish.allergenes);
+        const klassischMain = new Food('Menü Klassisch', klassischGptDish.price || 8.4);
+        const klassischFood = new Food(`${klassischGptDish.name} ${klassischGptDish.description}`,
+            null, false, false, klassischGptDish.allergenes);
         klassischMain.entries = [klassischFood];
 
-        const vegetarischMain = new Food('Menü Vegetarisch', 7.9);
-        const vegetarischFood = new Food(vegetarischGptDish.description, null, false, false, vegetarischGptDish.allergenes);
+        const vegetarischMain = new Food('Menü Vegetarisch', vegetarischGptDish.price || 7.9);
+        const vegetarischFood = new Food(`${vegetarischGptDish.name} ${vegetarischGptDish.description}`,
+            null, false, false, vegetarischGptDish.allergenes);
         vegetarischMain.entries = [vegetarischFood];
 
         let monatsHitMain = undefined
         const monatsHitGptDish = gptJsonAnswer.monats_hit || gptJsonAnswer["monats-hit"] || gptJsonAnswer.monatsHit;
         if (monatsHitGptDish) {
-            monatsHitMain = new Food('Monats-Hit', 10.9);
-            const monatsHitFood = new Food(monatsHitGptDish.description, null, false, false, monatsHitGptDish.allergenes);
+            monatsHitMain = new Food('Monats-Hit', monatsHitGptDish.price || 10.9);
+            const monatsHitFood = new Food(`${monatsHitGptDish.name} ${monatsHitGptDish.description}`,
+                null, false, false, monatsHitGptDish.allergenes);
             monatsHitMain.entries = [monatsHitFood];
         }
 
@@ -537,18 +543,19 @@ async function getIntersparWeekPlan() {
     return Promise.resolve(menu);
 }
 
-async function processTextWithGpt(text, apiKey) {
+async function processIntersparPdfTextWithGpt(pdfText, chatGptApiKey) {
     const gptUrl = 'https://api.openai.com/v1/chat/completions';
     const headers = {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`,
+        'Authorization': `Bearer ${chatGptApiKey}`,
     };
 
     const payload = {
         model: "gpt-3.5-turbo",
         messages: [{
             role: "user",
-            content: `parse this dishes and the monats-hit into json containing only the description of the dishes and the allergenes: ${text}`
+            content: `parse this dishes and the monats-hit into json containing only the full name combined with the
+            description of the dish, the allergenes and the price: ${pdfText}`
         }]
     };
 

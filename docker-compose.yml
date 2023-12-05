@@ -8,8 +8,10 @@ services:
     build: .
     restart: always
     ports:
-      - "${FOOD_PORT}:3000"
+      - "3000:3000"
     depends_on:
       - redis
     links:
       - redis
+    environment:
+      - FOOD_CHAT_GPT_API_KEY=${FOOD_CHAT_GPT_API_KEY}

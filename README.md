@@ -42,8 +42,9 @@ Aktuell:
 
 AAUFood läuft innerhalb eines Docker-Containers, um die App lokal laufen zu lassen muss also `docker`
 sowie `docker-compose` installiert sein. Die Inbetriebnahme erfolgt dann einfach mittels `$ docker-compose up`, wobei
-der Port, auf dem die Node-App erreichbar ist in der Umgebungsvariable `FOOD_PORT` gespeichert wird. Beispielsweise
-startet `$ FOOD_PORT=3000 docker-compose up` die App auf Port 3000. Es sind keine weiteren Schritte erforderlich.
+der Port der App 3000 ist. Für das Parsen mittels ChatGPT muss ein API key in der Umgebungsvariable
+`FOOD_CHAT_GPT_API_KEY` eingetragen werden. Dieser kann unter https://platform.openai.com/api-keys generiert werden
+(kostenpflichtig).
 
 ## Externe Dienste
 

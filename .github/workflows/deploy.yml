@@ -21,10 +21,11 @@ jobs:
           password: ${{ secrets.REGISTRY_PASSWORD }}
       - name: Build and push Docker image
         env:
-          registry_host: ${{ secrets.REGISTRY_HOST }}
+          REGISTRY_HOST: ${{ secrets.REGISTRY_HOST }}
+          FOOD_CHAT_GPT_API_KEY: ${{ secrets.FOOD_CHAT_GPT_API_KEY }}
         run: |
-          docker build . -t $registry_host/food:latest
-          docker push $registry_host/food:latest
+          docker build . -t $REGISTRY_HOST/food:latest
+          docker push $REGISTRY_HOST/food:latest
   deploy:
     name: Deploy with Docker Compose
     needs: [ artifact ]

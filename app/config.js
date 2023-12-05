@@ -28,7 +28,7 @@ module.exports = {
         },
         interspar: {
             id: "interspar",
-            name: "Interspar (experimenteller ChatGPT-Parser)"
+            name: "Interspar"
         },
         uniWirt: {
             id: "uni-wirt",

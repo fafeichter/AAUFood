@@ -104,14 +104,18 @@ router.get('/bitsandbytes/:day?', function (req, res) {
         .then(menu => res.send(menu));
 });
 
-router.get('/logs', function (req, res) {
-    res.download('logfile.log');
-});
+if (process.env.FOOD_ENV === 'DEV') {
+    router.get('/logs', function (req, res) {
+        res.download('logfile.log');
+    });
+}
 
-router.get('/sync', function (req, res) {
-    cache.update();
-    res.send("Ok")
-});
+if (process.env.FOOD_ENV === 'DEV') {
+    router.get('/sync', function (req, res) {
+        cache.update(true);
+        res.send("Ok")
+    });
+}
 
 function emptyUploadDirectory() {
     let files = fs.readdirSync(uploadDirectory);

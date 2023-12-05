@@ -18,11 +18,11 @@ class MenuCache extends EventEmitter {
         this.client = redisClient;
         // give the url cache a few seconds to finish first
         setTimeout(() => {
-            this.update();
+            this.update(true);
         }, 10000);
     }
 
-    update() {
+    update(forceSync = false) {
         winston.info('Updating menu caches...');
 
         scraper.getMensaWeekPlan()
@@ -40,7 +40,7 @@ class MenuCache extends EventEmitter {
         scraper.getBitsAndBytesWeekPlan()
             .then(weekPlan => this._updateIfNewer(restaurants.bitsAndBytes.id, weekPlan));
 
-        if (moment().hour() === 0) {
+        if (forceSync || process.env.FOOD_ENV === 'DEV' || moment().hour() === 0) {
             scraper.getIntersparWeekPlan()
                 .then(weekPlan => this._updateIfNewer(restaurants.interspar.id, weekPlan));
         }

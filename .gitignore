@@ -39,3 +39,6 @@ node_modules
 app/public/dist
 
 .vscode
+
+# Dev
+setup_env_dev.sh

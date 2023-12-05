@@ -1,5 +1,3 @@
-export FOOD_PORT ?= 3000
-
 DOCKER_COMPOSE=docker-compose -f docker-compose.yml
 DOCKER_COMPOSE_DEV=$(DOCKER_COMPOSE) -f dev.docker-compose.yml
 
