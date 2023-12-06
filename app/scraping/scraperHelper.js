@@ -19,15 +19,6 @@ function invalidateMenus(weekPlan) {
     return weekPlan;
 }
 
-function scrapingNotImplementedMenus(weekPlan) {
-    for (let i = 0; i < 7; i++) {
-        let outdatedMenu = new Menu();
-        outdatedMenu.scrapingNotImplemented = true;
-        weekPlan[i] = outdatedMenu;
-    }
-    return weekPlan;
-}
-
 function sanitizeName(val) {
     if (typeof val === "string") {
         val = val.replace(/\s\s+/g, ' '); // Replace tabs, newlines, multiple spaces etc. into a single space
@@ -155,6 +146,12 @@ function findDate(str) {
     return moment(dateStr, "D.M.YYYY")
 }
 
+function getWeekEmptyModel() {
+    return new Array(7).fill(1).map(() => {
+        return new Menu();
+    });
+}
+
 function getWeekErrorModel() {
     return new Array(7).fill(1).map(() => {
         let m = new Menu();
@@ -166,7 +163,6 @@ function getWeekErrorModel() {
 module.exports = {
     setErrorOnEmpty,
     invalidateMenus,
-    scrapingNotImplementedMenus,
     sanitizeName,
     capitalizeFirstLetter,
     decapitalize,
@@ -178,5 +174,6 @@ module.exports = {
     isCurrentKW,
     findKW,
     findDate,
+    getWeekEmptyModel,
     getWeekErrorModel,
 };

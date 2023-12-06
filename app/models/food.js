@@ -10,6 +10,7 @@ class Food {
     isMain = false;
     isInfo = false;
     allergens = [];
+    entries = [];
 
     constructor(name, price, isMain, isInfo, allergens) {
         this.name = !isMain ? scraperHelper.sanitizeName(name) : name;

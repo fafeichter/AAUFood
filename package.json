@@ -35,8 +35,6 @@
     "mini-css-extract-plugin": "^1.0.0",
     "moment": "^2.17.1",
     "morgan": "^1.7.0",
-    "pdfjs": "^2.0.0-alpha.3",
-    "pdfjs-dist": "^3.1.81",
     "popper.js": "^1.12.5",
     "postcss-import": "^12.0.1",
     "postcss-preset-env": "^6.7.0",

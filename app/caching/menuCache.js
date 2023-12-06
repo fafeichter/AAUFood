@@ -19,28 +19,31 @@ class MenuCache extends EventEmitter {
         // give the url cache a few seconds to finish first
         setTimeout(() => {
             this.update(true);
-        }, 10000);
+        }, 3000);
     }
 
     update(forceSync = false) {
         winston.info('Updating menu caches...');
 
+        const now = moment();
+
         scraper.getMensaWeekPlan()
             .then(weekPlan => this._updateIfNewer(restaurants.mensa.id, weekPlan));
-
-        scraper.getHotspotWeekPlan()
-            .then(weekPlan => this._updateIfNewer(restaurants.hotspot.id, weekPlan));
-
         scraper.getUniWirtWeekPlan()
             .then(weekPlan => this._updateIfNewer(restaurants.uniWirt.id, weekPlan));
 
-        scraper.getUniPizzeriaWeekPlan()
-            .then(weekPlan => this._updateIfNewer(restaurants.uniPizzeria.id, weekPlan));
+        // sync these menus only during Monday morning to minimize the cost of ChatGPT
+        if (forceSync || process.env.FOOD_ENV === 'DEV' || (now.weekday() === 0 && now.hour() > 5 && now.hour <= 12)) {
+            scraper.getHotspotWeekPlan()
+                .then(weekPlan => this._updateIfNewer(restaurants.hotspot.id, weekPlan));
+            scraper.getBitsAndBytesWeekPlan()
+                .then(weekPlan => this._updateIfNewer(restaurants.bitsAndBytes.id, weekPlan));
+            scraper.getUniPizzeriaWeekPlan()
+                .then(weekPlan => this._updateIfNewer(restaurants.uniPizzeria.id, weekPlan));
+        }
 
-        scraper.getBitsAndBytesWeekPlan()
-            .then(weekPlan => this._updateIfNewer(restaurants.bitsAndBytes.id, weekPlan));
-
-        if (forceSync || process.env.FOOD_ENV === 'DEV' || moment().hour() === 0) {
+        // sync the Interspar menu only between 0am and 1am on Monday because they always published the current menu already a week ago
+        if (forceSync || process.env.FOOD_ENV === 'DEV' || (now.weekday() === 0 && now.hour() === 0)) {
             scraper.getIntersparWeekPlan()
                 .then(weekPlan => this._updateIfNewer(restaurants.interspar.id, weekPlan));
         }

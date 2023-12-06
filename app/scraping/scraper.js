@@ -3,13 +3,10 @@
 const Promise = require('bluebird');
 const request = Promise.promisifyAll(require("request"));
 const cheerio = require('cheerio');
-const PDFJS = require("pdfjs-dist");
 global.XMLHttpRequest = require('xhr2');
 const moment = require('moment');
-const he = require('he');
 const _ = require('lodash');
 const crawler = require('crawler-request');
-const axios = require('axios');
 
 const Food = require("../models/food");
 const Menu = require("../models/menu");
@@ -17,6 +14,7 @@ const config = require('../config');
 const restaurants = config.restaurants;
 const timeHelper = require('../helpers/timeHelper');
 const scraperHelper = require('./scraperHelper')
+const gptHelper = require('./gptHelper')
 const urlCache = require('../caching/urlCache');
 
 function parseWeek(input, parseFunction) {
@@ -322,12 +320,43 @@ function createWochenspecialFoodMenuFromElement($, e) { // Kept here in case men
     return food;
 }
 
-function getUniPizzeriaWeekPlan() {
-    const menu = scraperHelper.scrapingNotImplementedMenus(new Array(7));
+async function getUniPizzeriaWeekPlan() {
+    const menu = scraperHelper.getWeekEmptyModel();
+
     menu[5].alacarte = true;
-    menu[5].scrapingNotImplemented = false;
     menu[6].alacarte = true;
-    menu[6].scrapingNotImplemented = false;
+
+    const pdfHttpResult = await urlCache.getUrls(restaurants.uniPizzeria.id)
+        .then(urls => {
+            return crawler(JSON.parse(urls).scraperUrl);
+        });
+
+    console.log(pdfHttpResult.text);
+
+    const gptResponse = await gptHelper.letMeChatGptThatForYou(pdfHttpResult.text);
+    const gptJsonAnswer = JSON.parse(gptResponse.data.choices[0].message.content);
+
+    console.log(gptJsonAnswer);
+
+    ["MO", "DI", "MI", "DO", "FR", "SA", "SO",].forEach(function (dayString, dayInWeek) {
+        var menuForDay = new Menu();
+        var menuct = 0;
+        let title = `Menü ${++menuct}`;
+        let mainCourse = new Food(title, null, true);
+
+        for (let dish of gptJsonAnswer.dishes) {
+            if (dish.day === dayString) {
+                let food = new Food(`${dish.name}${dish.description ? ' ' + dish.description : ''}`,
+                    dish.price, false, false, dish.allergens);
+                mainCourse.entries.push(food);
+            }
+        }
+
+        if (mainCourse.entries.length > 0) {
+            menuForDay.mains.push(mainCourse);
+            menu[dayInWeek] = menuForDay;
+        }
+    });
 
     return Promise.resolve(menu);
 }
@@ -339,7 +368,7 @@ function getHotspotWeekPlan() {
         .then(body => parseHotspot(body));
 }
 
-function parseHotspot(html) {
+async function parseHotspot(html) {
     var result = new Array(7);
     let closedMenu = new Menu();
     closedMenu.closed = true;
@@ -377,20 +406,27 @@ function parseHotspot(html) {
         }
     })
 
+    let relevantHtmlPart = $.html(contentTableDict);
+    console.log(relevantHtmlPart);
+
+    const gptResponse = await gptHelper.letMeChatGptThatForYou(relevantHtmlPart);
+    const gptJsonAnswer = JSON.parse(gptResponse.data.choices[0].message.content);
+
+    console.log(gptJsonAnswer);
+
     for (let dayInWeek = 0; dayInWeek < 4; dayInWeek++) { // Hotspot currently only MON-THU
         var menuForDay = new Menu();
         var menuct = 0;
-        if (Object.keys(contentTableDict).length) {
-            for (let entry of contentTableDict) {
-                let description = $(entry).find("> td").eq(0).text().trim();
-                let title = `Menü ${++menuct}`;
-                let priceField = $(entry).find("> td:contains(€)");
-                let price = scraperHelper.parsePrice(priceField.text());
-                let mainCourse = new Food(title, price, true);
-                mainCourse.entries = [new Food(description)];
-                menuForDay.mains.push(mainCourse);
-            }
+
+        for (let dish of gptJsonAnswer.dishes) {
+            let title = `Menü ${++menuct}`;
+            let mainCourse = new Food(title, dish.price, true);
+            let food = new Food(`${dish.name}${dish.description ? ' ' + dish.description : ''}`,
+                null, false, false, dish.allergens);
+            mainCourse.entries = [food];
+            menuForDay.mains.push(mainCourse);
         }
+
         result[dayInWeek] = menuForDay;
     }
 
@@ -404,7 +440,7 @@ function getBitsAndBytesWeekPlan() {
         .then(body => parseBitsAndBytes(body));
 }
 
-function parseBitsAndBytes(html) {
+async function parseBitsAndBytes(html) {
     var result = new Array(7);
     let closedMenu = new Menu();
     closedMenu.closed = true;
@@ -442,20 +478,27 @@ function parseBitsAndBytes(html) {
         }
     })
 
+    let relevantHtmlPart = $.html(contentTableDict);
+    console.log(relevantHtmlPart);
+
+    const gptResponse = await gptHelper.letMeChatGptThatForYou(relevantHtmlPart);
+    const gptJsonAnswer = JSON.parse(gptResponse.data.choices[0].message.content);
+
+    console.log(gptJsonAnswer);
+
     for (let dayInWeek = 0; dayInWeek < 5; dayInWeek++) {
         var menuForDay = new Menu();
         var menuct = 0;
-        if (Object.keys(contentTableDict).length) {
-            for (let entry of contentTableDict) {
-                let description = $(entry).find("> td").eq(0).text().trim();
-                let title = `Menü ${++menuct}`;
-                let priceField = $(entry).find("> td:contains(€)");
-                let price = scraperHelper.parsePrice(priceField.text());
-                let mainCourse = new Food(title, price, true);
-                mainCourse.entries = [new Food(description)];
-                menuForDay.mains.push(mainCourse);
-            }
+
+        for (let dish of gptJsonAnswer.dishes) {
+            let title = `Menü ${++menuct}`;
+            let mainCourse = new Food(title, dish.price, true);
+            let food = new Food(`${dish.name}${dish.description ? ' ' + dish.description : ''}`,
+                null, false, false, dish.allergens);
+            mainCourse.entries = [food];
+            menuForDay.mains.push(mainCourse);
         }
+
         result[dayInWeek] = menuForDay;
     }
 
@@ -463,17 +506,16 @@ function parseBitsAndBytes(html) {
 }
 
 async function getIntersparWeekPlan() {
-    const menu = scraperHelper.scrapingNotImplementedMenus(new Array(7));
-    const currentWeekNumber = 50;
+    const menu = scraperHelper.getWeekEmptyModel();
 
     const pdfHttpResult = await urlCache.getUrls(restaurants.interspar.id)
         .then(urls => {
             return crawler(JSON.parse(urls).scraperUrl);
         });
 
-    console.log(pdfHttpResult);
+    console.log(pdfHttpResult.text);
 
-    const gptResponse = await processIntersparPdfTextWithGpt(pdfHttpResult.text, process.env.FOOD_CHAT_GPT_API_KEY);
+    const gptResponse = await gptHelper.letMeChatGptThatForYou(pdfHttpResult.text);
     const gptJsonAnswer = JSON.parse(gptResponse.data.choices[0].message.content);
 
     console.log(gptJsonAnswer);
@@ -509,21 +551,24 @@ async function getIntersparWeekPlan() {
         }
 
         const klassischMain = new Food('Menü Klassisch', klassischGptDish.price || 8.4);
-        const klassischFood = new Food(`${klassischGptDish.name} ${klassischGptDish.description}`,
-            null, false, false, klassischGptDish.allergenes);
+        const klassischFood = new Food(`${klassischGptDish.name}${klassischGptDish.description ? ' ' +
+                klassischGptDish.description : ''}`,
+            null, false, false, klassischGptDish.allergens);
         klassischMain.entries = [klassischFood];
 
         const vegetarischMain = new Food('Menü Vegetarisch', vegetarischGptDish.price || 7.9);
-        const vegetarischFood = new Food(`${vegetarischGptDish.name} ${vegetarischGptDish.description}`,
-            null, false, false, vegetarischGptDish.allergenes);
+        const vegetarischFood = new Food(`${vegetarischGptDish.name}${vegetarischGptDish.description ? ' ' +
+                vegetarischGptDish.description : ''}`,
+            null, false, false, vegetarischGptDish.allergens);
         vegetarischMain.entries = [vegetarischFood];
 
         let monatsHitMain = undefined
-        const monatsHitGptDish = gptJsonAnswer.monats_hit || gptJsonAnswer["monats-hit"] || gptJsonAnswer.monatsHit;
+        const monatsHitGptDish = gptJsonAnswer.monthly_special;
         if (monatsHitGptDish) {
             monatsHitMain = new Food('Monats-Hit', monatsHitGptDish.price || 10.9);
-            const monatsHitFood = new Food(`${monatsHitGptDish.name} ${monatsHitGptDish.description}`,
-                null, false, false, monatsHitGptDish.allergenes);
+            const monatsHitFood = new Food(`${monatsHitGptDish.name}${monatsHitGptDish.description ? ' ' +
+                    monatsHitGptDish.description : ''}`,
+                null, false, false, monatsHitGptDish.allergens);
             monatsHitMain.entries = [monatsHitFood];
         }
 
@@ -541,25 +586,6 @@ async function getIntersparWeekPlan() {
     menu[6].scrapingNotImplemented = false;
 
     return Promise.resolve(menu);
-}
-
-async function processIntersparPdfTextWithGpt(pdfText, chatGptApiKey) {
-    const gptUrl = 'https://api.openai.com/v1/chat/completions';
-    const headers = {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${chatGptApiKey}`,
-    };
-
-    const payload = {
-        model: "gpt-3.5-turbo",
-        messages: [{
-            role: "user",
-            content: `parse this dishes and the monats-hit into json containing only the full name combined with the
-            description of the dish, the allergenes and the price: ${pdfText}`
-        }]
-    };
-
-    return await axios.post(gptUrl, payload, {headers});
 }
 
 module.exports = {
