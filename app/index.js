@@ -30,6 +30,10 @@ const RedisStore = require('connect-redis')(session);
 const redisClient = redis.createClient({host: 'redis'});
 const fileUpload = require('express-fileupload');
 const app = express();
+const requestLogger = (req, res, next) => {
+    winston.info(` ${req.method} ${req.url} ${req.ip}`);
+    next();
+};
 
 // use the express-fileupload middleware
 app.use(
@@ -41,14 +45,14 @@ app.use(
     })
 );
 
-winston.transports = [
-    new winston.transports.Console({
-        timestamp: function () {
-            const now = new Date();
-            return new Date(now.getTime() - now.getTimezoneOffset() * 60 * 1000).toISOString().slice(0, 23);
-        }, colorize: true
-    })
-];
+winston.remove(winston.transports.Console);
+winston.add(winston.transports.Console, {
+    timestamp: function () {
+        const now = new Date();
+        return new Date(now.getTime() - now.getTimezoneOffset() * 60 * 1000).toISOString().slice(0, 23);
+    }, colorize: true
+});
+winston.level = 'debug';
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -65,7 +69,7 @@ app.use(session({
 app.use(compression());
 app.use(express.static(__dirname + '/public'));
 app.use("/modules", express.static(__dirname + "/node_modules"));
-app.use(logger('dev'));
+app.use(requestLogger);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 
