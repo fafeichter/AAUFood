@@ -11,7 +11,7 @@ function countVisitors(req, res, next) {
             next()
         })
         .catch(() => {
-            winston.info('Visits could not be updated.');
+            winston.error('Visits could not be updated.');
         });
 }
 
