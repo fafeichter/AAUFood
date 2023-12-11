@@ -105,12 +105,6 @@ router.get('/bitsandbytes/:day?', function (req, res) {
 });
 
 if (process.env.FOOD_ENV === 'DEV') {
-    router.get('/logs', function (req, res) {
-        res.download('logfile.log');
-    });
-}
-
-if (process.env.FOOD_ENV === 'DEV') {
     router.get('/sync', function (req, res) {
         cache.update(true);
         res.send("Ok")
