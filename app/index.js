@@ -41,7 +41,14 @@ app.use(
     })
 );
 
-winston.add(winston.transports.File, {filename: 'logfile.log'});
+winston.transports = [
+    new winston.transports.Console({
+        timestamp: function () {
+            const now = new Date();
+            return new Date(now.getTime() - now.getTimezoneOffset() * 60 * 1000).toISOString().slice(0, 23);
+        }, colorize: true
+    })
+];
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -66,7 +73,7 @@ app.use('/', indexRoutes);
 app.use('/food', foodRoutes);
 
 app.use(function (err, req, res, next) {
-    console.log(err);
+    winston.error(err);
     res.status(500);
     res.json({error: err.message});
 });
@@ -82,7 +89,7 @@ app.locals.catFactHeaderUrl = placeKittenHelper.catFactHeaderUrl;
 app.locals.isWinterThemeEnabled = () => config.settings.winterTheme;
 
 var server = app.listen(config.settings.nodePort, function () {
-    console.log('AAU Food listening on port ' + config.settings.nodePort + '!');
+    winston.info('AAU Food listening on port ' + config.settings.nodePort + '!');
 
     const io = require('socket.io')(server);
 

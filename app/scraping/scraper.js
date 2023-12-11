@@ -7,6 +7,7 @@ global.XMLHttpRequest = require('xhr2');
 const moment = require('moment');
 const _ = require('lodash');
 const crawler = require('crawler-request');
+const winston = require('winston');
 
 const Food = require("../models/food");
 const Menu = require("../models/menu");
@@ -331,12 +332,12 @@ async function getUniPizzeriaWeekPlan() {
             return crawler(JSON.parse(urls).scraperUrl);
         });
 
-    console.log(pdfHttpResult.text);
+    winston.debug(pdfHttpResult.text);
 
     const gptResponse = await gptHelper.letMeChatGptThatForYou(pdfHttpResult.text);
     const gptJsonAnswer = JSON.parse(gptResponse.data.choices[0].message.content);
 
-    console.log(gptJsonAnswer);
+    winston.debug(gptJsonAnswer);
 
     ["MO", "DI", "MI", "DO", "FR", "SA", "SO",].forEach(function (dayString, dayInWeek) {
         var menuForDay = new Menu();
@@ -407,12 +408,12 @@ async function parseHotspot(html) {
     })
 
     let relevantHtmlPart = $.html(contentTableDict);
-    console.log(relevantHtmlPart);
+    winston.debug(relevantHtmlPart);
 
     const gptResponse = await gptHelper.letMeChatGptThatForYou(relevantHtmlPart);
     const gptJsonAnswer = JSON.parse(gptResponse.data.choices[0].message.content);
 
-    console.log(gptJsonAnswer);
+    winston.debug(gptJsonAnswer);
 
     for (let dayInWeek = 0; dayInWeek < 4; dayInWeek++) { // Hotspot currently only MON-THU
         var menuForDay = new Menu();
@@ -479,12 +480,12 @@ async function parseBitsAndBytes(html) {
     })
 
     let relevantHtmlPart = $.html(contentTableDict);
-    console.log(relevantHtmlPart);
+    winston.debug(relevantHtmlPart);
 
     const gptResponse = await gptHelper.letMeChatGptThatForYou(relevantHtmlPart);
     const gptJsonAnswer = JSON.parse(gptResponse.data.choices[0].message.content);
 
-    console.log(gptJsonAnswer);
+    winston.debug(gptJsonAnswer);
 
     for (let dayInWeek = 0; dayInWeek < 5; dayInWeek++) {
         var menuForDay = new Menu();
@@ -513,12 +514,12 @@ async function getIntersparWeekPlan() {
             return crawler(JSON.parse(urls).scraperUrl);
         });
 
-    console.log(pdfHttpResult.text);
+    winston.debug(pdfHttpResult.text);
 
     const gptResponse = await gptHelper.letMeChatGptThatForYou(pdfHttpResult.text);
     const gptJsonAnswer = JSON.parse(gptResponse.data.choices[0].message.content);
 
-    console.log(gptJsonAnswer);
+    winston.debug(gptJsonAnswer);
 
     for (let i = 0; i < 5; i++) {
         let klassischGptDish, vegetarischGptDish;
