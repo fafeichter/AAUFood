@@ -31,7 +31,8 @@ const redisClient = redis.createClient({host: 'redis'});
 const fileUpload = require('express-fileupload');
 const app = express();
 const requestLogger = (req, res, next) => {
-    winston.info(` ${req.method} ${req.url} ${req.ip}`);
+    var ip = (req.headers['x-forwarded-for'] || req.connection.remoteAddress || '').split(',')[0].trim();
+    winston.info(` ${req.method} ${req.url} ${ip}`);
     next();
 };
 
