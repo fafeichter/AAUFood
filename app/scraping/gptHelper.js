@@ -22,6 +22,10 @@ async function letMeGptThatForYou(text) {
                     type: array
                     items:
                       $ref: #/definitions/dish
+                  soups:
+                    type: array
+                    items:
+                      $ref: #/definitions/soup
                   monthly_special:
                       $ref: #/definitions/dish
                   dish:
@@ -39,6 +43,15 @@ async function letMeGptThatForYou(text) {
                           maxLength: 1
                       price:
                         type: double
+                      day: # must be one of ["MO", "DI", "MI", "DO", "FR", "SA", "SO"] otherwise do not include this property
+                        type: string
+                        maxLength: 2
+                  soup:
+                    type: object
+                    required: [name]
+                    properties:
+                      name: # keep apostrophes, double quotes and round brackets and the text within them
+                        type: string
                       day: # must be one of ["MO", "DI", "MI", "DO", "FR", "SA", "SO"] otherwise do not include this property
                         type: string
                         maxLength: 2

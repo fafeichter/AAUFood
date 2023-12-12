@@ -29,8 +29,6 @@ class MenuCache extends EventEmitter {
 
         scraper.getMensaWeekPlan()
             .then(weekPlan => this._updateIfNewer(restaurants.mensa.id, weekPlan));
-        scraper.getUniWirtWeekPlan()
-            .then(weekPlan => this._updateIfNewer(restaurants.uniWirt.id, weekPlan));
 
         // sync these menus only during Monday morning to minimize the cost of ChatGPT
         if (forceSync || process.env.FOOD_ENV === 'DEV' || (now.isoWeekday() === 1 && now.hour() > 5 && now.hour <= 12)) {
@@ -38,6 +36,8 @@ class MenuCache extends EventEmitter {
                 .then(weekPlan => this._updateIfNewer(restaurants.hotspot.id, weekPlan));
             scraper.getBitsAndBytesWeekPlan()
                 .then(weekPlan => this._updateIfNewer(restaurants.bitsAndBytes.id, weekPlan));
+            scraper.getUniWirtWeekPlan()
+                .then(weekPlan => this._updateIfNewer(restaurants.uniWirt.id, weekPlan));
             scraper.getUniPizzeriaWeekPlan()
                 .then(weekPlan => this._updateIfNewer(restaurants.uniPizzeria.id, weekPlan));
         }

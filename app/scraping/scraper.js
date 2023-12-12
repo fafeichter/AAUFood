@@ -34,13 +34,11 @@ function getUniWirtWeekPlan() {
         .then(body => parseUniwirt(body));
 }
 
-function parseUniwirt(html) {
-    var weekPlan = new Array(7);
+async function parseUniwirt(html) {
+    const menu = scraperHelper.getWeekEmptyModel();
 
-    //Set Sunday closed
-    let closedMenu = new Menu();
-    closedMenu.closed = true;
-    weekPlan[6] = closedMenu;
+    menu[5].alacarte = true;
+    menu[6].closed = true;
 
     var $ = cheerio.load(html);
 
@@ -53,119 +51,51 @@ function parseUniwirt(html) {
         for (let i = 0; i < 6; i++) {
             let outdatedMenu = new Menu();
             outdatedMenu.outdated = true;
-            weekPlan[i] = outdatedMenu;
+            menu[i] = outdatedMenu;
         }
-        return weekPlan;
+        return menu;
     }
 
-    // Week specials
-    // Get last entry including "wochen"
-    var weekHeading = $($("#mittagsmenues .wpb_row").toArray().filter(x => $(x).find("h2").text().toLowerCase().includes("woche")));
+    let relevantHtmlPart = $.html($(".slideContent.gu12 > div:nth-child(2),div:nth-child(3)"));
+    winston.debug(relevantHtmlPart);
 
-    // Get all names (first <p> in each column)
-    var allWeekSpecialNodes = weekHeading.nextAll().find("p:first-of-type");
+    const gptResponse = await gptHelper.letMeChatGptThatForYou(relevantHtmlPart);
+    const gptJsonAnswer = JSON.parse(gptResponse.data.choices[0].message.content);
 
-    // Filter out drinks
-    var weekSpecialNodes = allWeekSpecialNodes
-        .toArray()
-        .map(x => $(x))
-        .filter(x => !x.parent().text().toLowerCase().includes("drink"));
+    winston.debug(gptJsonAnswer);
 
-    const weekSpecials = [];
-    for (let specialNameElement of weekSpecialNodes) {
-        let infoText = specialNameElement.parent().text().trim();
-        let price = scraperHelper.parsePrice(infoText);
+    ["MO", "DI", "MI", "DO", "FR"].forEach(function (dayString, dayInWeek) {
+        var menuForDay = new Menu();
+        var menuct = 0;
 
-        let special = new Food(specialNameElement.text(), price);
-        if (!special.allergens || special.allergens.length === 0) {
-            special.extractAllergens(infoText);
-        }
+        for (let dish of gptJsonAnswer.dishes) {
+            if (dish.day === dayString) {
+                let title = `Menü ${++menuct}`;
+                let main = new Food(title, dish.price, true);
 
-        weekSpecials.push(special);
-    }
-
-    const weekSpecialMenu = new Food("Wochenangebote", null, true);
-    weekSpecialMenu.entries = weekSpecials;
-
-    // Daily menus
-    var date = mondayDate;
-    for (let dayInWeek = 0; dayInWeek < 6; dayInWeek++) {
-        var dateString = date.format("DD.MM.YY");
-        var dayEntry = $(`h3:contains(${dateString})`);
-        if (!dayEntry || dayEntry.length === 0) {
-            dateString = date.format('dddd').toLowerCase();
-            dayEntry = $(`h3:icontains(${dateString})`);
-        }
-
-        try {
-            let dayPlan = createUniwirtDayMenu(dayEntry.parent());
-            dayPlan.mains.push(weekSpecialMenu);
-            weekPlan[dayInWeek] = dayPlan;
-        } catch (ex) {
-            let errorMenu = new Menu();
-            errorMenu.error = true;
-            weekPlan[dayInWeek] = errorMenu;
-        }
-        date.add(1, 'days');
-    }
-
-    // Saturday a la carte
-    weekPlan[5].alacarte = true;
-
-    return weekPlan;
-}
-
-function createUniwirtDayMenu(dayEntry) {
-    var dayMenu = new Menu();
-    var paragraphs = dayEntry.find("p, li");
-    //Omit first <p> as it is the date
-    var dateParagraph = paragraphs.eq(0);
-    paragraphs = paragraphs.filter(":not(:empty)");
-
-    if (paragraphs.length < 2) {
-        //Special cases
-        let pText = paragraphs.length === 0 ? dateParagraph.text() : paragraphs.text();
-        pText = pText.replace(/\d\d\.\d\d\.\d+/, "").trim();
-
-        if (scraperHelper.contains(pText, true, ["feiertag", "ruhetag", "pause", "geschlossen", "closed"])) {
-            dayMenu.closed = true;
-        } else if (scraperHelper.contains(pText, true, ["Empfehlung"])) {
-            dayMenu.alacarte = true;
-        } else {
-            pText = pText.charAt(0).toUpperCase() + pText.slice(1);
-            let info = new Food(pText, null, false, true);
-            dayMenu.mains.push(info);
-        }
-    } else {
-        const foodEntries = []; // [name, price, isMainCourse]
-
-        for (let i = 0; i < paragraphs.length; i++) {
-            let pEntry = paragraphs.eq(i);
-
-            let text = pEntry.text().trim();
-
-            let price = scraperHelper.parsePrice(text);
-
-            //If it has a price, it is a main course, otherwise a starter
-            let hasName = !!text.trim();
-            if (hasName) {
-                foodEntries.push([text, price, !!price]);
+                let food = new Food(`${dish.name}${dish.description ? ' ' + dish.description : ''}`,
+                    null, false, false, dish.allergens);
+                if (gptJsonAnswer.soups) {
+                    for (let soup of gptJsonAnswer.soups) {
+                        if (soup.day === dayString) {
+                            main.entries.push(new Food(`${soup.name}`));
+                            break;
+                        }
+                    }
+                }
+                main.entries.push(food);
+                menuForDay.mains.push(main);
             }
         }
 
-        const starters = foodEntries.filter(x => !x[2]).map(([name]) => new Food(name));
-        const mainCourses = foodEntries.filter(x => x[2]);
+        if (menuForDay.mains.length > 0) {
+            menu[dayInWeek] = menuForDay;
+        }
+    });
 
-        const menus = mainCourses.map(([name, price], i) => {
-            let main = new Food(`Menü ${i + 1}`, price, true);
-            main.entries = [...starters, new Food(name)]
-            return main;
-        })
+    winston.debug(menu);
 
-        dayMenu.mains = menus;
-    }
-
-    return scraperHelper.setErrorOnEmpty(dayMenu);
+    return Promise.resolve(menu);
 }
 
 function getMensaWeekPlan() {

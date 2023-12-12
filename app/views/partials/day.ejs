@@ -13,7 +13,7 @@
             <%- include('restaurant', {restaurantId: restaurants.interspar.id, restaurantName: restaurants.interspar.name, restaurantFriendlyUrl: interspar.userFriendlyUrl, menu: interspar.menu ? interspar.menu[day] : null, combinedMenuList: true, day: day, chatGptPowered: true}) %>
         </div>
         <div class="col-xl-3 col-lg-6 col-md-12">
-            <%- include('restaurant', {restaurantId: restaurants.uniWirt.id, restaurantName: restaurants.uniWirt.name, restaurantFriendlyUrl: uniWirt.userFriendlyUrl, menu: uniWirt.menu ? uniWirt.menu[day] : null, combinedMenuList: true, day: day}) %>
+            <%- include('restaurant', {restaurantId: restaurants.uniWirt.id, restaurantName: restaurants.uniWirt.name, restaurantFriendlyUrl: uniWirt.userFriendlyUrl, menu: uniWirt.menu ? uniWirt.menu[day] : null, combinedMenuList: true, day: day, chatGptPowered: true}) %>
             <%- include('restaurant', {restaurantId: restaurants.uniPizzeria.id, restaurantName: restaurants.uniPizzeria.name, restaurantFriendlyUrl: uniPizzeria.userFriendlyUrl, menu: uniPizzeria.menu ? uniPizzeria.menu[day] : null, combinedMenuList: true, day: day, chatGptPowered: true}) %>
         </div>
         <div class="col-xl-3 col-lg-6 col-md-12">
