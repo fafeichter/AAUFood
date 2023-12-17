@@ -9,6 +9,7 @@ const scraper = require('../scraping/scraper');
 const restaurants = require('../config').restaurants;
 const winston = require('winston');
 const moment = require('moment');
+const urlCache = require('./urlCache');
 
 const menuKeyPrefix = "menu";
 
@@ -16,37 +17,38 @@ class MenuCache extends EventEmitter {
 
     init(redisClient) {
         this.client = redisClient;
-        // give the url cache a few seconds to finish first
-        setTimeout(() => {
-            this.update(true);
-        }, 3000);
     }
 
     update(forceSync = false) {
-        winston.info('Updating menu caches...');
-
         const now = moment();
 
-        scraper.getMensaWeekPlan()
-            .then(weekPlan => this._updateIfNewer(restaurants.mensa.id, weekPlan));
+        urlCache.update();
 
-        // sync these menus only a few times during Monday morning
-        if (forceSync || process.env.FOOD_ENV === 'DEV' || (now.isoWeekday() === 1 && now.hour() >= 7 && now.hour <= 10)) {
-            scraper.getHotspotWeekPlan()
-                .then(weekPlan => this._updateIfNewer(restaurants.hotspot.id, weekPlan));
-            scraper.getBitsAndBytesWeekPlan()
-                .then(weekPlan => this._updateIfNewer(restaurants.bitsAndBytes.id, weekPlan));
-            scraper.getUniWirtWeekPlan()
-                .then(weekPlan => this._updateIfNewer(restaurants.uniWirt.id, weekPlan));
-            scraper.getUniPizzeriaWeekPlan()
-                .then(weekPlan => this._updateIfNewer(restaurants.uniPizzeria.id, weekPlan));
-        }
+        // wait for url cache to update (... avoid the hell of nested promises)
+        setInterval(() => {
+            winston.info('Updating menu caches...');
 
-        // sync the Interspar menu only once on Monday night
-        if (forceSync || process.env.FOOD_ENV === 'DEV' || (now.isoWeekday() === 1 && now.hour() === 0)) {
-            scraper.getIntersparWeekPlan()
-                .then(weekPlan => this._updateIfNewer(restaurants.interspar.id, weekPlan));
-        }
+            scraper.getMensaWeekPlan()
+                .then(weekPlan => this._updateIfNewer(restaurants.mensa.id, weekPlan));
+
+            // sync these menus only a few times during Monday morning
+            if (forceSync || (now.isoWeekday() === 1 && now.hour() >= 6 && now.hour <= 10)) {
+                scraper.getHotspotWeekPlan()
+                    .then(weekPlan => this._updateIfNewer(restaurants.hotspot.id, weekPlan));
+                scraper.getBitsAndBytesWeekPlan()
+                    .then(weekPlan => this._updateIfNewer(restaurants.bitsAndBytes.id, weekPlan));
+                scraper.getUniWirtWeekPlan()
+                    .then(weekPlan => this._updateIfNewer(restaurants.uniWirt.id, weekPlan));
+                scraper.getUniPizzeriaWeekPlan()
+                    .then(weekPlan => this._updateIfNewer(restaurants.uniPizzeria.id, weekPlan));
+            }
+
+            // sync the Interspar menu only once on Monday night
+            if (forceSync || (now.isoWeekday() === 1 && now.hour() === 0)) {
+                scraper.getIntersparWeekPlan()
+                    .then(weekPlan => this._updateIfNewer(restaurants.interspar.id, weekPlan));
+            }
+        }, 10000);
     }
 
     _updateIfNewer(restaurantId, newWeekPlan) {

@@ -14,10 +14,8 @@ module.exports = {
         // mensa: new BreakInfo("Wir befinden uns für den Zeitraum", "28.7", "2.9", "in Sommerpause."),
     },
     cache: {
-        // Time in milliseconds -> 20 min.
+        // Time in milliseconds -> 1 hour.
         menuCacheIntervall: 3600000,
-        // Time in milliseconds -> 10 min.
-        urlCacheIntervall: 600000,
         overallVisitorKey: "overallVisitors",
         dailyVisitorKey: "dailyVisitors"
     },

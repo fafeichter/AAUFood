@@ -4,7 +4,6 @@ const path = require('path');
 const redis = require('redis');
 const bodyParser = require('body-parser');
 const compression = require('compression');
-const logger = require('morgan');
 const menuCache = require('./caching/menuCache');
 const urlCache = require('./caching/urlCache');
 const visitorCache = require('./caching/visitorCache');
@@ -105,6 +104,9 @@ var server = app.listen(config.settings.nodePort, function () {
     menuCache.init(redisClient);
     visitorCache.init(redisClient, io);
 
-    setInterval(() => menuCache.update(), config.cache.menuCacheIntervall);
-    setInterval(() => urlCache.update(), config.cache.urlCacheIntervall);
+    let forceSync = process.env.FOOD_ENV === 'DEV' || process.env.FOOD_FORCE_SYNC_ON_STARTUP === true;
+    if (forceSync) {
+        menuCache.update(true);
+    }
+    setInterval(() => menuCache.update(forceSync), config.cache.menuCacheIntervall);
 });

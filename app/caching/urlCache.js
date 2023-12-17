@@ -9,13 +9,17 @@ const Promise = require('bluebird');
 const request = Promise.promisifyAll(require("request"));
 const cheerio = require('cheerio');
 const moment = require('moment');
-const url = require("url");
 const restaurants = require('../config').restaurants;
 const urlKeyPrefix = "urls";
 
 class UrlCache {
     init(redisClient) {
         this.client = redisClient;
+    }
+
+    update() {
+        winston.info('Updating url caches...');
+
         // set static urls
         this.client.setAsync(`${urlKeyPrefix}:${restaurants.mensa.id}`,
             JSON.stringify({
@@ -41,12 +45,8 @@ class UrlCache {
                 userFriendlyUrl: "https://www.lakeside-scitec.com/services/gastronomie/hotspot"
             })
         );
-        // set dynamic urls
-        this.update();
-    }
 
-    update() {
-        winston.info('Updating url caches...');
+        // set dynamic urls
         this._updateUniPizzeriaUrl();
         this._updateIntersparUrl();
     }
@@ -82,8 +82,9 @@ class UrlCache {
             const urlsJson = JSON.stringify(urls);
 
             if (cachedUrls !== urlsJson) {
-                this.client.setAsync(`${urlKeyPrefix}:${restaurantId}`, urlsJson);
-                winston.info(`"${restaurantId}" has changed the url -> cache updated`)
+                this.client.setAsync(`${urlKeyPrefix}:${restaurantId}`, urlsJson).then(() => {
+                    winston.info(`"${restaurantId}" has changed the url -> cache updated`);
+                });
             }
         });
     }
