@@ -15,7 +15,7 @@ module.exports = {
     },
     cache: {
         // Time in milliseconds -> 20 min.
-        menuCacheIntervall: 1200000,
+        menuCacheIntervall: 3600000,
         // Time in milliseconds -> 10 min.
         urlCacheIntervall: 600000,
         overallVisitorKey: "overallVisitors",

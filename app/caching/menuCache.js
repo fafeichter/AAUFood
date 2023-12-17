@@ -30,8 +30,8 @@ class MenuCache extends EventEmitter {
         scraper.getMensaWeekPlan()
             .then(weekPlan => this._updateIfNewer(restaurants.mensa.id, weekPlan));
 
-        // sync these menus only during Monday morning to minimize the cost of ChatGPT
-        if (forceSync || process.env.FOOD_ENV === 'DEV' || (now.isoWeekday() === 1 && now.hour() > 5 && now.hour <= 12)) {
+        // sync these menus only a few times during Monday morning
+        if (forceSync || process.env.FOOD_ENV === 'DEV' || (now.isoWeekday() === 1 && now.hour() >= 7 && now.hour <= 10)) {
             scraper.getHotspotWeekPlan()
                 .then(weekPlan => this._updateIfNewer(restaurants.hotspot.id, weekPlan));
             scraper.getBitsAndBytesWeekPlan()
@@ -42,7 +42,7 @@ class MenuCache extends EventEmitter {
                 .then(weekPlan => this._updateIfNewer(restaurants.uniPizzeria.id, weekPlan));
         }
 
-        // sync the Interspar menu only between 0am and 1am on Monday because they always published the current menu already a week ago
+        // sync the Interspar menu only once on Monday night
         if (forceSync || process.env.FOOD_ENV === 'DEV' || (now.isoWeekday() === 1 && now.hour() === 0)) {
             scraper.getIntersparWeekPlan()
                 .then(weekPlan => this._updateIfNewer(restaurants.interspar.id, weekPlan));
