@@ -5,7 +5,7 @@ module.exports = {
     settings: {
         useRandomFooterPuns: true,
         defaultFooterPun: "heart",
-        winterTheme: true,
+        winterTheme: ['01.12.', '01.03.'],
         nodePort: 3000,
     },
     onBreak: {
