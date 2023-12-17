@@ -12,9 +12,6 @@ case menuStateHelper.MenuState.ALaCarte: %>
 case menuStateHelper.MenuState.Outdated: %>
 <%- include('outdated', {restaurantId, restaurantFriendlyUrl}) %>
 <% break;
-case menuStateHelper.MenuState.ScrapingNotImplemented: %>
-<%- include('not-implemented', {restaurantId, restaurantFriendlyUrl}) %>
-<% break; %>
 case menuStateHelper.MenuState.Error: %>
 <%- include('error', {restaurantId, restaurantFriendlyUrl}) %>
 <% break; %>

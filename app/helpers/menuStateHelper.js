@@ -7,7 +7,6 @@ const MenuState = {
     Closed: 2,
     Outdated: 3,
     OnBreak: 4,
-    ScrapingNotImplemented: 5,
     Error: 6,
 }
 
@@ -19,17 +18,14 @@ function getMenuState(restaurantId, menu) {
     if (menu == null || menu.error)
         return MenuState.Error;
 
-    if (menu.scrapingNotImplemented)
-        return MenuState.ScrapingNotImplemented;
-
     if (menu.closed)
         return MenuState.Closed;
 
-    if (menu.outdated)
-        return MenuState.Outdated;
-
     if (menu.alacarte)
         return MenuState.ALaCarte;
+
+    if (menu.outdated)
+        return MenuState.Outdated;
 
     return MenuState.Normal;
 }
