@@ -32,9 +32,9 @@ async function letMeGptThatForYou(text) {
                     type: object
                     required: [name, description]
                     properties:
-                      name: # keep apostrophes, double quotes and round brackets and the text within them
+                      name: # keep apostrophes, double quotes and round brackets and the text within them; remove the allergenes, typically at the end e.g. "GLO" or "A,C,G,L,M,O"
                         type: string
-                      description: # this is the side dish e.g. "mit Kartoffelschmarrn und Sauerkraut", if there is none, set it to null; keep apostrophes, double quotes and round brackets and the text within them
+                      description: # this is the side dish e.g. "mit Kartoffelschmarrn und Sauerkraut", if there is none, set it to null; keep apostrophes, double quotes and round brackets and the text within them; remove the allergenes, typically at the end e.g. "GLO" or "A,C,G,L,M,O"
                         type: string
                       allergens: # if you have trouble finding the allergens then you may find them immediately after the names of the dishes, e.g. "GLO" or "A,C,G,L,M,O"; transform this always into uppercase
                         type: array
