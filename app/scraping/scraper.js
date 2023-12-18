@@ -46,7 +46,7 @@ async function parseUniwirt(html) {
         winston.debug(`${restaurants.uniWirt.name}: ${relevantHtmlPart}`);
 
         if (relevantHtmlPart) {
-            const gptResponse = await gptHelper.letMeChatGptThatForYou(relevantHtmlPart);
+            const gptResponse = await gptHelper.letMeChatGptThatForYou(relevantHtmlPart, restaurants.uniWirt.id);
             const gptResponseContent = gptResponse.data.choices[0].message.content;
             winston.debug(`${restaurants.uniWirt.name}: ${gptResponseContent}`);
             const gptJsonAnswer = JSON.parse(gptResponseContent);
@@ -154,7 +154,7 @@ function parseMensa(html) {
 function createMensaFoodMenuFromElement($, e, name) {
     e = $(e);
 
-    // If Mensa changes to splitting foods by <br> again, look in git history for this section how to handle this 
+    // If Mensa changes to splitting foods by <br> again, look in git history for this section how to handle this
 
     let foodNameElements = e.find("> p:not(:contains(€))").toArray();
     // Filter short delimiter lines
@@ -224,7 +224,7 @@ async function getUniPizzeriaWeekPlan() {
     winston.debug(`${restaurants.uniPizzeria.name}: ${pdfHttpResult.text}`);
 
     if (pdfHttpResult.text) {
-        const gptResponse = await gptHelper.letMeChatGptThatForYou(pdfHttpResult.text);
+        const gptResponse = await gptHelper.letMeChatGptThatForYou(pdfHttpResult.text, restaurants.uniPizzeria.id);
         const gptResponseContent = gptResponse.data.choices[0].message.content;
         winston.debug(`${restaurants.uniPizzeria.name}: ${gptResponseContent}`);
         const gptJsonAnswer = JSON.parse(gptResponseContent);
@@ -303,7 +303,7 @@ async function parseHotspot(html) {
         winston.debug(`${restaurants.hotspot.name}: ${relevantHtmlPart}`);
 
         if (relevantHtmlPart) {
-            const gptResponse = await gptHelper.letMeChatGptThatForYou(relevantHtmlPart);
+            const gptResponse = await gptHelper.letMeChatGptThatForYou(relevantHtmlPart, restaurants.hotspot.id);
             const gptResponseContent = gptResponse.data.choices[0].message.content;
             winston.debug(`${restaurants.hotspot.name}: ${gptResponseContent}`);
             const gptJsonAnswer = JSON.parse(gptResponseContent);
@@ -378,7 +378,7 @@ async function parseBitsAndBytes(html) {
         winston.debug(`${restaurants.bitsAndBytes.name}: ${relevantHtmlPart}`);
 
         if (relevantHtmlPart) {
-            const gptResponse = await gptHelper.letMeChatGptThatForYou(relevantHtmlPart);
+            const gptResponse = await gptHelper.letMeChatGptThatForYou(relevantHtmlPart, restaurants.bitsAndBytes.id);
             const gptResponseContent = gptResponse.data.choices[0].message.content;
             const gptJsonAnswer = JSON.parse(gptResponseContent);
             winston.debug(`${restaurants.bitsAndBytes.name}: ${gptResponseContent}`);
@@ -417,7 +417,7 @@ async function getIntersparWeekPlan() {
     winston.debug(`${restaurants.interspar.name}: ${pdfHttpResult.text}`);
 
     if (pdfHttpResult.text) {
-        const gptResponse = await gptHelper.letMeChatGptThatForYou(pdfHttpResult.text);
+        const gptResponse = await gptHelper.letMeChatGptThatForYou(pdfHttpResult.text, restaurants.interspar.id);
         const gptResponseContent = gptResponse.data.choices[0].message.content;
         winston.debug(`${restaurants.interspar.name}: ${gptResponseContent}`);
         const gptJsonAnswer = JSON.parse(gptResponseContent);
@@ -456,22 +456,36 @@ async function getIntersparWeekPlan() {
                 winston.error(error);
             }
 
+            if (klassischGptDish) {
+                try {
+                    const klassischMain = new Food('Menü Klassisch', klassischGptDish.price || 8.4);
+                    const klassischFood = new Food(`${klassischGptDish.name}${klassischGptDish.description ? ' ' +
+                            klassischGptDish.description : ''}`,
+                        null, false, false, klassischGptDish.allergens);
+                    klassischMain.entries = [klassischFood];
+                    menu[i].mains.push(klassischMain)
+                } catch (error) {
+                    winston.error(error);
+                }
+            }
+            if (vegetarischGptDish) {
+                try {
+                    const vegetarischMain = new Food('Menü Vegetarisch', vegetarischGptDish.price || 7.9);
+                    const vegetarischFood = new Food(`${vegetarischGptDish.name}${vegetarischGptDish.description ? ' ' +
+                            vegetarischGptDish.description : ''}`,
+                        null, false, false, vegetarischGptDish.allergens);
+                    vegetarischMain.entries = [vegetarischFood];
+
+                    menu[i].mains.push(vegetarischMain)
+                } catch (error) {
+                    winston.error(error);
+                }
+            }
+
             try {
-                const klassischMain = new Food('Menü Klassisch', klassischGptDish.price || 8.4);
-                const klassischFood = new Food(`${klassischGptDish.name}${klassischGptDish.description ? ' ' +
-                        klassischGptDish.description : ''}`,
-                    null, false, false, klassischGptDish.allergens);
-                klassischMain.entries = [klassischFood];
-
-                const vegetarischMain = new Food('Menü Vegetarisch', vegetarischGptDish.price || 7.9);
-                const vegetarischFood = new Food(`${vegetarischGptDish.name}${vegetarischGptDish.description ? ' ' +
-                        vegetarischGptDish.description : ''}`,
-                    null, false, false, vegetarischGptDish.allergens);
-                vegetarischMain.entries = [vegetarischFood];
-
                 let monatsHitMain = undefined
                 const monatsHitGptDish = gptJsonAnswer.monthly_special ||
-                    gptJsonAnswer.dishes.length === 11 ? gptJsonAnswer.dishes[10] : undefined;
+                gptJsonAnswer.dishes.length === 11 ? gptJsonAnswer.dishes[10] : undefined;
                 if (monatsHitGptDish) {
                     monatsHitMain = new Food('Monats-Hit', monatsHitGptDish.price || 10.9);
                     const monatsHitFood = new Food(`${monatsHitGptDish.name}${monatsHitGptDish.description ? ' ' +
@@ -480,8 +494,6 @@ async function getIntersparWeekPlan() {
                     monatsHitMain.entries = [monatsHitFood];
                 }
 
-                menu[i].mains.push(klassischMain)
-                menu[i].mains.push(vegetarischMain)
                 if (monatsHitMain) {
                     menu[i].mains.push(monatsHitMain)
                 }
