@@ -25,7 +25,7 @@ class MenuCache extends EventEmitter {
         urlCache.update();
 
         // wait for url cache to update (... avoid the hell of nested promises)
-        setInterval(() => {
+        setTimeout(() => {
             winston.info('Updating menu caches...');
 
             scraper.getMensaWeekPlan()

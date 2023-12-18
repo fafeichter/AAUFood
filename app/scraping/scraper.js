@@ -43,13 +43,13 @@ async function parseUniwirt(html) {
         }
     } else {
         let relevantHtmlPart = $.html($(".slideContent.gu12 > div:nth-child(2),div:nth-child(3)"));
-        winston.debug(relevantHtmlPart);
+        winston.debug(`${restaurants.uniWirt.name}: ${relevantHtmlPart}`);
 
         if (relevantHtmlPart) {
             const gptResponse = await gptHelper.letMeChatGptThatForYou(relevantHtmlPart);
-            const gptJsonAnswer = JSON.parse(gptResponse.data.choices[0].message.content);
-
-            winston.debug(gptJsonAnswer);
+            const gptResponseContent = gptResponse.data.choices[0].message.content;
+            winston.debug(`${restaurants.uniWirt.name}: ${gptResponseContent}`);
+            const gptJsonAnswer = JSON.parse(gptResponseContent);
 
             ["MO", "DI", "MI", "DO", "FR"].forEach(function (dayString, dayInWeek) {
                 var menuForDay = new Menu();
@@ -219,17 +219,15 @@ async function getUniPizzeriaWeekPlan() {
     let menu = scraperHelper.getWeekEmptyModel();
 
     const pdfHttpResult = await urlCache.getUrls(restaurants.uniPizzeria.id)
-        .then(urls => {
-            return crawler(JSON.parse(urls).scraperUrl);
-        });
+        .then(urls => crawler(JSON.parse(urls).scraperUrl));
 
-    winston.debug(pdfHttpResult.text);
+    winston.debug(`${restaurants.uniPizzeria.name}: ${pdfHttpResult.text}`);
 
     if (pdfHttpResult.text) {
         const gptResponse = await gptHelper.letMeChatGptThatForYou(pdfHttpResult.text);
-        const gptJsonAnswer = JSON.parse(gptResponse.data.choices[0].message.content);
-
-        winston.debug(gptJsonAnswer);
+        const gptResponseContent = gptResponse.data.choices[0].message.content;
+        winston.debug(`${restaurants.uniPizzeria.name}: ${gptResponseContent}`);
+        const gptJsonAnswer = JSON.parse(gptResponseContent);
 
         ["MO", "DI", "MI", "DO", "FR", "SA", "SO",].forEach(function (dayString, dayInWeek) {
             var menuForDay = new Menu();
@@ -273,7 +271,7 @@ async function parseHotspot(html) {
     var $ = cheerio.load(html);
 
     var mainContent = $("section > .content");
-    var heading = mainContent.find("h1:contains(Restaurant Hotspot)").eq(0).text() || "";
+    var heading = mainContent.find("h1:contains(Restaurant Hotspot)").eq(-1).text() || "";
     var weekIsOutdated = !timeHelper.checkInputForCurrentWeek(heading)
 
     if (weekIsOutdated) {
@@ -302,13 +300,13 @@ async function parseHotspot(html) {
         })
 
         let relevantHtmlPart = $.html(contentTableDict);
-        winston.debug(relevantHtmlPart);
+        winston.debug(`${restaurants.hotspot.name}: ${relevantHtmlPart}`);
 
         if (relevantHtmlPart) {
             const gptResponse = await gptHelper.letMeChatGptThatForYou(relevantHtmlPart);
-            const gptJsonAnswer = JSON.parse(gptResponse.data.choices[0].message.content);
-
-            winston.debug(gptJsonAnswer);
+            const gptResponseContent = gptResponse.data.choices[0].message.content;
+            winston.debug(`${restaurants.hotspot.name}: ${gptResponseContent}`);
+            const gptJsonAnswer = JSON.parse(gptResponseContent);
 
             for (let dayInWeek = 0; dayInWeek < 4; dayInWeek++) { // Hotspot currently only MON-THU
                 var menuForDay = new Menu();
@@ -348,7 +346,7 @@ async function parseBitsAndBytes(html) {
     var $ = cheerio.load(html);
 
     var mainContent = $("section > .content");
-    var heading = mainContent.find("h1:contains(Bits & Bytes Marketplace)").eq(0).text() || "";
+    var heading = mainContent.find("h1:contains(Bits & Bytes Marketplace)").eq(-1).text() || "";
     var weekIsOutdated = !timeHelper.checkInputForCurrentWeek(heading)
 
     if (weekIsOutdated) {
@@ -377,13 +375,13 @@ async function parseBitsAndBytes(html) {
         })
 
         let relevantHtmlPart = $.html(contentTableDict);
-        winston.debug(relevantHtmlPart);
+        winston.debug(`${restaurants.bitsAndBytes.name}: ${relevantHtmlPart}`);
 
         if (relevantHtmlPart) {
             const gptResponse = await gptHelper.letMeChatGptThatForYou(relevantHtmlPart);
-            const gptJsonAnswer = JSON.parse(gptResponse.data.choices[0].message.content);
-
-            winston.debug(gptJsonAnswer);
+            const gptResponseContent = gptResponse.data.choices[0].message.content;
+            const gptJsonAnswer = JSON.parse(gptResponseContent);
+            winston.debug(`${restaurants.bitsAndBytes.name}: ${gptResponseContent}`);
 
             for (let dayInWeek = 0; dayInWeek < 5; dayInWeek++) {
                 var menuForDay = new Menu();
@@ -414,17 +412,15 @@ async function getIntersparWeekPlan() {
     let menu = scraperHelper.getWeekEmptyModel();
 
     const pdfHttpResult = await urlCache.getUrls(restaurants.interspar.id)
-        .then(urls => {
-            return crawler(JSON.parse(urls).scraperUrl);
-        });
+        .then(urls => crawler(JSON.parse(urls).scraperUrl));
 
-    winston.debug(pdfHttpResult.text);
+    winston.debug(`${restaurants.interspar.name}: ${pdfHttpResult.text}`);
 
     if (pdfHttpResult.text) {
         const gptResponse = await gptHelper.letMeChatGptThatForYou(pdfHttpResult.text);
-        const gptJsonAnswer = JSON.parse(gptResponse.data.choices[0].message.content);
-
-        winston.debug(gptJsonAnswer);
+        const gptResponseContent = gptResponse.data.choices[0].message.content;
+        winston.debug(`${restaurants.interspar.name}: ${gptResponseContent}`);
+        const gptJsonAnswer = JSON.parse(gptResponseContent);
 
         for (let i = 0; i < 5; i++) {
             let klassischGptDish, vegetarischGptDish;

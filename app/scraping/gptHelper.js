@@ -30,11 +30,11 @@ async function letMeGptThatForYou(text) {
                       $ref: #/definitions/dish
                   dish:
                     type: object
-                    required: [name]
+                    required: [name, description]
                     properties:
                       name: # keep apostrophes, double quotes and round brackets and the text within them
                         type: string
-                      description: # keep apostrophes, double quotes and round brackets and the text within them
+                      description: # this is the side dish e.g. "mit Kartoffelschmarrn und Sauerkraut", if there is none, set it to null; keep apostrophes, double quotes and round brackets and the text within them
                         type: string
                       allergens: # if you have trouble finding the allergens then you may find them immediately after the names of the dishes, e.g. "GLO" or "A,C,G,L,M,O"; transform this always into uppercase
                         type: array
