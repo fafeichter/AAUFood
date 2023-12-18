@@ -104,7 +104,7 @@ var server = app.listen(config.settings.nodePort, function () {
     menuCache.init(redisClient);
     visitorCache.init(redisClient, io);
 
-    let forceSync = process.env.FOOD_ENV === 'DEV' || process.env.FOOD_FORCE_SYNC_ON_STARTUP === true;
+    let forceSync = process.env.FOOD_ENV === 'DEV' || process.env.FOOD_FORCE_SYNC_ON_STARTUP === 'true';
     if (forceSync) {
         menuCache.update(true);
     }
