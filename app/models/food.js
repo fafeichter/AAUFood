@@ -24,13 +24,12 @@ class Food {
         this.isMain = isMain;
         this.isInfo = isInfo === true;
 
+        this.extractAllergens();
         if (allergens) {
             if (Array.isArray(allergens)) {
                 allergens = allergens.join(',');
             }
             this.allergens = allergens.replace(/\s/g, '')
-        } else {
-            this.extractAllergens();
         }
     }
 
