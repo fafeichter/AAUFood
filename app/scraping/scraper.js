@@ -26,7 +26,7 @@ function getUniWirtWeekPlan() {
 }
 
 async function parseUniwirt(html) {
-    const menu = scraperHelper.getWeekEmptyModel();
+    var menu = scraperHelper.getWeekEmptyModel();
 
     var $ = cheerio.load(html);
 
@@ -79,6 +79,8 @@ async function parseUniwirt(html) {
                     menu[dayInWeek] = menuForDay;
                 }
             });
+        } else {
+            menu = scraperHelper.invalidateMenus(menu);
         }
     }
 
@@ -323,6 +325,8 @@ async function parseHotspot(html) {
 
                 result[dayInWeek] = menuForDay;
             }
+        } else {
+            result = scraperHelper.invalidateMenus(result);
         }
     }
 
@@ -398,6 +402,8 @@ async function parseBitsAndBytes(html) {
 
                 result[dayInWeek] = menuForDay;
             }
+        } else {
+            result = scraperHelper.invalidateMenus(result);
         }
     }
 
@@ -454,6 +460,7 @@ async function getIntersparWeekPlan() {
                 }
             } catch (error) {
                 winston.error(error);
+                scraperHelper.invalidateMenu(menu, i);
             }
 
             if (klassischGptDish) {
@@ -500,6 +507,9 @@ async function getIntersparWeekPlan() {
             } catch (error) {
                 winston.error(error);
             }
+            if (menu[i].mains.length === 0) {
+                scraperHelper.invalidateMenu(menu, i);
+            }
         }
     } else {
         menu = scraperHelper.invalidateMenus(menu);
@@ -512,10 +522,10 @@ async function getIntersparWeekPlan() {
 }
 
 module.exports = {
-    getUniWirtWeekPlan: getUniWirtWeekPlan,
-    getHotspotWeekPlan: getHotspotWeekPlan,
-    getMensaWeekPlan: getMensaWeekPlan,
-    getUniPizzeriaWeekPlan: getUniPizzeriaWeekPlan,
-    getBitsAndBytesWeekPlan: getBitsAndBytesWeekPlan,
-    getIntersparWeekPlan: getIntersparWeekPlan
+    getUniWirtWeekPlan,
+    getHotspotWeekPlan,
+    getMensaWeekPlan,
+    getUniPizzeriaWeekPlan,
+    getBitsAndBytesWeekPlan,
+    getIntersparWeekPlan
 };

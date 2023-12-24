@@ -19,6 +19,14 @@ function invalidateMenus(weekPlan) {
     return weekPlan;
 }
 
+function invalidateMenu(weekPlan, i) {
+    let outdatedMenu = new Menu();
+    outdatedMenu.outdated = true;
+    weekPlan[i] = outdatedMenu;
+
+    return weekPlan;
+}
+
 function sanitizeName(val) {
     if (typeof val === "string") {
         val = val.replace(/\s\s+/g, ' '); // Replace tabs, newlines, multiple spaces etc. into a single space
@@ -163,6 +171,7 @@ function getWeekErrorModel() {
 module.exports = {
     setErrorOnEmpty,
     invalidateMenus,
+    invalidateMenu,
     sanitizeName,
     capitalizeFirstLetter,
     decapitalize,

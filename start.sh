@@ -1,9 +1,10 @@
 #!/bin/sh
 
 echo -e 'Active environment:\t'${FOOD_ENV}
-echo -e 'ChatGPT API key:\t'${FOOD_CHAT_GPT_API_KEY:0:3}$(echo ${FOOD_CHAT_GPT_API_KEY:3:-3} | sed 's/./*/g')${FOOD_CHAT_GPT_API_KEY: -3}
+echo -e 'Redis host:\t\t'${FOOD_REDIS_HOST}
+echo -e 'ChatGPT API key:\t'${FOOD_CHAT_GPT_API_KEY}
 
-if [ "${FOOD_ENV}" == "PROD" ]; then
+if [ "${FOOD_ENV}" = "PROD" ]; then
     node app/index.js
 else
     npm run build

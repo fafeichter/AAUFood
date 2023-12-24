@@ -15,4 +15,5 @@ services:
       - redis
     environment:
       - FOOD_ENV=DEV
+      - FOOD_REDIS_HOST=redis
       - FOOD_CHAT_GPT_API_KEY=${FOOD_CHAT_GPT_API_KEY}

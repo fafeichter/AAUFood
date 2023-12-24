@@ -4,51 +4,72 @@
 
 'use strict';
 
-const EventEmitter = require('events');
 const scraper = require('../scraping/scraper');
 const restaurants = require('../config').restaurants;
 const winston = require('winston');
 const moment = require('moment');
-const urlCache = require('./urlCache');
 
 const menuKeyPrefix = "menu";
 
-class MenuCache extends EventEmitter {
+class MenuCache {
 
     init(redisClient) {
         this.client = redisClient;
     }
 
     update(forceSync = false) {
-        const now = moment();
-
-        urlCache.update();
-
         // wait for url cache to update (... avoid the hell of nested promises)
         setTimeout(() => {
-            winston.info('Updating menu caches...');
+            winston.info('Updating menu caches ...');
 
-            scraper.getMensaWeekPlan()
-                .then(weekPlan => this._updateIfNewer(restaurants.mensa.id, weekPlan));
+            this.updateMenu(restaurants.mensa.id);
 
             // sync these menus only a few times during Monday morning
-            if (forceSync || (now.isoWeekday() === 1 && now.hour() >= 6 && now.hour <= 10)) {
-                scraper.getHotspotWeekPlan()
-                    .then(weekPlan => this._updateIfNewer(restaurants.hotspot.id, weekPlan));
-                scraper.getBitsAndBytesWeekPlan()
-                    .then(weekPlan => this._updateIfNewer(restaurants.bitsAndBytes.id, weekPlan));
-                scraper.getUniWirtWeekPlan()
-                    .then(weekPlan => this._updateIfNewer(restaurants.uniWirt.id, weekPlan));
-                scraper.getUniPizzeriaWeekPlan()
-                    .then(weekPlan => this._updateIfNewer(restaurants.uniPizzeria.id, weekPlan));
-            }
-
-            // sync the Interspar menu only once on Monday night
-            if (forceSync || (now.isoWeekday() === 1 && now.hour() === 0)) {
-                scraper.getIntersparWeekPlan()
-                    .then(weekPlan => this._updateIfNewer(restaurants.interspar.id, weekPlan));
+            const now = moment();
+            if (forceSync || (now.isoWeekday() === 1 && now.hour() >= 6 && now.hour <= 11)) {
+                this.updateMenu(restaurants.uniWirt.id);
+                this.updateMenu(restaurants.bitsAndBytes.id);
+                this.updateMenu(restaurants.hotspot.id);
             }
         }, 10000);
+    }
+
+    updateMenu(restaurantId) {
+        let weekPlan = undefined;
+
+        switch (restaurantId) {
+            case restaurants.mensa.id: {
+                weekPlan = scraper.getMensaWeekPlan();
+                break;
+            }
+            case restaurants.interspar.id: {
+                weekPlan = scraper.getIntersparWeekPlan();
+                break;
+            }
+            case restaurants.uniWirt.id: {
+                weekPlan = scraper.getUniWirtWeekPlan();
+                break;
+            }
+            case restaurants.uniPizzeria.id: {
+                weekPlan = scraper.getUniPizzeriaWeekPlan();
+                break;
+            }
+            case restaurants.bitsAndBytes.id: {
+                weekPlan = scraper.getBitsAndBytesWeekPlan();
+                break;
+            }
+            case restaurants.hotspot.id: {
+                weekPlan = scraper.getHotspotWeekPlan();
+                break;
+            }
+            default: {
+                throw new Error(`Restaurant with id ${restaurantId} is not supported for menu sync`);
+            }
+        }
+
+        if (weekPlan) {
+            weekPlan.then(weekPlan => this._updateIfNewer(restaurantId, weekPlan));
+        }
     }
 
     _updateIfNewer(restaurantId, newWeekPlan) {
@@ -56,9 +77,10 @@ class MenuCache extends EventEmitter {
 
         this.getMenu(restaurantId).then(cachedMenu => {
             if (cachedMenu !== newWeekPlanJson) {
-                this._cacheMenu(restaurantId, newWeekPlan, newWeekPlanJson);
-                this.emit(`${menuKeyPrefix}:${restaurantId}`, newWeekPlanJson); //Should we emit all single menus?
-                winston.info(`"${restaurantId}" has changed the menu -> cache updated`)
+                this._cacheMenu(restaurantId, newWeekPlan, newWeekPlanJson)
+                    .then(() => {
+                        winston.info(`"${restaurantId}" has changed the menu -> cache updated`)
+                    });
             }
         });
     }

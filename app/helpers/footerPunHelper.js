@@ -25,7 +25,10 @@ function formatFooterPun(footerPun) {
 }
 
 function getRandomFooterPun() {
-    var rand = footerPuns[Math.floor(Math.random() * footerPuns.length)];
+    var rand = undefined;
+    do {
+        rand = footerPuns[Math.floor(Math.random() * footerPuns.length)];
+    } while (!rand.active);
     return formatFooterPun(rand);
 }
 

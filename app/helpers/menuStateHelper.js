@@ -11,8 +11,7 @@ const MenuState = {
 }
 
 function getMenuState(restaurantId, menu) {
-    let isOnBreak = breakHelper.isOnBreak(restaurantId);
-    if (isOnBreak)
+    if (breakHelper.isOnBreak(restaurantId))
         return MenuState.OnBreak;
 
     if (menu == null || menu.error)
@@ -35,7 +34,7 @@ function isDefaultState(menuState) {
 }
 
 module.exports = {
-    getMenuState: getMenuState,
-    MenuState: MenuState,
-    isDefaultState: isDefaultState,
+    getMenuState,
+    MenuState,
+    isDefaultState,
 };

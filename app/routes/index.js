@@ -25,6 +25,7 @@ router.get('/:day(-?\\d*)?', counter.countVisitors, function (req, res, next) {
     Promise.all([uniwirtPlan, uniWirtUrls, mensaPlan, mensaUrls, hotspotPlan, hotspotUrls, uniPizzeriaPlan, uniPizzeriaUrls, bitsAndBytesPlan, bitsAndBytesUrls, intersparPlan, intersparUrls])
         .then(results => {
             res.render('index', {
+                title: 'AAU Food',
                 uniWirt: {
                     menu: JSON.parse(results[0]) || [],
                     userFriendlyUrl: JSON.parse(results[1]).userFriendlyUrl
@@ -62,6 +63,7 @@ router.get('/city/:day(-?\\d*)?', counter.countVisitors, function (req, res, nex
     Promise.all([lapastaPlan, princsPlan])
         .then(results => {
             res.render('cityfood', {
+                title: 'City Food',
                 lapasta: JSON.parse(results[0]) || [],
                 princs: JSON.parse(results[1]) || [],
                 visitorStats: req.visitorStats,
@@ -80,6 +82,7 @@ router.get('/about', counter.countVisitors, function (req, res, next) {
     Promise.all([dailyVisitorsFact, overallVisitiorsFact, catFact])
         .then(facts => {
             res.render('about', {
+                title: 'AAU Food: About',
                 dailyVisitorsFact: facts[0],
                 overallVisitiorsFact: facts[1],
                 catFact: facts[2],
@@ -98,6 +101,7 @@ router.get('/print', counter.countVisitors, function (req, res, next) {
     Promise.all([uniwirtPlan, mensaPlan, hotspotPlan, uniPizzeriaPlan, bitsAndBytesPlan, intersparPlan])
         .then(results => {
             res.render('print', {
+                title: 'AAU Food: Wochenplan',
                 uniWirt: JSON.parse(results[0]),
                 mensa: JSON.parse(results[1]),
                 hotspot: JSON.parse(results[2]),

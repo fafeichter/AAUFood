@@ -6,7 +6,11 @@
         <%= breakInfo.textPre %>
         <br/>
         <span class="break-date">
-            <%= breakInfo.from %> - <%= breakInfo.to %>
+            <%= breakInfo.from.format('DD. MMMM YYYY') %>
+        </span>
+        -
+        <span class="break-date">
+            <%= breakInfo.to.format('DD. MMMM YYYY') %>
         </span>
         <br/>
         <%= breakInfo.textPost %>

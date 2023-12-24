@@ -26,7 +26,7 @@ bluebird.promisifyAll(redis.Multi.prototype);
 
 const session = require('express-session');
 const RedisStore = require('connect-redis')(session);
-const redisClient = redis.createClient({host: 'redis'});
+const redisClient = redis.createClient({host: process.env.FOOD_REDIS_HOST, port: 6379});
 const fileUpload = require('express-fileupload');
 const app = express();
 const requestLogger = (req, res, next) => {
@@ -90,8 +90,8 @@ app.locals.isOnBreak = breakHelper.isOnBreak;
 app.locals.getBreakInfo = breakHelper.getBreakInfo;
 app.locals.menuStateHelper = menuStateHelper;
 app.locals.catFactHeaderUrl = placeKittenHelper.catFactHeaderUrl;
-app.locals.isWinterThemeEnabled = () => {
-    const [from, to] = config.settings.winterTheme.map(d => moment(d, "DD.MM"));
+app.locals.isWinterThemeActive = () => {
+    const [from, to] = config.settings.winterTheme.map(date => moment(date, "DD.MM"));
     return !moment().isBetween(to, from);
 };
 
@@ -104,9 +104,16 @@ var server = app.listen(config.settings.nodePort, function () {
     menuCache.init(redisClient);
     visitorCache.init(redisClient, io);
 
-    let forceSync = process.env.FOOD_ENV === 'DEV' || process.env.FOOD_FORCE_SYNC_ON_STARTUP === 'true';
-    if (forceSync) {
+    urlCache.update();
+    setInterval(() => urlCache.update(), config.cache.urlCacheIntervall);
+
+    let forceMenuSync = process.env.FOOD_ENV === 'DEV' || process.env.FOOD_FORCE_SYNC_ON_STARTUP === 'true';
+    if (forceMenuSync) {
         menuCache.update(true);
     }
-    setInterval(() => menuCache.update(forceSync), config.cache.menuCacheIntervall);
+    setInterval(() => menuCache.update(forceMenuSync), config.cache.menuCacheIntervall);
+});
+
+urlCache.on('update', async (restaurantId) => {
+    menuCache.updateMenu(restaurantId);
 });

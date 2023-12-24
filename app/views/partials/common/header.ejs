@@ -23,7 +23,7 @@
     <meta name="twitter:description"
           content="Essensauswahl leicht gemacht! food.felf.io hilft beim Vergleich der angebotenen Mittagsmenüs ausgewählter Restaurants rund um die Alpen-Adria-Universität Klagenfurt.">
 
-    <title><%= title ? title : "AAU Food" %></title>
+    <title><%= title %></title>
 
     <link rel="icon" sizes="192x192" href="favicons/fav_192.png">
     <link rel="icon" sizes="194x194" href="favicons/fav_194.png">
@@ -32,6 +32,8 @@
     <link href="https://fonts.googleapis.com/css?family=Raleway:400,600" rel="stylesheet">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/solid.css"
           integrity="sha384-doPVn+s3XZuxfJLS7K1E+sUl25XMZtTVb3O46RyV3JDU2ehfc0Aks4z0ufFpA2WC" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/regular.css" crossorigin="anonymous"
+          integrity="sha384-zgXo5aJZxI4cJSgWSRtbv7q4JB6PzrmOTAWiZt2CqN25ifeKsCuQZ/pUNoPgjcTb">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/brands.css"
           integrity="sha384-tft2+pObMD7rYFMZlLUziw/8QrQeKHU4GYYvA5jVaggC74ZrYdTASheA2vckPcX5" crossorigin="anonymous">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/fontawesome.css"
@@ -40,6 +42,6 @@
 </head>
 <body>
 
-<% if(isWinterThemeEnabled()) { %>
+<% if(isWinterThemeActive()) { %>
     <canvas id="snowCanvas"></canvas>
 <% } %>

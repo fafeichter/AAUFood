@@ -41,4 +41,4 @@ app/public/dist
 .vscode
 
 # Dev
-setup_env_dev.sh
+setup-env-dev.sh
