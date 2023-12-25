@@ -106,12 +106,15 @@ var server = app.listen(config.settings.nodePort, function () {
 
     urlCache.update();
     setInterval(() => urlCache.update(), config.cache.urlCacheIntervall);
+    winston.debug("Successfully registered url cache updater");
 
     let forceMenuSync = process.env.FOOD_ENV === 'DEV' || process.env.FOOD_FORCE_SYNC_ON_STARTUP === 'true';
     if (forceMenuSync) {
+        winston.debug("Forcing menu sync on startup");
         menuCache.update(true);
     }
     setInterval(() => menuCache.update(forceMenuSync), config.cache.menuCacheIntervall);
+    winston.debug("Successfully registered menu cache updater");
 });
 
 urlCache.on('update', async (restaurantId) => {

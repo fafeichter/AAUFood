@@ -20,7 +20,7 @@ class MenuCache {
     update(forceSync = false) {
         // wait for url cache to update (... avoid the hell of nested promises)
         setTimeout(() => {
-            winston.info('Updating menu caches ...');
+            winston.debug('Updating menu caches ...');
 
             this.updateMenu(restaurants.mensa.id);
 
@@ -35,6 +35,8 @@ class MenuCache {
     }
 
     updateMenu(restaurantId) {
+        winston.debug(`Getting week plan for "${restaurantId}"`);
+
         let weekPlan = undefined;
 
         switch (restaurantId) {
@@ -63,12 +65,14 @@ class MenuCache {
                 break;
             }
             default: {
-                throw new Error(`Restaurant with id ${restaurantId} is not supported for menu sync`);
+                throw new Error(`Restaurant with id "${restaurantId}" is not supported for menu sync`);
             }
         }
 
         if (weekPlan) {
             weekPlan.then(weekPlan => this._updateIfNewer(restaurantId, weekPlan));
+        } else {
+            throw new Error(`There is no week plan for "${restaurantId}"`);
         }
     }
 
@@ -81,6 +85,8 @@ class MenuCache {
                     .then(() => {
                         winston.info(`"${restaurantId}" has changed the menu -> cache updated`)
                     });
+            } else {
+                winston.info(`"${restaurantId}" has not changed the menu`)
             }
         });
     }

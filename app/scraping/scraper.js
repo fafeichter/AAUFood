@@ -26,6 +26,7 @@ function getUniWirtWeekPlan() {
 }
 
 async function parseUniwirt(html) {
+    winston.debug(`Parsing of "${restaurants.uniWirt.id}" started ...`);
     var menu = scraperHelper.getWeekEmptyModel();
 
     var $ = cheerio.load(html);
@@ -36,19 +37,21 @@ async function parseUniwirt(html) {
 
     // Set outdated
     if (mondayDate.isValid() && mondayDate.format("DD.MM") !== timeHelper.getMondayDate()) {
+        winston.debug(`Menu of "${restaurants.uniWirt.id}" is outdated`);
         for (let i = 0; i < 6; i++) {
             let outdatedMenu = new Menu();
             outdatedMenu.outdated = true;
             menu[i] = outdatedMenu;
         }
     } else {
+        winston.debug(`Menu of "${restaurants.uniWirt.id}" is not outdated`);
         let relevantHtmlPart = $.html($(".slideContent.gu12 > div:nth-child(2),div:nth-child(3)"));
-        winston.debug(`${restaurants.uniWirt.name}: ${relevantHtmlPart}`);
+        winston.debug(`Relevant HTML content of "${restaurants.uniWirt.id}": ${relevantHtmlPart}`);
 
         if (relevantHtmlPart) {
             const gptResponse = await gptHelper.letMeChatGptThatForYou(relevantHtmlPart, restaurants.uniWirt.id);
             const gptResponseContent = gptResponse.data.choices[0].message.content;
-            winston.debug(`${restaurants.uniWirt.name}: ${gptResponseContent}`);
+            winston.debug(`ChatGPT response of "${restaurants.uniWirt.id}": ${gptResponseContent}`);
             const gptJsonAnswer = JSON.parse(gptResponseContent);
 
             ["MO", "DI", "MI", "DO", "FR"].forEach(function (dayString, dayInWeek) {
@@ -80,6 +83,7 @@ async function parseUniwirt(html) {
                 }
             });
         } else {
+            winston.debug(`Menu of "${restaurants.uniWirt.id}" is outdated`);
             menu = scraperHelper.invalidateMenus(menu);
         }
     }
@@ -98,6 +102,7 @@ function getMensaWeekPlan() {
 }
 
 function parseMensa(html) {
+    winston.debug(`Parsing of "${restaurants.mensa.id}" started ...`);
     var result = new Array(7);
 
     var $ = cheerio.load(html);
@@ -105,16 +110,19 @@ function parseMensa(html) {
     let mondayDateString = $(".weekdays .date").first().text();
     let mondayDate = moment(mondayDateString, "DD.MM.");
     if (mondayDate.isValid() && mondayDate.week() !== moment().week()) {
+        winston.debug(`Menu of "${restaurants.mensa.id}" is outdated`);
         for (let i = 0; i < 5; i++) {
             let outdatedMenu = new Menu();
             outdatedMenu.outdated = true;
             result[i] = outdatedMenu;
         }
     } else {
+        winston.debug(`Menu of "${restaurants.mensa.id}" is not outdated`);
         var leftMenuElements = $("#leftColumn .menu-left .menu-category > *");
         var rightMenuElements = $("#middleColumn .menu-category > *");
 
         var menuElements = $.merge(leftMenuElements, rightMenuElements);
+        winston.debug(`Relevant HTML content of "${restaurants.mensa.id}": ${$.html(menuElements)}`);
         var menuElementsGroupedByName = _.groupBy(menuElements, e => $(e).find("> :header").text());
 
         var foodsPerWeekday = [[], [], [], [], [], [], []]; //.fill only works with primitive values
@@ -218,17 +226,18 @@ function orderMensaMenusOfDay(menu, dayIndex) {
 }
 
 async function getUniPizzeriaWeekPlan() {
+    winston.debug(`Parsing of "${restaurants.uniPizzeria.id}" started ...`);
     let menu = scraperHelper.getWeekEmptyModel();
 
     const pdfHttpResult = await urlCache.getUrls(restaurants.uniPizzeria.id)
         .then(urls => crawler(JSON.parse(urls).scraperUrl));
 
-    winston.debug(`${restaurants.uniPizzeria.name}: ${pdfHttpResult.text}`);
+    winston.debug(`Relevant PDF content of "${restaurants.uniPizzeria.id}": ${pdfHttpResult.text}`);
 
     if (pdfHttpResult.text) {
         const gptResponse = await gptHelper.letMeChatGptThatForYou(pdfHttpResult.text, restaurants.uniPizzeria.id);
         const gptResponseContent = gptResponse.data.choices[0].message.content;
-        winston.debug(`${restaurants.uniPizzeria.name}: ${gptResponseContent}`);
+        winston.debug(`ChatGPT response of "${restaurants.uniPizzeria.id}": ${gptResponseContent}`);
         const gptJsonAnswer = JSON.parse(gptResponseContent);
 
         ["MO", "DI", "MI", "DO", "FR", "SA", "SO",].forEach(function (dayString, dayInWeek) {
@@ -251,6 +260,7 @@ async function getUniPizzeriaWeekPlan() {
             }
         });
     } else {
+        winston.debug(`Menu of "${restaurants.uniPizzeria.id}" is outdated`);
         menu = scraperHelper.invalidateMenus(menu);
     }
 
@@ -268,6 +278,7 @@ function getHotspotWeekPlan() {
 }
 
 async function parseHotspot(html) {
+    winston.debug(`Parsing of "${restaurants.hotspot.id}" started ...`);
     var result = new Array(7);
 
     var $ = cheerio.load(html);
@@ -277,8 +288,10 @@ async function parseHotspot(html) {
     var weekIsOutdated = !timeHelper.checkInputForCurrentWeek(heading)
 
     if (weekIsOutdated) {
+        winston.debug(`Menu of "${restaurants.hotspot.id}" is outdated`);
         result = scraperHelper.invalidateMenus(result);
     } else {
+        winston.debug(`Menu of "${restaurants.hotspot.id}" is not outdated`);
         var contentTable = mainContent.find("> table > tbody");
 
         // Hauptspeisen
@@ -302,12 +315,12 @@ async function parseHotspot(html) {
         })
 
         let relevantHtmlPart = $.html(contentTableDict);
-        winston.debug(`${restaurants.hotspot.name}: ${relevantHtmlPart}`);
+        winston.debug(`Relevant HTML content of "${restaurants.hotspot.id}": ${relevantHtmlPart}`);
 
         if (relevantHtmlPart) {
             const gptResponse = await gptHelper.letMeChatGptThatForYou(relevantHtmlPart, restaurants.hotspot.id);
             const gptResponseContent = gptResponse.data.choices[0].message.content;
-            winston.debug(`${restaurants.hotspot.name}: ${gptResponseContent}`);
+            winston.debug(`ChatGPT response of "${restaurants.hotspot.id}": ${gptResponseContent}`);
             const gptJsonAnswer = JSON.parse(gptResponseContent);
 
             for (let dayInWeek = 0; dayInWeek < 4; dayInWeek++) { // Hotspot currently only MON-THU
@@ -326,6 +339,7 @@ async function parseHotspot(html) {
                 result[dayInWeek] = menuForDay;
             }
         } else {
+            winston.debug(`Menu of "${restaurants.hotspot.id}" is outdated`);
             result = scraperHelper.invalidateMenus(result);
         }
     }
@@ -345,6 +359,7 @@ function getBitsAndBytesWeekPlan() {
 }
 
 async function parseBitsAndBytes(html) {
+    winston.debug(`Parsing of "${restaurants.bitsAndBytes.id}" started ...`);
     var result = new Array(7);
 
     var $ = cheerio.load(html);
@@ -354,8 +369,10 @@ async function parseBitsAndBytes(html) {
     var weekIsOutdated = !timeHelper.checkInputForCurrentWeek(heading)
 
     if (weekIsOutdated) {
+        winston.debug(`Menu of "${restaurants.bitsAndBytes.id}" is outdated`);
         result = scraperHelper.invalidateMenus(result);
     } else {
+        winston.debug(`Menu of "${restaurants.bitsAndBytes.id}" is not outdated`);
         var contentTable = mainContent.find("> table > tbody");
 
         // Hauptspeisen
@@ -379,13 +396,13 @@ async function parseBitsAndBytes(html) {
         })
 
         let relevantHtmlPart = $.html(contentTableDict);
-        winston.debug(`${restaurants.bitsAndBytes.name}: ${relevantHtmlPart}`);
+        winston.debug(`Relevant HTML content of "${restaurants.bitsAndBytes.id}": ${relevantHtmlPart}`);
 
         if (relevantHtmlPart) {
             const gptResponse = await gptHelper.letMeChatGptThatForYou(relevantHtmlPart, restaurants.bitsAndBytes.id);
             const gptResponseContent = gptResponse.data.choices[0].message.content;
             const gptJsonAnswer = JSON.parse(gptResponseContent);
-            winston.debug(`${restaurants.bitsAndBytes.name}: ${gptResponseContent}`);
+            winston.debug(`ChatGPT response of "${restaurants.bitsAndBytes.id}": ${gptResponseContent}`);
 
             for (let dayInWeek = 0; dayInWeek < 5; dayInWeek++) {
                 var menuForDay = new Menu();
@@ -403,6 +420,7 @@ async function parseBitsAndBytes(html) {
                 result[dayInWeek] = menuForDay;
             }
         } else {
+            winston.debug(`Menu of "${restaurants.bitsAndBytes.id}" is outdated`);
             result = scraperHelper.invalidateMenus(result);
         }
     }
@@ -415,17 +433,18 @@ async function parseBitsAndBytes(html) {
 }
 
 async function getIntersparWeekPlan() {
+    winston.debug(`Parsing of "${restaurants.interspar.id}" started ...`);
     let menu = scraperHelper.getWeekEmptyModel();
 
     const pdfHttpResult = await urlCache.getUrls(restaurants.interspar.id)
         .then(urls => crawler(JSON.parse(urls).scraperUrl));
 
-    winston.debug(`${restaurants.interspar.name}: ${pdfHttpResult.text}`);
+    winston.debug(`Relevant PDF content of "${restaurants.interspar.id}": ${pdfHttpResult.text}`);
 
     if (pdfHttpResult.text) {
         const gptResponse = await gptHelper.letMeChatGptThatForYou(pdfHttpResult.text, restaurants.interspar.id);
         const gptResponseContent = gptResponse.data.choices[0].message.content;
-        winston.debug(`${restaurants.interspar.name}: ${gptResponseContent}`);
+        winston.debug(`ChatGPT response of "${restaurants.interspar.id}": ${gptResponseContent}`);
         const gptJsonAnswer = JSON.parse(gptResponseContent);
 
         for (let i = 0; i < 5; i++) {
@@ -460,6 +479,7 @@ async function getIntersparWeekPlan() {
                 }
             } catch (error) {
                 winston.error(error);
+                winston.debug(`Menu of "${restaurants.interspar.id}" on day with index ${i} is outdated`);
                 scraperHelper.invalidateMenu(menu, i);
             }
 
@@ -508,10 +528,12 @@ async function getIntersparWeekPlan() {
                 winston.error(error);
             }
             if (menu[i].mains.length === 0) {
+                winston.debug(`Menu of "${restaurants.interspar.id}" on day with index ${i} is outdated`);
                 scraperHelper.invalidateMenu(menu, i);
             }
         }
     } else {
+        winston.debug(`Menu of "${restaurants.interspar.id}" is outdated`);
         menu = scraperHelper.invalidateMenus(menu);
     }
 

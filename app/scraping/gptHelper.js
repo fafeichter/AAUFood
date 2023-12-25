@@ -31,7 +31,7 @@ async function letMeChatGptThatForYou(text, restaurantId) {
             break;
         }
         default: {
-            throw new Error(`Restaurant with id ${restaurantId} is not supported for parsing with ChatGPT`);
+            throw new Error(`Restaurant with id "${restaurantId}" is not supported for parsing with ChatGPT`);
         }
     }
 

@@ -20,11 +20,12 @@ class UrlCache extends EventEmitter {
     }
 
     update() {
-        winston.info('Updating url caches ...');
+        winston.debug('Updating dynamic url caches ...');
         this._setDynamicUrls();
     }
 
     _setStaticUrls() {
+        winston.debug('Updating static url caches ...');
         this._updateIfNewer(restaurants.mensa.id, {
             scraperUrl: "https://menu.mensen.at/index/index/locid/45",
             userFriendlyUrl: "https://menu.mensen.at/index/index/locid/45"
@@ -83,6 +84,8 @@ class UrlCache extends EventEmitter {
                     this.emit('update', restaurantId);
                     winston.info(`"${restaurantId}" has changed the url -> cache updated`);
                 });
+            } else {
+                winston.info(`"${restaurantId}" has not changed the url`);
             }
         });
     }
