@@ -2,24 +2,25 @@
 const config = require('../config');
 const moment = require('moment');
 
-function isOnBreak(restaurantId) {
+function isOnBreak(restaurantId, day = moment().weekday()) {
     if (restaurantId == null) {
         return false;
     } else {
-        return getBreakInfo(restaurantId) != null;
+        return getBreakInfo(restaurantId, day) != null;
     }
 }
 
-function getBreakInfo(restaurantId) {
+function getBreakInfo(restaurantId, day) {
     let breakInfo = null;
-    const now = moment();
+    const dayOfWeek = moment().day(day + 1);
 
     if (restaurantId != null) {
         const breakInfos = config.onBreak[restaurantId];
         if (breakInfos) {
-            for (let i = 0; i <= breakInfos.length; i++) {
+            for (let i = 0; i < breakInfos.length; i++) {
                 const breakInfoTmp = breakInfos[i];
-                if (now.isSameOrAfter(breakInfoTmp.from) && now.isSameOrBefore(breakInfoTmp.to)) {
+                if (dayOfWeek.isSameOrAfter(breakInfoTmp.from) &&
+                    dayOfWeek.isSameOrBefore(breakInfoTmp.to.endOf('day'))) {
                     breakInfo = breakInfoTmp;
                     break;
                 }

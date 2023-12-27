@@ -19,7 +19,15 @@ module.exports = {
         nodePort: 3000,
     },
     onBreak: {
-        mensa: [new BreakInfo("Wir haben vom", moment("22.12.2023", "DD.MM.YYYY"), moment("07.01.2024", "DD.MM.YYYY"), "geschlossen.", "fas fa-snowboarding")],
+        mensa: [
+            new BreakInfo("Wir haben vom", moment("22.12.2023", "DD.MM.YYYY"), moment("05.01.2024", "DD.MM.YYYY"), "geschlossen.", "fas fa-snowboarding")
+        ],
+        "bits-and-bytes": [
+            new BreakInfo("Wir haben vom", moment("27.12.2023", "DD.MM.YYYY"), moment("28.12.2023", "DD.MM.YYYY"), "geschlossen.", "fas fa-snowboarding")
+        ],
+        hotspot: [
+            new BreakInfo("Wir haben vom", moment("27.12.2023", "DD.MM.YYYY"), moment("04.01.2024", "DD.MM.YYYY"), "geschlossen.", "fas fa-snowboarding")
+        ],
     },
     cache: {
         // time in milliseconds -> 1 hour

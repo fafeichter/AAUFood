@@ -18,7 +18,7 @@
     </h3>
 
     <div class="card-body">
-        <% menuState = menuStateHelper.getMenuState(restaurantId, menu) %>
+        <% menuState = menuStateHelper.getMenuState(restaurantId, menu, day) %>
         <% if(!menuStateHelper.isDefaultState(menuState)) { %>
             <%- include('infos/infos', { restaurantId, restaurantFriendlyUrl, menuState }) %>
         <% } else if(combinedMenuList){ %>

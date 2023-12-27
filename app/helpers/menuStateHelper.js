@@ -10,8 +10,8 @@ const MenuState = {
     Error: 6,
 }
 
-function getMenuState(restaurantId, menu) {
-    if (breakHelper.isOnBreak(restaurantId))
+function getMenuState(restaurantId, menu, day) {
+    if (breakHelper.isOnBreak(restaurantId, day))
         return MenuState.OnBreak;
 
     if (menu == null || menu.error)
