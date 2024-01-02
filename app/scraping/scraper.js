@@ -80,11 +80,14 @@ async function parseUniwirt(html) {
 
                 if (menuForDay.mains.length > 0) {
                     menu[dayInWeek] = menuForDay;
+                } else {
+                    winston.debug(`Menu of "${restaurants.uniWirt.id}" on day with index ${dayInWeek} is outdated`);
+                    scraperHelper.setDayToOutdated(menu, dayInWeek);
                 }
             });
         } else {
             winston.debug(`Menu of "${restaurants.uniWirt.id}" is outdated`);
-            menu = scraperHelper.invalidateMenus(menu);
+            menu = scraperHelper.setWeekPlanToOutdated(menu);
         }
     }
 
@@ -257,11 +260,14 @@ async function getUniPizzeriaWeekPlan() {
             if (mainCourse.entries.length > 0) {
                 menuForDay.mains.push(mainCourse);
                 menu[dayInWeek] = menuForDay;
+            } else {
+                winston.debug(`Menu of "${restaurants.uniPizzeria.id}" on day with index ${dayInWeek} is outdated`);
+                scraperHelper.setDayToOutdated(menu, dayInWeek);
             }
         });
     } else {
         winston.debug(`Menu of "${restaurants.uniPizzeria.id}" is outdated`);
-        menu = scraperHelper.invalidateMenus(menu);
+        menu = scraperHelper.setWeekPlanToOutdated(menu);
     }
 
     menu[5].alacarte = true;
@@ -289,7 +295,7 @@ async function parseHotspot(html) {
 
     if (weekIsOutdated) {
         winston.debug(`Menu of "${restaurants.hotspot.id}" is outdated`);
-        result = scraperHelper.invalidateMenus(result);
+        result = scraperHelper.setWeekPlanToOutdated(result);
     } else {
         winston.debug(`Menu of "${restaurants.hotspot.id}" is not outdated`);
         var contentTable = mainContent.find("> table > tbody");
@@ -336,11 +342,16 @@ async function parseHotspot(html) {
                     menuForDay.mains.push(mainCourse);
                 }
 
-                result[dayInWeek] = menuForDay;
+                if (menuForDay.mains.length > 0) {
+                    result[dayInWeek] = menuForDay;
+                } else {
+                    winston.debug(`Menu of "${restaurants.hotspot.id}" on day with index ${dayInWeek} is outdated`);
+                    scraperHelper.setDayToOutdated(menu, dayInWeek);
+                }
             }
         } else {
             winston.debug(`Menu of "${restaurants.hotspot.id}" is outdated`);
-            result = scraperHelper.invalidateMenus(result);
+            result = scraperHelper.setWeekPlanToOutdated(result);
         }
     }
 
@@ -370,7 +381,7 @@ async function parseBitsAndBytes(html) {
 
     if (weekIsOutdated) {
         winston.debug(`Menu of "${restaurants.bitsAndBytes.id}" is outdated`);
-        result = scraperHelper.invalidateMenus(result);
+        result = scraperHelper.setWeekPlanToOutdated(result);
     } else {
         winston.debug(`Menu of "${restaurants.bitsAndBytes.id}" is not outdated`);
         var contentTable = mainContent.find("> table > tbody");
@@ -417,11 +428,16 @@ async function parseBitsAndBytes(html) {
                     menuForDay.mains.push(mainCourse);
                 }
 
-                result[dayInWeek] = menuForDay;
+                if (menuForDay.mains.length > 0) {
+                    result[dayInWeek] = menuForDay;
+                } else {
+                    winston.debug(`Menu of "${restaurants.uniWirt.id}" on day with index ${dayInWeek} is outdated`);
+                    scraperHelper.setDayToOutdated(result, dayInWeek);
+                }
             }
         } else {
             winston.debug(`Menu of "${restaurants.bitsAndBytes.id}" is outdated`);
-            result = scraperHelper.invalidateMenus(result);
+            result = scraperHelper.setWeekPlanToOutdated(result);
         }
     }
 
@@ -480,7 +496,7 @@ async function getIntersparWeekPlan() {
             } catch (error) {
                 winston.error(error);
                 winston.debug(`Menu of "${restaurants.interspar.id}" on day with index ${i} is outdated`);
-                scraperHelper.invalidateMenu(menu, i);
+                scraperHelper.setDayToOutdated(menu, i);
             }
 
             if (klassischGptDish) {
@@ -529,12 +545,12 @@ async function getIntersparWeekPlan() {
             }
             if (menu[i].mains.length === 0) {
                 winston.debug(`Menu of "${restaurants.interspar.id}" on day with index ${i} is outdated`);
-                scraperHelper.invalidateMenu(menu, i);
+                scraperHelper.setDayToOutdated(menu, i);
             }
         }
     } else {
         winston.debug(`Menu of "${restaurants.interspar.id}" is outdated`);
-        menu = scraperHelper.invalidateMenus(menu);
+        menu = scraperHelper.setWeekPlanToOutdated(menu);
     }
 
     menu[5].closed = true;
