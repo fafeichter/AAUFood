@@ -31,6 +31,11 @@ class MenuCache {
                 this.updateMenu(restaurants.bitsAndBytes.id);
                 this.updateMenu(restaurants.hotspot.id);
             }
+
+            if (forceSync) {
+                this.updateMenu(restaurants.interspar.id);
+                this.updateMenu(restaurants.uniPizzeria.id);
+            }
         }, 10000);
     }
 
