@@ -431,7 +431,7 @@ async function parseBitsAndBytes(html) {
                 if (menuForDay.mains.length > 0) {
                     result[dayInWeek] = menuForDay;
                 } else {
-                    winston.debug(`Menu of "${restaurants.uniWirt.id}" on day with index ${dayInWeek} is outdated`);
+                    winston.debug(`Menu of "${restaurants.bitsAndBytes.id}" on day with index ${dayInWeek} is outdated`);
                     scraperHelper.setDayToOutdated(result, dayInWeek);
                 }
             }
