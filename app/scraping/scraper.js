@@ -468,27 +468,27 @@ async function getIntersparWeekPlan() {
             try {
                 switch (i) {
                     case 0: {
-                        klassischGptDish = gptJsonAnswer.dishes[1];
-                        vegetarischGptDish = gptJsonAnswer.dishes[2];
-                        break;
-                    }
-                    case 1: {
-                        klassischGptDish = gptJsonAnswer.dishes[4];
-                        vegetarischGptDish = gptJsonAnswer.dishes[5];
-                        break;
-                    }
-                    case 2: {
                         klassischGptDish = gptJsonAnswer.dishes[8];
                         vegetarischGptDish = gptJsonAnswer.dishes[9];
                         break;
                     }
-                    case 3: {
+                    case 1: {
                         klassischGptDish = gptJsonAnswer.dishes[6];
                         vegetarischGptDish = gptJsonAnswer.dishes[7];
                         break;
                     }
+                    case 2: {
+                        klassischGptDish = gptJsonAnswer.dishes[4];
+                        vegetarischGptDish = gptJsonAnswer.dishes[5];
+                        break;
+                    }
+                    case 3: {
+                        klassischGptDish = gptJsonAnswer.dishes[2];
+                        vegetarischGptDish = gptJsonAnswer.dishes[3];
+                        break;
+                    }
                     case 4: {
-                        klassischGptDish = gptJsonAnswer.dishes[3];
+                        klassischGptDish = gptJsonAnswer.dishes[1];
                         vegetarischGptDish = gptJsonAnswer.dishes[0];
                         break;
                     }
