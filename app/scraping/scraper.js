@@ -528,7 +528,7 @@ async function getIntersparWeekPlan() {
             try {
                 let monatsHitMain = undefined
                 const monatsHitGptDish = gptJsonAnswer.monthly_special ||
-                gptJsonAnswer.dishes.length === 11 ? gptJsonAnswer.dishes[10] : undefined;
+                    (gptJsonAnswer.dishes.length === 11 ? gptJsonAnswer.dishes[10] : undefined);
                 if (monatsHitGptDish) {
                     monatsHitMain = new Food('Monats-Hit', monatsHitGptDish.price || 10.9);
                     const monatsHitFood = new Food(`${monatsHitGptDish.name}${monatsHitGptDish.description ? ' ' +
