@@ -17,6 +17,7 @@ const breakHelper = require('./helpers/breakHelper');
 const placeKittenHelper = require('./helpers/placeKittenHelper');
 const menuStateHelper = require('./helpers/menuStateHelper');
 const moment = require('moment');
+const cron = require('node-cron');
 
 require('moment/locale/de');
 moment.locale('de');
@@ -103,6 +104,11 @@ var server = app.listen(config.settings.nodePort, function () {
     urlCache.init(redisClient);
     menuCache.init(redisClient);
     visitorCache.init(redisClient, io);
+
+    cron.schedule('0 0 * * MON', () => {
+        menuCache.resetAll();
+    });
+    winston.debug("Successfully registered menu cache resetter");
 
     urlCache.update();
     setInterval(() => urlCache.update(), config.cache.urlCacheIntervall);

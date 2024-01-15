@@ -8,6 +8,7 @@ const scraper = require('../scraping/scraper');
 const restaurants = require('../config').restaurants;
 const winston = require('winston');
 const moment = require('moment');
+const scraperHelper = require('../scraping/scraperHelper')
 
 const menuKeyPrefix = "menu";
 
@@ -78,6 +79,16 @@ class MenuCache {
             weekPlan.then(weekPlan => this._updateIfNewer(restaurantId, weekPlan));
         } else {
             throw new Error(`There is no week plan for "${restaurantId}"`);
+        }
+    }
+
+    resetAll() {
+        winston.info("Starting to reset all menu caches");
+        for (let restaurant in restaurants) {
+            const restaurantId = restaurants[restaurant].id;
+            winston.info(`Starting to reset menu cache for "${restaurantId}"`);
+            const outdatedMenu = scraperHelper.setWeekPlanToOutdated(scraperHelper.getWeekEmptyModel());
+            this._updateIfNewer(restaurantId, outdatedMenu);
         }
     }
 
