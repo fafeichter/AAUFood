@@ -84,10 +84,10 @@ class MenuCache {
 
     resetAll() {
         winston.info("Starting to reset all menu caches");
+        const outdatedMenu = scraperHelper.setWeekPlanToOutdated(scraperHelper.getWeekEmptyModel());
         for (let restaurant in restaurants) {
             const restaurantId = restaurants[restaurant].id;
             winston.info(`Starting to reset menu cache for "${restaurantId}"`);
-            const outdatedMenu = scraperHelper.setWeekPlanToOutdated(scraperHelper.getWeekEmptyModel());
             this._updateIfNewer(restaurantId, outdatedMenu);
         }
     }
