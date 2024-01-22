@@ -76,14 +76,7 @@ class MenuCache {
         }
 
         if (weekPlan) {
-            weekPlan.then(weekPlan => {
-                if (weekPlan.mains) {
-                    this._updateIfNewer(restaurantId, weekPlan);
-                } else {
-                    winston.debug(`Menu of restaurant with id "${restaurantId}" ist empty -> 
-                        the old menu will not be overridden`)
-                }
-            });
+            weekPlan.then(weekPlan => this._updateIfNewer(restaurantId, weekPlan));
         } else {
             throw new Error(`There is no week plan for "${restaurantId}"`);
         }
