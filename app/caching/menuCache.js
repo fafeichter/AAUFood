@@ -84,11 +84,13 @@ class MenuCache {
 
     resetAll() {
         winston.info("Starting to reset all menu caches");
-        const outdatedMenu = scraperHelper.setWeekPlanToOutdated(scraperHelper.getWeekEmptyModel());
         for (let restaurant in restaurants) {
             const restaurantId = restaurants[restaurant].id;
             winston.info(`Starting to reset menu cache for "${restaurantId}"`);
-            this._updateIfNewer(restaurantId, outdatedMenu);
+            this._deleteMenu(restaurantId)
+                .then(() => {
+                    winston.info(`Resetted menu cache for "${restaurantId}"`)
+                });
         }
     }
 
@@ -109,12 +111,24 @@ class MenuCache {
 
     _cacheMenu(restaurantId, weekPlan, weekPlanJson) {
         var promises = [];
-        promises.push(this.client.setAsync(`${menuKeyPrefix}:${restaurantId}`, weekPlanJson)); //Store whole weekPlan
+        promises.push(this.client.setAsync(`${menuKeyPrefix}:${restaurantId}`, weekPlanJson)); // save whole weekPlan
 
         for (let day = 0; day < weekPlan.length; day++) {
             let key = `${menuKeyPrefix}:${restaurantId}:${day}`;
             let menuJson = JSON.stringify(weekPlan[day]);
             promises.push(this.client.setAsync(key, menuJson));
+        }
+
+        return Promise.all(promises);
+    }
+
+    _deleteMenu(restaurantId) {
+        var promises = [];
+        promises.push(this.client.delAsync(`${menuKeyPrefix}:${restaurantId}`)); // delete whole weekPlan
+
+        for (let day = 0; day < 7; day++) {
+            let key = `${menuKeyPrefix}:${restaurantId}:${day}`;
+            promises.push(this.client.delAsync(key));
         }
 
         return Promise.all(promises);
