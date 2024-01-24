@@ -27,7 +27,7 @@ class MenuCache {
 
             // sync these menus only a few times during Monday morning
             const now = moment();
-            if (forceSync || (now.isoWeekday() === 1 && now.hour() >= 6 && now.hour <= 11)) {
+            if (forceSync || (now.isoWeekday() === 1 && now.hour() >= 6 && now.hour() <= 11)) {
                 this.updateMenu(restaurants.uniWirt.id);
                 this.updateMenu(restaurants.bitsAndBytes.id);
                 this.updateMenu(restaurants.hotspot.id);
