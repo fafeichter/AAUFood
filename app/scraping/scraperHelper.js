@@ -19,10 +19,10 @@ function setWeekPlanToOutdated(weekPlan) {
     return weekPlan;
 }
 
-function setDayToOutdated(weekPlan, i) {
-    let outdatedMenu = new Menu();
-    outdatedMenu.outdated = true;
-    weekPlan[i] = outdatedMenu;
+function setDayToError(weekPlan, i) {
+    let errorMenu = new Menu();
+    errorMenu.error = true;
+    weekPlan[i] = errorMenu;
 
     return weekPlan;
 }
@@ -171,7 +171,7 @@ function getWeekErrorModel() {
 module.exports = {
     setErrorOnEmpty,
     setWeekPlanToOutdated,
-    setDayToOutdated,
+    setDayToError,
     sanitizeName,
     capitalizeFirstLetter,
     decapitalize,

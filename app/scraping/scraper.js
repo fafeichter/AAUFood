@@ -81,8 +81,8 @@ async function parseUniwirt(html) {
                 if (menuForDay.mains.length > 0) {
                     menu[dayInWeek] = menuForDay;
                 } else {
-                    winston.debug(`Menu of "${restaurants.uniWirt.id}" on day with index ${dayInWeek} is outdated`);
-                    scraperHelper.setDayToOutdated(menu, dayInWeek);
+                    winston.debug(`There is no menu for "${restaurants.uniWirt.id}" on day with index ${dayInWeek}`);
+                    scraperHelper.setDayToError(menu, dayInWeek);
                 }
             });
         } else {
@@ -261,8 +261,8 @@ async function getUniPizzeriaWeekPlan() {
                 menuForDay.mains.push(mainCourse);
                 menu[dayInWeek] = menuForDay;
             } else {
-                winston.debug(`Menu of "${restaurants.uniPizzeria.id}" on day with index ${dayInWeek} is outdated`);
-                scraperHelper.setDayToOutdated(menu, dayInWeek);
+                winston.debug(`There is no menu for "${restaurants.uniPizzeria.id}" on day with index ${dayInWeek}`);
+                scraperHelper.setDayToError(menu, dayInWeek);
             }
         });
     } else {
@@ -345,8 +345,8 @@ async function parseHotspot(html) {
                 if (menuForDay.mains.length > 0) {
                     result[dayInWeek] = menuForDay;
                 } else {
-                    winston.debug(`Menu of "${restaurants.hotspot.id}" on day with index ${dayInWeek} is outdated`);
-                    scraperHelper.setDayToOutdated(menu, dayInWeek);
+                    winston.debug(`There is no menu for "${restaurants.hotspot.id}" on day with index ${dayInWeek}`);
+                    scraperHelper.setDayToError(menu, dayInWeek);
                 }
             }
         } else {
@@ -431,8 +431,8 @@ async function parseBitsAndBytes(html) {
                 if (menuForDay.mains.length > 0) {
                     result[dayInWeek] = menuForDay;
                 } else {
-                    winston.debug(`Menu of "${restaurants.bitsAndBytes.id}" on day with index ${dayInWeek} is outdated`);
-                    scraperHelper.setDayToOutdated(result, dayInWeek);
+                    winston.debug(`There is no menu for "${restaurants.bitsAndBytes.id}" on day with index ${dayInWeek}`);
+                    scraperHelper.setDayToError(result, dayInWeek);
                 }
             }
         } else {
@@ -463,10 +463,10 @@ async function getIntersparWeekPlan() {
         winston.debug(`ChatGPT response of "${restaurants.interspar.id}": ${gptResponseContent}`);
         const gptJsonAnswer = JSON.parse(gptResponseContent);
 
-        for (let i = 0; i < 5; i++) {
+        for (let dayInWeek = 0; dayInWeek < 5; dayInWeek++) {
             let klassischGptDish, vegetarischGptDish;
             try {
-                switch (i) {
+                switch (dayInWeek) {
                     case 0: {
                         klassischGptDish = gptJsonAnswer.dishes[8];
                         vegetarischGptDish = gptJsonAnswer.dishes[9];
@@ -495,8 +495,8 @@ async function getIntersparWeekPlan() {
                 }
             } catch (error) {
                 winston.error(error);
-                winston.debug(`Menu of "${restaurants.interspar.id}" on day with index ${i} is outdated`);
-                scraperHelper.setDayToOutdated(menu, i);
+                winston.debug(`There is no menu for "${restaurants.interspar.id}" on day with index ${dayInWeek}`);
+                scraperHelper.setDayToError(menu, dayInWeek);
             }
 
             if (klassischGptDish) {
@@ -506,7 +506,7 @@ async function getIntersparWeekPlan() {
                             klassischGptDish.description : ''}`,
                         null, false, false, klassischGptDish.allergens);
                     klassischMain.entries = [klassischFood];
-                    menu[i].mains.push(klassischMain)
+                    menu[dayInWeek].mains.push(klassischMain)
                 } catch (error) {
                     winston.error(error);
                 }
@@ -519,7 +519,7 @@ async function getIntersparWeekPlan() {
                         null, false, false, vegetarischGptDish.allergens);
                     vegetarischMain.entries = [vegetarischFood];
 
-                    menu[i].mains.push(vegetarischMain)
+                    menu[dayInWeek].mains.push(vegetarischMain)
                 } catch (error) {
                     winston.error(error);
                 }
@@ -538,14 +538,14 @@ async function getIntersparWeekPlan() {
                 }
 
                 if (monatsHitMain) {
-                    menu[i].mains.push(monatsHitMain)
+                    menu[dayInWeek].mains.push(monatsHitMain)
                 }
             } catch (error) {
                 winston.error(error);
             }
-            if (menu[i].mains.length === 0) {
-                winston.debug(`Menu of "${restaurants.interspar.id}" on day with index ${i} is outdated`);
-                scraperHelper.setDayToOutdated(menu, i);
+            if (menu[dayInWeek].mains.length === 0) {
+                winston.debug(`There is no menu for "${restaurants.interspar.id}" on day with index ${dayInWeek}`);
+                scraperHelper.setDayToError(menu, dayInWeek);
             }
         }
     } else {
