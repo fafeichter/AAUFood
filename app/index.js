@@ -83,6 +83,10 @@ app.use(function (err, req, res, next) {
     res.json({error: err.message});
 });
 
+process.on('unhandledRejection', (reason) => {
+    winston.error(reason);
+});
+
 //Locals for usage in views
 app.locals.moment = moment;
 app.locals.timeHelper = timeHelper;
