@@ -55,7 +55,7 @@ const restaurants = {
                   maxLength: 1
               price:
                 type: double
-              day: # must be one of ["MO", "DI", "MI", "DO", "FR", "SA", "SO"]
+              day: # must be always one of ["MO", "DI", "MI", "DO", "FR", "SA", "SO"]
                 type: string
                 maxLength: 2
           soup:
@@ -64,7 +64,7 @@ const restaurants = {
             properties:
               name: # e.g. "Klare Rindsuppe"; keep apostrophes, double quotes and round brackets and the text within them
                 type: string
-              day: # must be one of ["MO", "DI", "MI", "DO", "FR", "SA", "SO"]
+              day: # must be always one of ["MO", "DI", "MI", "DO", "FR", "SA", "SO"]
                 type: string
                 maxLength: 2
                 
@@ -94,7 +94,7 @@ const restaurants = {
                   maxLength: 1
               price:
                 type: double
-              day: # must be one of ["MO", "DI", "MI", "DO", "FR", "SA", "SO"]
+              day: # must be always one of ["MO", "DI", "MI", "DO", "FR", "SA", "SO"]
                 type: string
                 maxLength: 2
                 
