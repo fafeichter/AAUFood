@@ -501,7 +501,7 @@ async function getIntersparWeekPlan() {
 
             if (klassischGptDish) {
                 try {
-                    const klassischMain = new Food('Menü Klassisch', klassischGptDish.price || 8.4);
+                    const klassischMain = new Food('Menü Klassisch', klassischGptDish.price || 8.9);
                     const klassischFood = new Food(`${klassischGptDish.name}${klassischGptDish.description ? ' ' +
                             klassischGptDish.description : ''}`,
                         null, false, false, klassischGptDish.allergens);
