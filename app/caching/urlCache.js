@@ -55,10 +55,31 @@ class UrlCache extends EventEmitter {
             .then(html => {
                 // fallback to overview page if we can not extract the dynamic url for the week menu
                 let uniPizzeriaUrl = this._parseUniPizzeriaUrl(html) || "https://uni-pizzeria.at/essen/mittagsteller-2/";
-                this._updateIfNewer(restaurants.uniPizzeria.id, {
-                    scraperUrl: uniPizzeriaUrl,
-                    userFriendlyUrl: uniPizzeriaUrl
-                });
+
+                if (uniPizzeriaUrl.includes("https://acrobat.adobe.com/")) {
+                    const dynamicPart = uniPizzeriaUrl.split("https://acrobat.adobe.com/id/")[1];
+                    const options = {
+                        url: `https://send-asr.acrobat.com/a/invitation/${dynamicPart}/asset/asset-0/preview?withDownloadUrl=true`,
+                        headers: {
+                            'Accept': 'application/vnd.adobe.skybox+json;version=1'
+                        }
+                    };
+                    request.getAsync(options)
+                        .then(res => res.body)
+                        .then(res => JSON.parse(res))
+                        .then(res => {
+                            let urlToPdf = res["download_url"];
+                            this._updateIfNewer(restaurants.uniPizzeria.id, {
+                                scraperUrl: urlToPdf,
+                                userFriendlyUrl: urlToPdf
+                            });
+                        })
+                } else {
+                    this._updateIfNewer(restaurants.uniPizzeria.id, {
+                        scraperUrl: uniPizzeriaUrl,
+                        userFriendlyUrl: uniPizzeriaUrl
+                    });
+                }
             });
     }
 
