@@ -36,11 +36,20 @@ async function letMeChatGptThatForYou(text, restaurantId) {
     }
 
     const payload = {
-        model: "gpt-3.5-turbo",
-        messages: [{
-            role: "user",
-            content: content
-        }]
+        model: "gpt-3.5-turbo-0125",
+        response_format: {
+            type: "json_object"
+        },
+        messages: [
+            {
+                role: "system",
+                content: "You are a helpful assistant designed to output JSON."
+            },
+            {
+                role: "user",
+                content: content
+            }
+        ],
     };
 
     return await axios.post(gptUrl, payload, {headers});
