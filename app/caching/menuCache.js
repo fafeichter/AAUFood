@@ -35,7 +35,7 @@ class MenuCache {
 
             if (forceSync) {
                 this.updateMenu(restaurants.interspar.id);
-                this.updateMenu(restaurants.uniPizzeria.id);
+                // this.updateMenu(restaurants.uniPizzeria.id);
             }
         }, 10000);
     }
