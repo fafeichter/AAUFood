@@ -61,7 +61,11 @@ module.exports = {
         hotspot: {
             id: "hotspot",
             name: "Hotspot"
-        }
+        },
+        daMario: {
+            id: "da-mario",
+            name: "Da Mario"
+        },
 
     },
     cookie: {

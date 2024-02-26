@@ -25,12 +25,15 @@ class MenuCache {
 
             this.updateMenu(restaurants.mensa.id);
 
-            // sync these menus only after midnight and a few times during Monday morning
             const now = moment();
             if (forceSync || (now.isoWeekday() === 1 && (now.hour() === 0 || (now.hour() >= 6 && now.hour() <= 11)))) {
                 this.updateMenu(restaurants.uniWirt.id);
                 this.updateMenu(restaurants.bitsAndBytes.id);
                 this.updateMenu(restaurants.hotspot.id);
+            }
+
+            if (forceSync || (now.isoWeekday() === 1 && now.hour() === 0)) {
+                this.updateMenu(restaurants.daMario.id);
             }
 
             if (forceSync) {
@@ -68,6 +71,10 @@ class MenuCache {
             }
             case restaurants.hotspot.id: {
                 weekPlan = scraper.getHotspotWeekPlan();
+                break;
+            }
+            case restaurants.daMario.id: {
+                weekPlan = scraper.getDaMarioWeekPlan();
                 break;
             }
             default: {

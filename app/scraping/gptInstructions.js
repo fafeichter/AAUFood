@@ -27,6 +27,7 @@ const restaurants = {
                 type: double
                 
         ${text}`,
+
     uniWirt: (text) => `
         use the following openapi yaml schema - while using the specified hints on how to get the desired data - to parse the text afterwards into a response containing only valid json without any other text or explanations
         
@@ -99,6 +100,7 @@ const restaurants = {
                 maxLength: 2
                 
         ${text}`,
+
     bitsAndBytes: (text) => `
         use the following openapi yaml schema - while using the specified hints on how to get the desired data - to parse the text afterwards into a response containing only valid json without any other text or explanations
         
@@ -124,7 +126,31 @@ const restaurants = {
               price:
                 type: double
                 
-        ${text}`
+        ${text}`,
+
+    daMario: (text) => `
+        use the following openapi yaml schema - while using the specified hints on how to get the desired data - to parse the text afterwards into a response containing only valid json without any other text or explanations
+        
+        definitions:
+          required: [pizza, pasta]
+          pizza:
+            type: array
+            items:
+              $ref: #/definitions/dish
+          pasta:
+            type: array
+            items:
+              $ref: #/definitions/dish
+          dish:
+            type: object
+            required: [name, price]
+            properties:
+              name: # keep apostrophes, double quotes and round brackets and the text within them; do not include allergens wich are typically at the end e.g. "GLO" or "A,C,G,L,M,O", remove all Roman numerals at the start
+                type: string
+              price:
+                type: double
+                
+        ${text}`,
 }
 
 module.exports = {

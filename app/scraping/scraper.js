@@ -559,11 +559,66 @@ async function getIntersparWeekPlan() {
     return menu;
 }
 
+function getDaMarioWeekPlan() {
+    return urlCache.getUrls(restaurants.daMario.id)
+        .then(urls => request.getAsync(JSON.parse(urls).scraperUrl))
+        .then(res => res.body)
+        .then(body => parseDaMario(body));
+}
+
+async function parseDaMario(html) {
+    winston.debug(`Parsing of "${restaurants.daMario.id}" started ...`);
+    var result = new Array(7);
+
+    var $ = cheerio.load(html);
+
+    let relevantHtmlPart = $.html($('div.wd-tab-content.wd-active.wd-in'));
+    winston.debug(`Relevant HTML content of "${restaurants.daMario.id}": ${relevantHtmlPart}`);
+
+    if (relevantHtmlPart) {
+        const gptResponse = await gptHelper.letMeChatGptThatForYou(relevantHtmlPart, restaurants.daMario.id);
+        const gptResponseContent = gptResponse.data.choices[0].message.content;
+        const gptJsonAnswer = JSON.parse(gptResponseContent);
+        winston.debug(`ChatGPT response of "${restaurants.daMario.id}": ${gptResponseContent}`);
+
+        for (let dayInWeek = 0; dayInWeek < 5; dayInWeek++) {
+            var menuForDay = new Menu();
+
+            let titlePizza = 'Pizza';
+            let mainCoursePizza = new Food(titlePizza, null, true);
+            for (let dish of gptJsonAnswer.pizza) {
+                let food = new Food(`${dish.name}${dish.description ? ' ' + dish.description : ''}`,
+                    dish.price, false, false, dish.allergens);
+                mainCoursePizza.entries.push(food);
+            }
+            menuForDay.mains.push(mainCoursePizza);
+
+            let titlePasta = 'Pasta';
+            let mainCoursePasta = new Food(titlePasta, null, true);
+            for (let dish of gptJsonAnswer.pasta) {
+                let food = new Food(`${dish.name}${dish.description ? ' ' + dish.description : ''}`,
+                    dish.price, false, false, dish.allergens);
+                mainCoursePasta.entries.push(food);
+            }
+            menuForDay.mains.push(mainCoursePasta);
+
+            result[dayInWeek] = menuForDay;
+        }
+    }
+
+    let closedMenu = new Menu();
+    closedMenu.closed = true;
+    result[0] = result[5] = result[6] = closedMenu;
+
+    return result;
+}
+
 module.exports = {
     getUniWirtWeekPlan,
     getHotspotWeekPlan,
     getMensaWeekPlan,
     getUniPizzeriaWeekPlan,
     getBitsAndBytesWeekPlan,
-    getIntersparWeekPlan
+    getIntersparWeekPlan,
+    getDaMarioWeekPlan,
 };

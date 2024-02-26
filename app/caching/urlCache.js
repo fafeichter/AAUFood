@@ -42,6 +42,10 @@ class UrlCache extends EventEmitter {
             scraperUrl: "https://www.lakeside-scitec.com/services/gastronomie/hotspot",
             userFriendlyUrl: "https://www.lakeside-scitec.com/services/gastronomie/hotspot"
         });
+        this._updateIfNewer(restaurants.daMario.id, {
+            scraperUrl: "https://da-mario.at/klagenfurt/speisen/",
+            userFriendlyUrl: "https://da-mario.at/klagenfurt/speisen/"
+        });
     }
 
     _setDynamicUrls() {

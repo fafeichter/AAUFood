@@ -30,13 +30,17 @@ async function letMeChatGptThatForYou(text, restaurantId) {
             content = gptInstructions.restaurants.bitsAndBytes(text);
             break;
         }
+        case restaurants.daMario.id: {
+            content = gptInstructions.restaurants.daMario(text);
+            break;
+        }
         default: {
             throw new Error(`Restaurant with id "${restaurantId}" is not supported for parsing with ChatGPT`);
         }
     }
 
     const payload = {
-        model: "gpt-3.5-turbo-0125",
+        model: "gpt-3.5-turbo",
         response_format: {
             type: "json_object"
         },

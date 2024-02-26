@@ -100,7 +100,7 @@ body {
 }
 
 .bits-and-bytes {
-  @include restaurantColors($bitsAndBytesBg, white)
+  @include restaurantColors($bitsAndBytesRed, white)
 }
 
 .mensa {
@@ -108,15 +108,19 @@ body {
 }
 
 .uni-wirt {
-  @include restaurantColors($uniwirtPurple, white);
+  @include restaurantColors($uniWirtPurple, white);
 }
 
 .uni-pizzeria {
-  @include restaurantColors($uniPizzeriaBg, white);
+  @include restaurantColors($uniPizzeriaBlue, white);
 }
 
 .interspar {
   @include restaurantColors($intersparGreen, white);
+}
+
+.da-mario {
+  @include restaurantColors($daMarioMagenta, white);
 }
 
 /* Menu Lists */
