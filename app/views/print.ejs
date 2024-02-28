@@ -10,8 +10,9 @@
     }
 
     ul {
-        padding-left: 10px;
+        padding-left: 0;
         list-style-type: none;
+        margin-bottom: 0;
     }
 
     li {
@@ -23,7 +24,7 @@
     }
 
     th {
-        text-align: center;
+        text-align: left;
     }
 
     .new-page {
@@ -86,7 +87,8 @@
         <div class="custom-control custom-checkbox print-hidden">
             <input type="checkbox" class="custom-control-input" id="<%= restaurants.interspar.id %>" checked
                    onclick="toggleRow('<%= restaurants.interspar.id %>');">
-            <label class="custom-control-label" for="<%= restaurants.interspar.id %>"><%= restaurants.interspar.name %></label>
+            <label class="custom-control-label"
+                   for="<%= restaurants.interspar.id %>"><%= restaurants.interspar.name %></label>
         </div>
         <div class="custom-control custom-checkbox print-hidden">
             <input type="checkbox" class="custom-control-input" id="<%= restaurants.uniWirt.id %>" checked
@@ -152,11 +154,15 @@
         <% for(let i = 0; i < 5; i++) { %>
             <td class="datacol">
                 <ul>
-                    <% interspar[i].mains.forEach(function (menu) { %>
-                        <% menu.entries.forEach(function (menuItem) { if (menuItem.name != "") { %>
-                            <li><%= menuItem.name %></li>
-                        <% }}); %>
-                        <br>
+                    <% interspar[i].mains.forEach(function (menu, index, mains) { %>
+                        <li class="<%= index !== mains.length - 1 ? "mb-2" : "" %>">
+                            <%= menu.name %>
+                            <br>
+                            <% menu.entries.forEach(function (food) { %>
+                                <%= food.name %>
+                                <br>
+                            <% }); %>
+                        </li>
                     <% }); %>
                 </ul>
             </td>
@@ -168,16 +174,19 @@
 
         <% for(let i = 0; i < 5; i++) { %>
             <td class="datacol">
-                <ul class="starters">
-                    <% uniWirt[i].starters.forEach(function (food) { if (food.name != "") { %>
-                        <li><%= food.name %></li>
-                    <% }}); %>
-                </ul>
-
                 <ul class="mains">
-                    <% uniWirt[i].mains.forEach(function (food) { if (food.name != "") { %>
-                        <li><%= food.name %></li>
-                    <% }}); %>
+                    <% uniWirt[i].mains.forEach(function (menu, index, mains) { %>
+                        <li class="<%= index !== mains.length - 1 ? "mb-2" : "" %>">
+                            <%= menu.name %>
+                            <br>
+                            <%= menu.entries[0].name %>
+
+                            <% if(menu.entries.length === 2) { %>
+                                <br>
+                                <%= menu.entries[1].name %>
+                            <% } %>
+                        </li>
+                    <% }); %>
                 </ul>
             </td>
         <% } %>
@@ -185,44 +194,21 @@
 
     <tr class="<%= restaurants.daMario.id %>">
         <td class="namecol"><span class="name"><%= restaurants.daMario.name %></span></td>
-
-        <% for(let i = 0; i < 5; i++) { %>
-            <td class="datacol">
-                <ul>
-                    <% daMario[i].mains.forEach(function (menu) { %>
-                        <% menu.entries.forEach(function (menuItem) { if (menuItem.name != "") { %>
-                            <li><%= menuItem.name %></li>
-                        <% }}); %>
-                        <br>
-                    <% }); %>
-                </ul>
-            </td>
-        <% } %>
-    </tr>
-
-    <tr class="<%= restaurants.hotspot.id %>">
-        <td class="namecol"><span class="name"><%= restaurants.hotspot.name %></span></td>
-
-        <td class="datacol">
-            <ul class="starters">
-                <li><strong>Suppen für gesamte Woche</strong></li>
-                <% hotspot[0].starters.forEach(function (food) { if (food.name != "") { %>
-                    <li><%= food.name %></li>
-                <% }}); %>
-            </ul>
-        </td>
-        <td class="datacol" colSpan="4">
+        <td class="datacol" colSpan="5">
             <table>
                 <tr>
                     <td>
                         <ul class="mains">
                             <li><strong>Hauptspeisen für gesamte Woche</strong></li>
-                            <% hotspot[0].mains.forEach(function (menu) { %>
-                                <% if(menu.name == "Wochenhit") { %>
-                                    <li><%= menu.entries[0].name %></li>
-                                <% } else { %>
-                                    <li><%= menu.name + " " + menu.entries[0].name %></li>
-                                <% } %>
+                            <% daMario[1].mains.forEach(function (menu, index, mains) { %>
+                                <li class="<%= index !== mains.length - 1 ? "mb-2" : "" %>">
+                                    <%= menu.name %>
+                                    <br>
+                                    <% menu.entries.forEach(function (food) { %>
+                                        <%= food.name %>
+                                        <br>
+                                    <% }); %>
+                                </li>
                             <% }); %>
                         </ul>
                     </td>
@@ -239,8 +225,34 @@
                     <td>
                         <ul class="mains">
                             <li><strong>Hauptspeisen für gesamte Woche</strong></li>
-                            <% bitsAndBytes[0].mains.forEach(function (menu) { %>
-                                <li><%= menu.name + " " + menu.entries[0].name %></li>
+                            <% bitsAndBytes[0].mains.forEach(function (menu, index, mains) { %>
+                                <li class="<%= index !== mains.length - 1 ? "mb-2" : "" %>">
+                                    <%= menu.name %>
+                                    <br>
+                                    <%= menu.entries[0].name %>
+                                </li>
+                            <% }); %>
+                        </ul>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+
+    <tr class="<%= restaurants.hotspot.id %>">
+        <td class="namecol"><span class="name"><%= restaurants.hotspot.name %></span></td>
+        <td class="datacol" colSpan="4">
+            <table>
+                <tr>
+                    <td>
+                        <ul class="mains">
+                            <li><strong>Hauptspeisen für gesamte Woche</strong></li>
+                            <% hotspot[0].mains.forEach(function (menu, index, mains) { %>
+                                <li class="<%= index !== mains.length - 1 ? "mb-2" : "" %>">
+                                    <%= menu.name %>
+                                    <br>
+                                    <%= menu.entries[0].name %>
+                                </li>
                             <% }); %>
                         </ul>
                     </td>
