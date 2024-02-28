@@ -185,25 +185,6 @@
             </table>
         </td>
     </tr>
-    <tr class="<%= restaurants.uniPizzeria.id %>">
-        <td class="namecol"><span class="name"><%= restaurants.uniPizzeria.name %></span></td>
-
-        <% for(let i = 0; i < 5; i++) { %>
-            <td class="datacol">
-                <ul class="starters">
-                    <% uniPizzeria[i].starters.forEach(function (food) { if (food.name != "") { %>
-                        <li><%= food.name %></li>
-                    <% }}); %>
-                </ul>
-
-                <ul class="mains">
-                    <% uniPizzeria[i].mains.forEach(function (food) { if (food.name != "") { %>
-                        <li><%= food.name %></li>
-                    <% }}); %>
-                </ul>
-            </td>
-        <% } %>
-    </tr>
     <tr class="<%= restaurants.bitsAndBytes.id %>">
         <td class="namecol"><span class="name"><%= restaurants.bitsAndBytes.name %></span></td>
         <td class="datacol" colSpan="5">
