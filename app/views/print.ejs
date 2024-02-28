@@ -84,22 +84,33 @@
             <label class="custom-control-label" for="<%= restaurants.mensa.id %>"><%= restaurants.mensa.name %></label>
         </div>
         <div class="custom-control custom-checkbox print-hidden">
+            <input type="checkbox" class="custom-control-input" id="<%= restaurants.interspar.id %>" checked
+                   onclick="toggleRow('<%= restaurants.interspar.id %>');">
+            <label class="custom-control-label" for="<%= restaurants.interspar.id %>"><%= restaurants.interspar.name %></label>
+        </div>
+        <div class="custom-control custom-checkbox print-hidden">
             <input type="checkbox" class="custom-control-input" id="<%= restaurants.uniWirt.id %>" checked
                    onclick="toggleRow('<%= restaurants.uniWirt.id %>');">
             <label class="custom-control-label"
                    for="<%= restaurants.uniWirt.id %>"><%= restaurants.uniWirt.name %></label>
         </div>
         <div class="custom-control custom-checkbox print-hidden">
-            <input type="checkbox" class="custom-control-input" id="<%= restaurants.hotspot.id %>" checked
-                   onclick="toggleRow('<%= restaurants.hotspot.id %>');">
+            <input type="checkbox" class="custom-control-input" id="<%= restaurants.daMario.id %>" checked
+                   onclick="toggleRow('<%= restaurants.daMario.id %>');">
             <label class="custom-control-label"
-                   for="<%= restaurants.hotspot.id %>"><%= restaurants.hotspot.name %></label>
+                   for="<%= restaurants.daMario.id %>"><%= restaurants.daMario.name %></label>
         </div>
         <div class="custom-control custom-checkbox print-hidden">
             <input type="checkbox" class="custom-control-input" id="<%= restaurants.bitsAndBytes.id %>" checked
                    onclick="toggleRow('<%= restaurants.bitsAndBytes.id %>');">
             <label class="custom-control-label"
                    for="<%= restaurants.bitsAndBytes.id %>"><%= restaurants.bitsAndBytes.name %></label>
+        </div>
+        <div class="custom-control custom-checkbox print-hidden">
+            <input type="checkbox" class="custom-control-input" id="<%= restaurants.hotspot.id %>" checked
+                   onclick="toggleRow('<%= restaurants.hotspot.id %>');">
+            <label class="custom-control-label"
+                   for="<%= restaurants.hotspot.id %>"><%= restaurants.hotspot.name %></label>
         </div>
     </div>
     <h2 class="mx-auto">Wochenplan
@@ -135,6 +146,23 @@
         <% } %>
     </tr>
 
+    <tr class="<%= restaurants.interspar.id %>">
+        <td class="namecol"><span class="name"><%= restaurants.interspar.name %></span></td>
+
+        <% for(let i = 0; i < 5; i++) { %>
+            <td class="datacol">
+                <ul>
+                    <% interspar[i].mains.forEach(function (menu) { %>
+                        <% menu.entries.forEach(function (menuItem) { if (menuItem.name != "") { %>
+                            <li><%= menuItem.name %></li>
+                        <% }}); %>
+                        <br>
+                    <% }); %>
+                </ul>
+            </td>
+        <% } %>
+    </tr>
+
     <tr class="<%= restaurants.uniWirt.id %>">
         <td class="namecol"><span class="name"><%= restaurants.uniWirt.name %></span></td>
 
@@ -150,6 +178,23 @@
                     <% uniWirt[i].mains.forEach(function (food) { if (food.name != "") { %>
                         <li><%= food.name %></li>
                     <% }}); %>
+                </ul>
+            </td>
+        <% } %>
+    </tr>
+
+    <tr class="<%= restaurants.daMario.id %>">
+        <td class="namecol"><span class="name"><%= restaurants.daMario.name %></span></td>
+
+        <% for(let i = 0; i < 5; i++) { %>
+            <td class="datacol">
+                <ul>
+                    <% daMario[i].mains.forEach(function (menu) { %>
+                        <% menu.entries.forEach(function (menuItem) { if (menuItem.name != "") { %>
+                            <li><%= menuItem.name %></li>
+                        <% }}); %>
+                        <br>
+                    <% }); %>
                 </ul>
             </td>
         <% } %>
@@ -185,6 +230,7 @@
             </table>
         </td>
     </tr>
+
     <tr class="<%= restaurants.bitsAndBytes.id %>">
         <td class="namecol"><span class="name"><%= restaurants.bitsAndBytes.name %></span></td>
         <td class="datacol" colSpan="5">

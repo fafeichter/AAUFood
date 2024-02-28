@@ -110,8 +110,9 @@ router.get('/print', counter.countVisitors, function (req, res, next) {
     var uniPizzeriaPlan = menuCache.getMenu(restaurants.uniPizzeria.id);
     var bitsAndBytesPlan = menuCache.getMenu(restaurants.bitsAndBytes.id);
     var intersparPlan = menuCache.getMenu(restaurants.interspar.id);
+    var daMarioPlan = menuCache.getMenu(restaurants.daMario.id);
 
-    Promise.all([uniwirtPlan, mensaPlan, hotspotPlan, uniPizzeriaPlan, bitsAndBytesPlan, intersparPlan])
+    Promise.all([uniwirtPlan, mensaPlan, hotspotPlan, uniPizzeriaPlan, bitsAndBytesPlan, intersparPlan, daMarioPlan])
         .then(results => {
             res.render('print', {
                 title: 'AAU Food: Wochenplan',
@@ -121,6 +122,7 @@ router.get('/print', counter.countVisitors, function (req, res, next) {
                 uniPizzeria: JSON.parse(results[3]),
                 bitsAndBytes: JSON.parse(results[4]),
                 interspar: JSON.parse(results[5]),
+                daMario: JSON.parse(results[6]),
                 restaurants
             });
         });
