@@ -36,6 +36,7 @@ $(document).ready(function () {
         snowFall.initSnowFall();
     });
     initNameShuffling();
+    initHiddenSecondaryUrls();
 });
 
 var mailPre = "contact", mailDomain = "felf.io";
@@ -134,4 +135,10 @@ function initNameShuffling() {
             a[j] = x;
         }
     }
+}
+
+function initHiddenSecondaryUrls() {
+    $('span[data-secondary-url]').click(function (event) {
+        window.open(event.target.getAttribute("data-secondary-url"))
+    });
 }

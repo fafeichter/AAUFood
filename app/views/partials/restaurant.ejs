@@ -1,10 +1,13 @@
-<!-- Parameters: restaurantId, restaurantName, restaurantFriendlyUrl, menu, combinedMenuList (optional) -->
+<!-- Parameters: restaurantId, restaurantName, restaurantFriendlyUrl, menu, combinedMenuList (optional), chatGptPowered (optional), restaurantSecondaryFriendlyUrl (optional)  -->
 <% combinedMenuList = typeof (combinedMenuList) === 'boolean' && combinedMenuList /* handling optional parameter */ %>
 <% chatGptPowered = typeof (chatGptPowered) === 'boolean' && chatGptPowered /* handling optional parameter */ %>
 
 <div class="card restaurant <%= restaurantId %>" id="<%= restaurantId %>">
     <h3 class="card-header">
-        <span><%= restaurantName %></span>
+        <span
+        <% if(restaurantId === 'interspar') { %> data-secondary-url="<%= restaurantSecondaryFriendlyUrl %>"
+                <% } %>
+        ><%= restaurantName %></span>
         <% if(chatGptPowered) { %>
             <a href="https://openai.com/" target="_blank">
                 <img src="images/ChatGPT_logo.svg" alt="Logo von ChatGPT"

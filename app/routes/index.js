@@ -57,7 +57,8 @@ router.get('/:day(-?\\d*)?', counter.countVisitors, function (req, res, next) {
                 },
                 interspar: {
                     menu: JSON.parse(results[10]) || [],
-                    userFriendlyUrl: JSON.parse(results[11]).userFriendlyUrl
+                    userFriendlyUrl: JSON.parse(results[11]).userFriendlyUrl,
+                    secondaryFriendlyUrl: JSON.parse(results[11]).secondaryFriendlyUrl
                 },
                 daMario: {
                     menu: JSON.parse(results[12]) || [],

@@ -96,7 +96,8 @@ class UrlCache extends EventEmitter {
         let currentWeekNumber = moment().format('WW');
         this._updateIfNewer(restaurants.interspar.id, {
             scraperUrl: `https://flugblatt.interspar.at/menuplane/menuplan-kw${currentWeekNumber}/GetPDF.ashx`,
-            userFriendlyUrl: `https://flugblatt.interspar.at/menuplane/menuplan-kw${currentWeekNumber}/`
+            userFriendlyUrl: `https://flugblatt.interspar.at/menuplane/menuplan-kw${currentWeekNumber}/`,
+            secondaryFriendlyUrl: `https://flugblatt.interspar.at/happy-hour/happy-hour-kw${currentWeekNumber}/`
         });
     }
 
