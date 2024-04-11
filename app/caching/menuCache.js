@@ -96,7 +96,7 @@ class MenuCache {
             winston.info(`Starting to reset menu cache for "${restaurantId}"`);
             this._deleteMenu(restaurantId)
                 .then(() => {
-                    winston.info(`Resetted menu cache for "${restaurantId}"`)
+                    winston.info(`Reset menu cache for "${restaurantId}"`)
                 });
         }
     }
