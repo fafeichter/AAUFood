@@ -309,7 +309,8 @@ async function parseHotspot(html) {
                 isMainDish = false;
             } else {
                 if (isMainDish) {
-                    if ($(itm).text().trim() !== "" && $(itm).has('li').length) {
+                    if ($(itm).text().trim() !== "" && ($(itm).has('li').length) ||
+                        ($(itm).has('p').length)) {
                         contentTableDict.push(itm);
                     }
                 } else {
@@ -395,7 +396,8 @@ async function parseBitsAndBytes(html) {
                 isMainDish = false;
             } else {
                 if (isMainDish) {
-                    if ($(itm).text().trim() !== "" && $(itm).has('li').length) {
+                    if ($(itm).text().trim() !== "" && ($(itm).has('li').length) ||
+                        ($(itm).has('p').length)) {
                         contentTableDict.push(itm);
                     }
                 } else {
