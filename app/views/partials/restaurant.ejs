@@ -1,8 +1,13 @@
-<!-- Parameters: restaurantId, restaurantName, restaurantFriendlyUrl, menu, combinedMenuList (optional), chatGptPowered (optional), restaurantSecondaryFriendlyUrl (optional)  -->
+<!-- Parameters: restaurantId, restaurantName, restaurantFriendlyUrl, menu, combinedMenuList (optional),
+chatGptPowered (optional), restaurantSecondaryFriendlyUrl (optional), isNew (optional)  -->
 <% combinedMenuList = typeof (combinedMenuList) === 'boolean' && combinedMenuList /* handling optional parameter */ %>
 <% chatGptPowered = typeof (chatGptPowered) === 'boolean' && chatGptPowered /* handling optional parameter */ %>
+<% isNew = typeof (isNew) === 'boolean' && isNew /* handling optional parameter */ %>
 
 <div class="card restaurant <%= restaurantId %>" id="<%= restaurantId %>">
+    <% if(isNew) { %>
+        <img class="new-banner" src="images/new_corner_label.png" alt="Neues Restaurant">
+    <% } %>
     <h3 class="card-header">
         <span
         <% if(restaurantId === 'interspar') { %> data-secondary-url="<%= restaurantSecondaryFriendlyUrl %>"

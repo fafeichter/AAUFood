@@ -67,6 +67,10 @@ module.exports = {
             id: "da-mario",
             name: "Da Mario"
         },
+        burgerBoutique: {
+            id: "burger-boutique",
+            name: "Burger Boutique"
+        }
 
     },
     cookie: {

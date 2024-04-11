@@ -82,6 +82,10 @@ body {
     &:hover {
       color: $fontColor;
     }
+
+    & > i {
+      position: relative;
+    }
   }
   .menu-title, .price-tag {
     list-style: none;
@@ -121,6 +125,10 @@ body {
 
 .da-mario {
   @include restaurantColors($daMarioBrown, white);
+}
+
+.burger-boutique {
+  @include restaurantColors($burgerBoutiqueGold, white)
 }
 
 /* Menu Lists */
@@ -411,4 +419,12 @@ footer {
   @include media-breakpoint-down(sm) {
     width: 45%;
   }
+}
+
+.new-banner {
+  height: 38px;
+  position: absolute;
+  right: 0;
+  top: 0;
+  transform: rotate(90deg);
 }

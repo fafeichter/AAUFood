@@ -46,6 +46,10 @@ class UrlCache extends EventEmitter {
             scraperUrl: "https://da-mario.at/klagenfurt/speisen/",
             userFriendlyUrl: "https://da-mario.at/klagenfurt/speisen/"
         });
+        this._updateIfNewer(restaurants.burgerBoutique.id, {
+            scraperUrl: null,
+            userFriendlyUrl: "https://www.facebook.com/BurgerBoutiqueklagenfurt/posts/pfbid02sxLxcyvTwiRTzBqtswmTZPdqNg614vytd65Xcn19NKqfzrkNyac27UEXxo4cXfpSl"
+        });
     }
 
     _setDynamicUrls() {

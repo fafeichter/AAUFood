@@ -15,6 +15,7 @@ router.get('/:day(-?\\d*)?', counter.countVisitors, function (req, res, next) {
     var bitsAndBytesPlan = menuCache.getMenu(restaurants.bitsAndBytes.id);
     var intersparPlan = menuCache.getMenu(restaurants.interspar.id);
     var daMarioPlan = menuCache.getMenu(restaurants.daMario.id);
+    var burgerBoutiquePlan = menuCache.getMenu(restaurants.burgerBoutique.id);
 
     var uniWirtUrls = urlCache.getUrls(restaurants.uniWirt.id);
     var mensaUrls = urlCache.getUrls(restaurants.mensa.id);
@@ -23,6 +24,7 @@ router.get('/:day(-?\\d*)?', counter.countVisitors, function (req, res, next) {
     var bitsAndBytesUrls = urlCache.getUrls(restaurants.bitsAndBytes.id);
     var intersparUrls = urlCache.getUrls(restaurants.interspar.id);
     var daMarioUrls = urlCache.getUrls(restaurants.daMario.id);
+    var burgerBoutiqueUrls = urlCache.getUrls(restaurants.burgerBoutique.id);
 
     Promise.all([
         uniwirtPlan, uniWirtUrls,
@@ -31,7 +33,8 @@ router.get('/:day(-?\\d*)?', counter.countVisitors, function (req, res, next) {
         uniPizzeriaPlan, uniPizzeriaUrls,
         bitsAndBytesPlan, bitsAndBytesUrls,
         intersparPlan, intersparUrls,
-        daMarioPlan, daMarioUrls])
+        daMarioPlan, daMarioUrls,
+        burgerBoutiquePlan, burgerBoutiqueUrls])
         .then(results => {
             res.render('index', {
                 title: 'AAU Food',
@@ -63,6 +66,10 @@ router.get('/:day(-?\\d*)?', counter.countVisitors, function (req, res, next) {
                 daMario: {
                     menu: JSON.parse(results[12]) || [],
                     userFriendlyUrl: JSON.parse(results[13]).userFriendlyUrl
+                },
+                burgerBoutique: {
+                    menu: JSON.parse(results[14]) || [],
+                    userFriendlyUrl: JSON.parse(results[15]).userFriendlyUrl
                 },
                 visitorStats: req.visitorStats,
                 restaurants
@@ -112,8 +119,9 @@ router.get('/print', counter.countVisitors, function (req, res, next) {
     var bitsAndBytesPlan = menuCache.getMenu(restaurants.bitsAndBytes.id);
     var intersparPlan = menuCache.getMenu(restaurants.interspar.id);
     var daMarioPlan = menuCache.getMenu(restaurants.daMario.id);
+    var burgerBoutiquePlan = menuCache.getMenu(restaurants.burgerBoutique.id);
 
-    Promise.all([uniwirtPlan, mensaPlan, hotspotPlan, uniPizzeriaPlan, bitsAndBytesPlan, intersparPlan, daMarioPlan])
+    Promise.all([uniwirtPlan, mensaPlan, hotspotPlan, uniPizzeriaPlan, bitsAndBytesPlan, intersparPlan, daMarioPlan, burgerBoutiquePlan])
         .then(results => {
             res.render('print', {
                 title: 'AAU Food: Wochenplan',
@@ -124,6 +132,7 @@ router.get('/print', counter.countVisitors, function (req, res, next) {
                 bitsAndBytes: JSON.parse(results[4]),
                 interspar: JSON.parse(results[5]),
                 daMario: JSON.parse(results[6]),
+                burgerBoutique: JSON.parse(results[7]),
                 restaurants
             });
         });

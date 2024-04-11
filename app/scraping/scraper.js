@@ -613,6 +613,57 @@ async function parseDaMario(html) {
     return result;
 }
 
+function getBurgerBoutiquePlan() {
+    winston.debug(`Building static menu of "${restaurants.burgerBoutique.id}" started ...`);
+    let menu = scraperHelper.getWeekEmptyModel();
+
+    // Monday
+    let mondayMenu = new Menu();
+    let mondayMain = new Food("Menü 1", 9.9, true);
+    let mondayFood = new Food("Burrritos", null, false, false, null);
+
+    mondayMain.entries.push(mondayFood);
+    mondayMenu.mains.push(mondayMain);
+    menu[0] = mondayMenu;
+
+    // Tuesday
+    let tuesdayMenu = new Menu();
+    let tuesdayMain = new Food("Menü 1", 9.9, true);
+    let tuesdayFood = new Food("Bowls", null, false, false, null);
+
+    tuesdayMain.entries.push(tuesdayFood);
+    tuesdayMenu.mains.push(tuesdayMain);
+    menu[1] = tuesdayMenu;
+
+    // Wednesday
+    let wednesdayMenu = new Menu();
+    let wednesdayMain = new Food("Menü 1", 9.9, true);
+    let wednesdayFood = new Food("Burger - außer New Jersey, Route 66 und Surf and Turf", null,
+        false, false, null);
+
+    wednesdayMain.entries.push(wednesdayFood);
+    wednesdayMenu.mains.push(wednesdayMain);
+    menu[2] = wednesdayMenu;
+
+    // Thursday
+    let thursdayMenu = new Menu();
+    let thursdayMain = new Food("Menü 1", 8.9, true);
+    let thursdayFood = new Food("Wraps", null, false, false, null);
+
+    thursdayMain.entries.push(thursdayFood);
+    thursdayMenu.mains.push(thursdayMain);
+    menu[3] = thursdayMenu;
+
+    // Friday
+    menu[4] = wednesdayMenu;
+
+    let aLaCarteMenu = new Menu();
+    aLaCarteMenu.alacarte = true;
+    menu[5] = menu[6] = aLaCarteMenu;
+
+    return Promise.resolve(menu);
+}
+
 module.exports = {
     getUniWirtWeekPlan,
     getHotspotWeekPlan,
@@ -621,4 +672,5 @@ module.exports = {
     getBitsAndBytesWeekPlan,
     getIntersparWeekPlan,
     getDaMarioWeekPlan,
+    getBurgerBoutiquePlan
 };

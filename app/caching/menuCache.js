@@ -24,6 +24,7 @@ class MenuCache {
             winston.debug('Updating menu caches ...');
 
             this.updateMenu(restaurants.mensa.id);
+            this.updateMenu(restaurants.burgerBoutique.id);
 
             const now = moment();
             if (forceSync || (now.isoWeekday() === 1 && (now.hour() === 0 || (now.hour() >= 6 && now.hour() <= 11)))) {
@@ -75,6 +76,10 @@ class MenuCache {
             }
             case restaurants.daMario.id: {
                 weekPlan = scraper.getDaMarioWeekPlan();
+                break;
+            }
+            case restaurants.burgerBoutique.id: {
+                weekPlan = scraper.getBurgerBoutiquePlan();
                 break;
             }
             default: {
