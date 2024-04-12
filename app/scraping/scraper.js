@@ -640,8 +640,8 @@ function getBurgerBoutiquePlan() {
     // Wednesday
     let wednesdayMenu = new Menu();
     let wednesdayMain = new Food("Menü 1", 9.9, true);
-    let wednesdayFood = new Food("Burger (ausgenommen Burger ab 15,00 €)", null,
-        false, false, null);
+    let wednesdayFood = new Food();
+    wednesdayFood.name = "Burger (ausgenommen Burger ab 15 Euro)";
 
     wednesdayMain.entries.push(wednesdayFood);
     wednesdayMenu.mains.push(wednesdayMain);
