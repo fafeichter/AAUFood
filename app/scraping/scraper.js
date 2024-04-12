@@ -640,7 +640,7 @@ function getBurgerBoutiquePlan() {
     // Wednesday
     let wednesdayMenu = new Menu();
     let wednesdayMain = new Food("Menü 1", 9.9, true);
-    let wednesdayFood = new Food("Burger - außer New Jersey, Route 66 und Surf and Turf", null,
+    let wednesdayFood = new Food("Burger (ausgenommen Burger ab 15,00 €)", null,
         false, false, null);
 
     wednesdayMain.entries.push(wednesdayFood);
