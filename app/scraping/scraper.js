@@ -556,7 +556,7 @@ async function getIntersparWeekPlan() {
     }
 
     menu[5].closed = true;
-    menu[6].closed = true;
+    menu[6].alacarte = true;
 
     return menu;
 }
