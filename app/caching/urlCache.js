@@ -46,15 +46,12 @@ class UrlCache extends EventEmitter {
             scraperUrl: "https://da-mario.at/klagenfurt/speisen/",
             userFriendlyUrl: "https://da-mario.at/klagenfurt/speisen/"
         });
-        this._updateIfNewer(restaurants.burgerBoutique.id, {
-            scraperUrl: null,
-            userFriendlyUrl: "https://www.facebook.com/BurgerBoutiqueklagenfurt/posts/pfbid02sxLxcyvTwiRTzBqtswmTZPdqNg614vytd65Xcn19NKqfzrkNyac27UEXxo4cXfpSl"
-        });
     }
 
     _setDynamicUrls() {
         this._updateIntersparUrl();
         this._updateUniPizzeriaUrl();
+        this._updateBurgerBoutiqueUrl();
     }
 
     _updateUniPizzeriaUrl() {
@@ -103,6 +100,26 @@ class UrlCache extends EventEmitter {
             userFriendlyUrl: `https://flugblatt.interspar.at/menuplane/menuplan-kw${currentWeekNumber}/`,
             secondaryFriendlyUrl: `https://flugblatt.interspar.at/happy-hour/happy-hour-kw${currentWeekNumber}/`
         });
+    }
+
+    _updateBurgerBoutiqueUrl() {
+        request.getAsync("https://www.burgerboutique.at/")
+            .then(res => res.body)
+            .then(html => {
+                // fallback to last known friendly URL in case current URL can not be retrieved
+                let burgerBoutiqueUrl = this._parseBurgerBoutiqueUrl(html)
+                    || "https://www.burgerboutique.at/wp-content/uploads/2023/02/BurgerBoutique2023.pdf";
+
+                this._updateIfNewer(restaurants.burgerBoutique.id, {
+                    scraperUrl: null,
+                    userFriendlyUrl: burgerBoutiqueUrl
+                });
+            });
+    }
+
+    _parseBurgerBoutiqueUrl(html) {
+        var $ = cheerio.load(html);
+        return $("#menu-item-1614 > a").attr("href");
     }
 
     _updateIfNewer(restaurantId, urls) {
