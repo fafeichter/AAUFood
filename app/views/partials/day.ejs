@@ -19,7 +19,7 @@
         </div>
         <div class="col-xl-3 col-lg-6 col-md-12">
             <%- include('restaurant', {restaurantId: restaurants.bitsAndBytes.id, restaurantName: restaurants.bitsAndBytes.name, restaurantFriendlyUrl: bitsAndBytes.userFriendlyUrl, menu: bitsAndBytes.menu ? bitsAndBytes.menu[day] : null, combinedMenuList: true, day: day, chatGptPowered: true}) %>
-            <%- include('restaurant', {restaurantId: restaurants.burgerBoutique.id, restaurantName: restaurants.burgerBoutique.name, restaurantFriendlyUrl: burgerBoutique.userFriendlyUrl, menu: burgerBoutique.menu ? burgerBoutique.menu[day] : null, combinedMenuList: true, day: day, chatGptPowered: false, isNew: true}) %>
+            <%- include('restaurant', {restaurantId: restaurants.burgerBoutique.id, restaurantName: restaurants.burgerBoutique.name, restaurantFriendlyUrl: burgerBoutique.userFriendlyUrl, menu: burgerBoutique.menu ? burgerBoutique.menu[day] : null, combinedMenuList: true, day: day, chatGptPowered: false}) %>
         </div>
         <div class="col-xl-3 col-lg-6 col-md-12">
             <%- include('restaurant', {restaurantId: restaurants.hotspot.id, restaurantName: restaurants.hotspot.name, restaurantFriendlyUrl: hotspot.userFriendlyUrl, menu: hotspot.menu ? hotspot.menu[day] : null, combinedMenuList: true, day: day, chatGptPowered: true}) %>
