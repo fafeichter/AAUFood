@@ -555,8 +555,8 @@ async function getIntersparWeekPlan() {
         menu = scraperHelper.setWeekPlanToOutdated(menu);
     }
 
-    menu[5].closed = true;
-    menu[6].alacarte = true;
+    menu[5].alacarte = true;
+    menu[6].closed = true;
 
     return menu;
 }
