@@ -20,7 +20,8 @@ module.exports = {
     },
     onBreak: {
         mensa: [
-            new BreakInfo("Wir haben vom", moment("22.12.2023", "DD.MM.YYYY"), moment("05.01.2024", "DD.MM.YYYY"), "geschlossen.", "fas fa-snowboarding")
+            new BreakInfo("Wir haben vom", moment("22.12.2023", "DD.MM.YYYY"), moment("05.01.2024", "DD.MM.YYYY"), "geschlossen.", "fas fa-snowboarding"),
+            new BreakInfo("Wir haben vom", moment("05.08.2024", "DD.MM.YYYY"), moment("16.08.2024", "DD.MM.YYYY"), "geschlossen.", "fas fa-frown")
         ],
         "bits-and-bytes": [
             new BreakInfo("Wir haben vom", moment("27.12.2023", "DD.MM.YYYY"), moment("28.12.2023", "DD.MM.YYYY"), "geschlossen.", "fas fa-snowboarding")
