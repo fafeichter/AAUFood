@@ -33,7 +33,7 @@ async function parseUniwirt(html) {
 
     // Get Monday Date
     const mondayString = $("h3:contains(Montag)").text().split(" ")[1];
-    const mondayDate = moment(mondayString, "DD.MM.YY");
+    const mondayDate = moment(mondayString, "DD.MM");
 
     // Set outdated
     if (mondayDate.isValid() && mondayDate.format("DD.MM") !== timeHelper.getMondayDate()) {
@@ -45,7 +45,7 @@ async function parseUniwirt(html) {
         }
     } else {
         winston.debug(`Menu of "${restaurants.uniWirt.id}" is not outdated`);
-        let relevantHtmlPart = $.html($(".slideContent.gu12 > div:nth-child(2),div:nth-child(3)"));
+        let relevantHtmlPart = $.html($("#tab-wochenmenue"));
         winston.debug(`Relevant HTML content of "${restaurants.uniWirt.id}": ${relevantHtmlPart}`);
 
         if (relevantHtmlPart) {
@@ -76,6 +76,18 @@ async function parseUniwirt(html) {
                         main.entries.push(food);
                         menuForDay.mains.push(main);
                     }
+                }
+
+                let weeklySpecial = gptJsonAnswer.weekly_special;
+                if (weeklySpecial) {
+                    let title = `Wochengericht`;
+                    let main = new Food(title, weeklySpecial.price, true);
+
+                    let name = `${weeklySpecial.name}${weeklySpecial.description ? ' ' + weeklySpecial.description : ''}`;
+                    let food = new Food(name, null, false, false, weeklySpecial.allergens);
+
+                    main.entries.push(food);
+                    menuForDay.mains.push(main);
                 }
 
                 if (menuForDay.mains.length > 0) {

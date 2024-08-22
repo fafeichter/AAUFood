@@ -31,8 +31,8 @@ class UrlCache extends EventEmitter {
             userFriendlyUrl: "https://menu.mensen.at/index/index/locid/45"
         });
         this._updateIfNewer(restaurants.uniWirt.id, {
-            scraperUrl: "https://www.uniwirt.at/wp/home/mittagsmenues/",
-            userFriendlyUrl: "https://www.uniwirt.at/wp/home/mittagsmenues/"
+            scraperUrl: "https://www.uniwirt.at/",
+            userFriendlyUrl: "https://www.uniwirt.at/#menue"
         });
         this._updateIfNewer(restaurants.bitsAndBytes.id, {
             scraperUrl: "https://www.lakeside-scitec.com/services/gastronomie/bits-bytes",
