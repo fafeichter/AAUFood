@@ -17,6 +17,7 @@ const timeHelper = require('../helpers/timeHelper');
 const scraperHelper = require('./scraperHelper')
 const gptHelper = require('./gptHelper')
 const urlCache = require('../caching/urlCache');
+const fileUtils = require("./fileUtils");
 
 function getUniWirtWeekPlan() {
     return urlCache.getUrls(restaurants.uniWirt.id)
@@ -463,109 +464,57 @@ async function parseBitsAndBytes(html) {
 }
 
 async function getIntersparWeekPlan() {
-    winston.debug(`Parsing of "${restaurants.interspar.id}" started ...`);
+    let restaurantId = restaurants.interspar.id;
+    winston.debug(`Parsing of "${restaurantId}" started ...`);
+
     let menu = scraperHelper.getWeekEmptyModel();
 
-    const pdfHttpResult = await urlCache.getUrls(restaurants.interspar.id)
-        .then(urls => crawler(JSON.parse(urls).scraperUrl));
+    const scraperUrl = await urlCache.getUrls(restaurantId)
+        .then(urls => JSON.parse(urls).scraperUrl)
 
-    winston.debug(`Relevant PDF content of "${restaurants.interspar.id}": ${pdfHttpResult.text}`);
+    const pdfAsBase64Image = await fileUtils.pdf2Base64Image(scraperUrl, restaurantId);
 
-    if (pdfHttpResult.text) {
-        const gptResponse = await gptHelper.letMeChatGptThatForYou(pdfHttpResult.text, restaurants.interspar.id);
-        const gptResponseContent = gptResponse.data.choices[0].message.content;
-        winston.debug(`ChatGPT response of "${restaurants.interspar.id}": ${gptResponseContent}`);
-        const gptJsonAnswer = JSON.parse(gptResponseContent);
+    const gptResponse = await gptHelper.letMeChatGptThatForYou(pdfAsBase64Image, restaurantId);
+    const gptResponseContent = gptResponse.data.choices[0].message.content;
+    winston.debug(`ChatGPT response of "${restaurantId}": ${gptResponseContent}`);
+    const gptJsonAnswer = JSON.parse(gptResponseContent);
 
-        for (let dayInWeek = 0; dayInWeek < 5; dayInWeek++) {
-            let klassischGptDish, vegetarischGptDish;
-            try {
-                switch (dayInWeek) {
-                    case 0: {
-                        klassischGptDish = gptJsonAnswer.dishes[8];
-                        vegetarischGptDish = gptJsonAnswer.dishes[9];
-                        break;
-                    }
-                    case 1: {
-                        klassischGptDish = gptJsonAnswer.dishes[3];
-                        vegetarischGptDish = gptJsonAnswer.dishes[6];
-                        break;
-                    }
-                    case 2: {
-                        klassischGptDish = gptJsonAnswer.dishes[4];
-                        vegetarischGptDish = gptJsonAnswer.dishes[5];
-                        break;
-                    }
-                    case 3: {
-                        klassischGptDish = gptJsonAnswer.dishes[1];
-                        vegetarischGptDish = gptJsonAnswer.dishes[2];
-                        break;
-                    }
-                    case 4: {
-                        klassischGptDish = gptJsonAnswer.dishes[7];
-                        vegetarischGptDish = gptJsonAnswer.dishes[0];
-                        break;
-                    }
-                }
-            } catch (error) {
-                winston.error(error);
-                winston.debug(`There is no menu for "${restaurants.interspar.id}" on day with index ${dayInWeek}`);
-                scraperHelper.setDayToError(menu, dayInWeek);
-            }
+    ["MO", "DI", "MI", "DO", "FR"].forEach(function (dayString, dayInWeek) {
+        var menuForDay = new Menu();
+        var menuct = 0;
 
-            if (klassischGptDish) {
-                try {
-                    const klassischMain = new Food('Menü Klassisch', klassischGptDish.price || 8.9);
-                    const klassischFood = new Food(`${klassischGptDish.name}${klassischGptDish.description ? ' ' +
-                            klassischGptDish.description : ''}`,
-                        null, false, false, klassischGptDish.allergens);
-                    klassischMain.entries = [klassischFood];
-                    menu[dayInWeek].mains.push(klassischMain)
-                } catch (error) {
-                    winston.error(error);
-                }
-            }
-            if (vegetarischGptDish) {
-                try {
-                    const vegetarischMain = new Food('Menü Vegetarisch', vegetarischGptDish.price || 7.9);
-                    const vegetarischFood = new Food(`${vegetarischGptDish.name}${vegetarischGptDish.description ? ' ' +
-                            vegetarischGptDish.description : ''}`,
-                        null, false, false, vegetarischGptDish.allergens);
-                    vegetarischMain.entries = [vegetarischFood];
+        for (let dish of gptJsonAnswer.dishes) {
+            if (dish.day === dayString) {
+                let title = `Menü ${++menuct === 0 ? 'Klassisch' : 'Vegetarisch'}`;
+                let main = new Food(title, dish.price, true);
 
-                    menu[dayInWeek].mains.push(vegetarischMain)
-                } catch (error) {
-                    winston.error(error);
-                }
-            }
+                let food = new Food(`${dish.name}${dish.description ? ' ' + dish.description : ''}`,
+                    null, false, false, dish.allergens);
 
-            try {
-                let monatsHitMain = undefined
-                const monatsHitGptDish = gptJsonAnswer.monthly_special ||
-                    (gptJsonAnswer.dishes.length === 11 ? gptJsonAnswer.dishes[10] : undefined);
-                if (monatsHitGptDish) {
-                    monatsHitMain = new Food('Monats-Hit', monatsHitGptDish.price || 10.9);
-                    const monatsHitFood = new Food(`${monatsHitGptDish.name}${monatsHitGptDish.description ? ' ' +
-                            monatsHitGptDish.description : ''}`,
-                        null, false, false, monatsHitGptDish.allergens);
-                    monatsHitMain.entries = [monatsHitFood];
-                }
-
-                if (monatsHitMain) {
-                    menu[dayInWeek].mains.push(monatsHitMain)
-                }
-            } catch (error) {
-                winston.error(error);
-            }
-            if (menu[dayInWeek].mains.length === 0) {
-                winston.debug(`There is no menu for "${restaurants.interspar.id}" on day with index ${dayInWeek}`);
-                scraperHelper.setDayToError(menu, dayInWeek);
+                main.entries.push(food);
+                menuForDay.mains.push(main);
             }
         }
-    } else {
-        winston.debug(`Menu of "${restaurants.interspar.id}" is outdated`);
-        menu = scraperHelper.setWeekPlanToOutdated(menu);
-    }
+
+        let monthlySpecial = gptJsonAnswer.monthly_special;
+        if (monthlySpecial) {
+            let title = `Monats-Hit`;
+            let main = new Food(title, monthlySpecial.price, true);
+
+            let name = `${monthlySpecial.name}${monthlySpecial.description ? ' ' + monthlySpecial.description : ''}`;
+            let food = new Food(name, null, false, false, monthlySpecial.allergens);
+
+            main.entries.push(food);
+            menuForDay.mains.push(main);
+        }
+
+        if (menuForDay.mains.length > 0) {
+            menu[dayInWeek] = menuForDay;
+        } else {
+            winston.debug(`There is no menu for "${restaurants.interspar.id}" on day with index ${dayInWeek}`);
+            scraperHelper.setDayToError(menu, dayInWeek);
+        }
+    });
 
     menu[5].alacarte = true;
     menu[6].closed = true;

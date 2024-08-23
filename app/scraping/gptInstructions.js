@@ -1,6 +1,6 @@
 const restaurants = {
-    interspar: (text) => `
-        use the following openapi yaml schema - while using the specified hints on how to get the desired data - to parse the text afterwards into a response containing only valid json without any other text or explanations
+    interspar: () => `
+        use the following openapi yaml schema - while using the specified hints on how to get the desired data - to parse the provided image into a response containing only valid json without any other text or explanations
         
         definitions:
           required: [dishes, monthly_special]
@@ -9,12 +9,12 @@ const restaurants = {
             items:
               $ref: #/definitions/dish
           monthly_special:
-              $ref: #/definitions/dish
+              $ref: #/definitions/dish # no day property in this dish required as it is a weekly dish
           dish:
             type: object
-            required: [name, description, allergens, price]
+            required: [name, description, allergens, price, day]
             properties:
-              name: # keep apostrophes, double quotes and round brackets and the text within them; do not include allergens wich are typically at the end e.g. "GLO" or "A,C,G,L,M,O"
+              name: # include also the dishes on the right column called "Menü Vegetarisch"; keep apostrophes, double quotes and round brackets and the text within them; do not include allergens wich are typically at the end e.g. "GLO" or "A,C,G,L,M,O"
                 type: string
               description: # this is the side dish e.g. "mit Kartoffelschmarrn und Sauerkraut"; keep apostrophes, double quotes and round brackets and the text within them; do not include allergens wich are typically at the end e.g. "GLO" or "A,C,G,L,M,O"
                 type: string
@@ -25,10 +25,11 @@ const restaurants = {
                   maxLength: 1
               price:
                 type: double
-                
-        ${text}`,
+              day: # must be always one of ["MO", "DI", "MI", "DO", "FR", "SA", "SO"]
+                type: string
+                maxLength: 2`,
 
-    uniWirt: (text) => `
+    uniWirt: (htmlText) => `
         use the following openapi yaml schema - while using the specified hints on how to get the desired data - to parse the text afterwards into a response containing only valid json without any other text or explanations
         
         definitions:
@@ -71,9 +72,9 @@ const restaurants = {
                 type: string
                 maxLength: 2
                 
-        ${text}`,
+        ${htmlText}`,
 
-    uniPizzeria: (text) => `
+    uniPizzeria: (htmlText) => `
         use the following openapi yaml schema - while using the specified hints on how to get the desired data - to parse the text afterwards into a response containing only valid json without any other text or explanations
         
         definitions:
@@ -101,9 +102,9 @@ const restaurants = {
                 type: string
                 maxLength: 2
                 
-        ${text}`,
+        ${htmlText}`,
 
-    bitsAndBytes: (text) => `
+    bitsAndBytes: (htmlText) => `
         use the following openapi yaml schema - while using the specified hints on how to get the desired data - to parse the text afterwards into a response containing only valid json without any other text or explanations
         
         definitions:
@@ -128,9 +129,9 @@ const restaurants = {
               price:
                 type: double
                 
-        ${text}`,
+        ${htmlText}`,
 
-    daMario: (text) => `
+    daMario: (htmlText) => `
         use the following openapi yaml schema - while using the specified hints on how to get the desired data - to parse the text afterwards into a response containing only valid json without any other text or explanations
         
         definitions:
@@ -152,7 +153,7 @@ const restaurants = {
               price:
                 type: double
                 
-        ${text}`,
+        ${htmlText}`,
 }
 
 module.exports = {

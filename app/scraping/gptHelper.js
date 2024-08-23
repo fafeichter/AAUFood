@@ -4,34 +4,34 @@ const axios = require("axios");
 const restaurants = require("../config").restaurants;
 const gptInstructions = require("./gptInstructions");
 
-async function letMeChatGptThatForYou(text, restaurantId) {
+async function letMeChatGptThatForYou(input, restaurantId) {
     const gptUrl = 'https://api.openai.com/v1/chat/completions';
     const headers = {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${process.env.FOOD_CHAT_GPT_API_KEY}`,
     };
 
-    let content = undefined;
+    let prompt = undefined;
     switch (restaurantId) {
         case restaurants.interspar.id: {
-            content = gptInstructions.restaurants.interspar(text);
+            prompt = gptInstructions.restaurants.interspar();
             break;
         }
         case restaurants.uniWirt.id: {
-            content = gptInstructions.restaurants.uniWirt(text);
+            prompt = gptInstructions.restaurants.uniWirt(input);
             break;
         }
         case restaurants.uniPizzeria.id: {
-            content = gptInstructions.restaurants.uniPizzeria(text);
+            prompt = gptInstructions.restaurants.uniPizzeria();
             break;
         }
         case restaurants.bitsAndBytes.id:
         case restaurants.hotspot.id: {
-            content = gptInstructions.restaurants.bitsAndBytes(text);
+            prompt = gptInstructions.restaurants.bitsAndBytes(input);
             break;
         }
         case restaurants.daMario.id: {
-            content = gptInstructions.restaurants.daMario(text);
+            prompt = gptInstructions.restaurants.daMario(input);
             break;
         }
         default: {
@@ -39,7 +39,24 @@ async function letMeChatGptThatForYou(text, restaurantId) {
         }
     }
 
-    const payload = {
+    const requestPayload = payload(restaurantId, prompt, input);
+
+    return await axios.post(gptUrl, requestPayload, {headers});
+}
+
+function payload(restaurantId, prompt, base64Image) {
+    switch (restaurantId) {
+        case restaurants.interspar.id:
+        case restaurants.uniPizzeria.id: {
+            return payloadForTextFromImage(prompt, base64Image);
+        }
+        default:
+            return defaultPayload(prompt);
+    }
+}
+
+function defaultPayload(input) {
+    return {
         model: "gpt-3.5-turbo",
         response_format: {
             type: "json_object"
@@ -51,12 +68,36 @@ async function letMeChatGptThatForYou(text, restaurantId) {
             },
             {
                 role: "user",
-                content: content
+                content: input
             }
         ],
     };
+}
 
-    return await axios.post(gptUrl, payload, {headers});
+function payloadForTextFromImage(input, base64Image) {
+    return {
+        model: "gpt-4o",
+        response_format: {
+            type: "json_object"
+        },
+        messages: [
+            {
+                role: "user",
+                content: [
+                    {
+                        type: "text",
+                        text: input
+                    },
+                    {
+                        type: "image_url",
+                        image_url: {
+                            url: `data:image/jpeg;base64,${base64Image}`
+                        }
+                    }
+                ]
+            }
+        ]
+    };
 }
 
 module.exports = {

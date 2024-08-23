@@ -34,6 +34,7 @@
     "moment": "^2.17.1",
     "morgan": "^1.7.0",
     "node-cron": "^3.0.3",
+    "pdf2pic": "^3.1.1",
     "popper.js": "^1.12.5",
     "postcss-import": "^12.0.1",
     "postcss-preset-env": "^6.7.0",

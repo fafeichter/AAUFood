@@ -1,6 +1,7 @@
-FROM node:16.19.0-alpine
+FROM node:18.20.4-alpine
 
-RUN apk add --no-cache tzdata
+RUN apk update
+RUN apk add --no-cache tzdata ghostscript graphicsmagick
 ENV TZ="/usr/share/zoneinfo/Europe/Vienna"
 
 RUN mkdir -p /usr/src/aaufood/app
