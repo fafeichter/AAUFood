@@ -8,7 +8,6 @@ const scraper = require('../scraping/scraper');
 const restaurants = require('../config').restaurants;
 const winston = require('winston');
 const moment = require('moment');
-const scraperHelper = require('../scraping/scraperHelper')
 
 const menuKeyPrefix = "menu";
 
@@ -39,7 +38,7 @@ class MenuCache {
 
             if (forceSync) {
                 this.updateMenu(restaurants.interspar.id);
-                // this.updateMenu(restaurants.uniPizzeria.id);
+                this.updateMenu(restaurants.uniPizzeria.id);
             }
         }, 10000);
     }

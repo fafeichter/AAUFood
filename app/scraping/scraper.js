@@ -242,46 +242,55 @@ function orderMensaMenusOfDay(menu, dayIndex) {
 }
 
 async function getUniPizzeriaWeekPlan() {
-    winston.debug(`Parsing of "${restaurants.uniPizzeria.id}" started ...`);
+    let restaurantId = restaurants.uniPizzeria.id;
+    winston.debug(`Parsing of "${restaurantId}" started ...`);
+
     let menu = scraperHelper.getWeekEmptyModel();
 
-    const pdfHttpResult = await urlCache.getUrls(restaurants.uniPizzeria.id)
-        .then(urls => crawler(JSON.parse(urls).scraperUrl));
+    const scraperUrl = await urlCache.getUrls(restaurantId)
+        .then(urls => JSON.parse(urls).scraperUrl)
 
-    winston.debug(`Relevant PDF content of "${restaurants.uniPizzeria.id}": ${pdfHttpResult.text}`);
+    const pdfAsBase64Image = await fileUtils.pdf2Base64Image(scraperUrl, restaurantId);
 
-    if (pdfHttpResult.text) {
-        const gptResponse = await gptHelper.letMeChatGptThatForYou(pdfHttpResult.text, restaurants.uniPizzeria.id);
-        const gptResponseContent = gptResponse.data.choices[0].message.content;
-        winston.debug(`ChatGPT response of "${restaurants.uniPizzeria.id}": ${gptResponseContent}`);
-        const gptJsonAnswer = JSON.parse(gptResponseContent);
+    const gptResponse = await gptHelper.letMeChatGptThatForYou(pdfAsBase64Image, restaurantId);
+    const gptResponseContent = gptResponse.data.choices[0].message.content;
+    winston.debug(`ChatGPT response of "${restaurantId}": ${gptResponseContent}`);
+    const gptJsonAnswer = JSON.parse(gptResponseContent);
 
-        ["MO", "DI", "MI", "DO", "FR", "SA", "SO",].forEach(function (dayString, dayInWeek) {
-            var menuForDay = new Menu();
-            var menuct = 0;
-            let title = `Menü ${++menuct}`;
-            let mainCourse = new Food(title, null, true);
+    ["MO", "DI", "MI", "DO", "FR"].forEach(function (dayString, dayInWeek) {
+        var menuForDay = new Menu();
+        var menuct = 0;
 
-            for (let dish of gptJsonAnswer.dishes) {
-                if (dish.day === dayString) {
-                    let food = new Food(`${dish.name}${dish.description ? ' ' + dish.description : ''}`,
-                        dish.price, false, false, dish.allergens);
-                    mainCourse.entries.push(food);
+        for (let dish of gptJsonAnswer.dishes) {
+            if (dish.day === dayString) {
+                let title = `Menü ${++menuct}`;
+                let main = new Food(title, dish.price, true);
+
+                let food = new Food(`${dish.name}${dish.description ? ' ' + dish.description : ''}`,
+                    null, false, false, dish.allergens);
+
+                let salats = gptJsonAnswer.salats;
+                if (salats) {
+                    for (let salat of gptJsonAnswer.salats) {
+                        if (salat.day === dayString) {
+                            main.entries.push(new Food(`${salat.name}`));
+                            break;
+                        }
+                    }
                 }
-            }
 
-            if (mainCourse.entries.length > 0) {
-                menuForDay.mains.push(mainCourse);
-                menu[dayInWeek] = menuForDay;
-            } else {
-                winston.debug(`There is no menu for "${restaurants.uniPizzeria.id}" on day with index ${dayInWeek}`);
-                scraperHelper.setDayToError(menu, dayInWeek);
+                main.entries.push(food);
+                menuForDay.mains.push(main);
             }
-        });
-    } else {
-        winston.debug(`Menu of "${restaurants.uniPizzeria.id}" is outdated`);
-        menu = scraperHelper.setWeekPlanToOutdated(menu);
-    }
+        }
+
+        if (menuForDay.mains.length > 0) {
+            menu[dayInWeek] = menuForDay;
+        } else {
+            winston.debug(`There is no menu for "${restaurants.uniWirt.id}" on day with index ${dayInWeek}`);
+            scraperHelper.setDayToError(menu, dayInWeek);
+        }
+    });
 
     menu[5].alacarte = true;
     menu[6].alacarte = true;

@@ -129,11 +129,7 @@ class UrlCache extends EventEmitter {
             if (cachedUrls !== urlsJson) {
                 this.client.setAsync(`${urlKeyPrefix}:${restaurantId}`, urlsJson).then(() => {
                     winston.info(`"${restaurantId}" has changed the url -> cache updated`);
-                    if (restaurantId !== restaurants.uniPizzeria.id) {
-                        this.emit('update', restaurantId);
-                    } else {
-                        winston.info(`Menu sync for '${restaurantId}' is disabled`)
-                    }
+                    this.emit('update', restaurantId);
                 });
             } else {
                 winston.info(`"${restaurantId}" has not changed the url`);

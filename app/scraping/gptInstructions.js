@@ -75,14 +75,18 @@ const restaurants = {
         ${htmlText}`,
 
     uniPizzeria: (htmlText) => `
-        use the following openapi yaml schema - while using the specified hints on how to get the desired data - to parse the text afterwards into a response containing only valid json without any other text or explanations
+        use the following openapi yaml schema - while using the specified hints on how to get the desired data - to parse the provided image into a response containing only valid json without any other text or explanations
         
         definitions:
-          required: [dishes]
+          required: [dishes, salats]
           dishes:
             type: array
             items:
               $ref: #/definitions/dish
+          salats:
+            type: array
+            items:
+              $ref: #/definitions/salat
           dish:
             type: object
             required: [name, description, allergens, price, day]
@@ -98,6 +102,15 @@ const restaurants = {
                   maxLength: 1
               price:
                 type: double
+              day: # must be always one of ["MO", "DI", "MI", "DO", "FR", "SA", "SO"]
+                type: string
+                maxLength: 2
+          salat: 
+            type: object
+            required: [name, day]
+            properties:
+              name: # keep apostrophes, double quotes and round brackets and the text within them; do not include allergens wich are typically at the end e.g. "GLO" or "A,C,G,L,M,O"
+                type: string
               day: # must be always one of ["MO", "DI", "MI", "DO", "FR", "SA", "SO"]
                 type: string
                 maxLength: 2
