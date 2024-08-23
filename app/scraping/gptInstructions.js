@@ -65,7 +65,7 @@ const restaurants = {
             type: object
             required: [name, day]
             properties:
-              name: # e.g. "Klare Rindsuppe"; keep apostrophes, double quotes and round brackets and the text within them
+              name: # e.g. "Klare Rindsuppe"; remove word "dazu" at the beginning; keep apostrophes, double quotes and round brackets and the text within them
                 type: string
               day: # must be always one of ["MO", "DI", "MI", "DO", "FR", "SA", "SO"]
                 type: string
