@@ -7,7 +7,6 @@
 const scraper = require('../scraping/scraper');
 const restaurants = require('../config').restaurants;
 const winston = require('winston');
-const moment = require('moment');
 
 const menuKeyPrefix = "menu";
 
@@ -17,33 +16,23 @@ class MenuCache {
         this.client = redisClient;
     }
 
-    update(forceSync = false) {
+    update() {
         // wait for url cache to update (... avoid the hell of nested promises)
         setTimeout(() => {
             winston.debug('Updating menu caches ...');
 
-            this.updateMenu(restaurants.mensa.id);
-            this.updateMenu(restaurants.burgerBoutique.id);
-
-            const now = moment();
-            if (forceSync || (now.isoWeekday() === 1 && (now.hour() === 0 || (now.hour() >= 6 && now.hour() <= 11)))) {
-                this.updateMenu(restaurants.uniWirt.id);
-                this.updateMenu(restaurants.bitsAndBytes.id);
-                this.updateMenu(restaurants.hotspot.id);
-            }
-
-            if (forceSync || (now.isoWeekday() === 1 && now.hour() === 0)) {
-                this.updateMenu(restaurants.daMario.id);
-            }
-
-            if (forceSync) {
-                this.updateMenu(restaurants.interspar.id);
-                this.updateMenu(restaurants.uniPizzeria.id);
-            }
+            this._updateMenu(restaurants.mensa.id);
+            this._updateMenu(restaurants.burgerBoutique.id);
+            this._updateMenu(restaurants.uniWirt.id);
+            this._updateMenu(restaurants.bitsAndBytes.id);
+            this._updateMenu(restaurants.hotspot.id);
+            this._updateMenu(restaurants.daMario.id);
+            this._updateMenu(restaurants.interspar.id);
+            this._updateMenu(restaurants.uniPizzeria.id);
         }, 10000);
     }
 
-    updateMenu(restaurantId) {
+    _updateMenu(restaurantId) {
         winston.debug(`Getting week plan for "${restaurantId}"`);
 
         let weekPlan = undefined;
@@ -86,11 +75,11 @@ class MenuCache {
             }
         }
 
-        if (weekPlan) {
-            weekPlan.then(weekPlan => this._updateIfNewer(restaurantId, weekPlan));
-        } else {
-            throw new Error(`There is no week plan for "${restaurantId}"`);
-        }
+        weekPlan.then(weekPlan => {
+            if (weekPlan !== scraper.PARSING_SKIPPED) {
+                this._updateIfNewer(restaurantId, weekPlan);
+            }
+        });
     }
 
     resetAll() {

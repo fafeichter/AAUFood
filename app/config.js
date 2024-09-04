@@ -32,10 +32,10 @@ module.exports = {
         ],
     },
     cache: {
-        // time in milliseconds -> 1 hour
-        menuCacheIntervall: 3600000,
+        // time in milliseconds -> 5 min
+        urlCacheIntervall: 5 * 60 * 1000,
         // time in milliseconds -> 15 min
-        urlCacheIntervall: 900000,
+        menuCacheIntervall: 15 * 60 * 1000,
         overallVisitorKey: "overallVisitors",
         dailyVisitorKey: "dailyVisitors"
     },

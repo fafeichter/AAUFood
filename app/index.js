@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');
 const compression = require('compression');
 const menuCache = require('./caching/menuCache');
 const urlCache = require('./caching/urlCache');
+const menuRawDataHashCache = require('./caching/menuRawDataHashCache');
 const visitorCache = require('./caching/visitorCache');
 const config = require('./config');
 const indexRoutes = require('./routes/index');
@@ -107,6 +108,7 @@ var server = app.listen(config.settings.nodePort, function () {
 
     urlCache.init(redisClient);
     menuCache.init(redisClient);
+    menuRawDataHashCache.init(redisClient);
     visitorCache.init(redisClient, io);
 
     cron.schedule('0 0 * * MON', () => {
@@ -121,12 +123,8 @@ var server = app.listen(config.settings.nodePort, function () {
     let forceMenuSync = process.env.FOOD_ENV === 'DEV' || process.env.FOOD_FORCE_SYNC_ON_STARTUP === 'true';
     if (forceMenuSync) {
         winston.debug("Forcing menu sync on startup");
-        menuCache.update(true);
+        menuCache.update();
     }
     setInterval(() => menuCache.update(forceMenuSync), config.cache.menuCacheIntervall);
     winston.debug("Successfully registered menu cache updater");
-});
-
-urlCache.on('update', async (restaurantId) => {
-    menuCache.updateMenu(restaurantId);
 });

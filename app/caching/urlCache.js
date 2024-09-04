@@ -9,11 +9,10 @@ const Promise = require('bluebird');
 const request = Promise.promisifyAll(require("request"));
 const cheerio = require('cheerio');
 const moment = require('moment');
-const EventEmitter = require('events')
 const restaurants = require('../config').restaurants;
 const urlKeyPrefix = "urls";
 
-class UrlCache extends EventEmitter {
+class UrlCache {
     init(redisClient) {
         this.client = redisClient;
         this._setStaticUrls();
@@ -129,7 +128,6 @@ class UrlCache extends EventEmitter {
             if (cachedUrls !== urlsJson) {
                 this.client.setAsync(`${urlKeyPrefix}:${restaurantId}`, urlsJson).then(() => {
                     winston.info(`"${restaurantId}" has changed the url -> cache updated`);
-                    this.emit('update', restaurantId);
                 });
             } else {
                 winston.info(`"${restaurantId}" has not changed the url`);
