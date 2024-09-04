@@ -34,7 +34,7 @@ const restaurants = {
         
         definitions:
           required: [dishes, soups, weekly_special]
-          dishes:
+          dishes: # put soups which are typically one line before the dish name into the "soups" array and not to dishes
             type: array
             items:
               $ref: #/definitions/dish
@@ -48,7 +48,7 @@ const restaurants = {
             type: object
             required: [name, description, allergens, price, day]
             properties:
-              name: # remove everything related to soups like "dazu Paprika-Limettensuppe"; keep apostrophes, double quotes and round brackets and the text within them; do not include allergens wich are typically at the end e.g. "GLO" or "A,C,G,L,M,O"
+              name: keep apostrophes, double quotes and round brackets and the text within them; do not include allergens wich are typically at the end e.g. "GLO" or "A,C,G,L,M,O"
                 type: string
               description: # this is the side dish e.g. "mit Kartoffelschmarrn und Sauerkraut", otherwise set this property to null; keep apostrophes, double quotes and round brackets and the text within them; do not include allergens wich are typically at the end e.g. "GLO" or "A,C,G,L,M,O"
                 type: string
@@ -130,7 +130,7 @@ const restaurants = {
             type: object
             required: [name, description, allergens, price]
             properties:
-              name: # keep apostrophes, double quotes and round brackets and the text within them; do not include allergens wich are typically at the end e.g. "GLO" or "A,C,G,L,M,O"; include also daily or weekly special dishes if available
+              name: # keep apostrophes, double quotes and round brackets and the text within them; do not include allergens wich are typically at the end e.g. "GLO" or "A,C,G,L,M,O"; include also daily or weekly special dishes including additional info like "(täglich wechselnd, unsere MitarbeiterInnen informieren Sie gerne!)" if available
                 type: string
               description: # this is the side dish e.g. "mit Kartoffelschmarrn und Sauerkraut", otherwise set this property to null; keep apostrophes, double quotes and round brackets and the text within them; do not include allergens wich are typically at the end e.g. "GLO" or "A,C,G,L,M,O"
                 type: string
