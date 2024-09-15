@@ -64,7 +64,7 @@ async function parseUniwirt(html) {
 
         if (relevantHtmlPart) {
             let relevantHtmlPartPreviousHash = await menuRawDataHashCache.getHash(uniWirtRestaurantId);
-            let relevantHtmlPartHash = hashUtils.hashWithSHA256(uniWirtRestaurantId);
+            let relevantHtmlPartHash = hashUtils.hashWithSHA256(relevantHtmlPart);
             menuRawDataHashCache.updateIfNewer(uniWirtRestaurantId, relevantHtmlPartHash);
 
             if (relevantHtmlPartPreviousHash === null || relevantHtmlPartPreviousHash !== relevantHtmlPartHash) {
@@ -159,10 +159,11 @@ async function parseMensa(html) {
         var rightMenuElements = $("#middleColumn .menu-category > *");
 
         var menuElements = $.merge(leftMenuElements, rightMenuElements);
-        winston.debug(`Relevant HTML content of "${mensaRestaurantId}": ${$.html(menuElements)}`);
+        let relevantHtmlPart = $.html(menuElements);
+        winston.debug(`Relevant HTML content of "${mensaRestaurantId}": ${relevantHtmlPart}`);
 
         let relevantHtmlPartPreviousHash = await menuRawDataHashCache.getHash(mensaRestaurantId);
-        let relevantHtmlPartHash = hashUtils.hashWithSHA256(mensaRestaurantId);
+        let relevantHtmlPartHash = hashUtils.hashWithSHA256(relevantHtmlPart);
         menuRawDataHashCache.updateIfNewer(mensaRestaurantId, relevantHtmlPartHash);
 
         if (relevantHtmlPartPreviousHash === null || relevantHtmlPartPreviousHash !== relevantHtmlPartHash) {
@@ -283,7 +284,7 @@ async function getUniPizzeriaWeekPlan() {
 
     if (pdfAsBase64Image) {
         let imagePreviousHash = await menuRawDataHashCache.getHash(uniPizzeriaRestaurantId)
-        let imageHash = hashUtils.hashWithSHA256(uniPizzeriaRestaurantId);
+        let imageHash = hashUtils.hashWithSHA256(pdfAsBase64Image);
         menuRawDataHashCache.updateIfNewer(uniPizzeriaRestaurantId, imageHash);
 
         if (imagePreviousHash === null || imagePreviousHash !== imageHash) {
@@ -387,7 +388,7 @@ async function parseHotspot(html) {
 
         if (relevantHtmlPart) {
             let relevantHtmlPartPreviousHash = await menuRawDataHashCache.getHash(hotspotRestaurantId);
-            let relevantHtmlPartHash = hashUtils.hashWithSHA256(hotspotRestaurantId);
+            let relevantHtmlPartHash = hashUtils.hashWithSHA256(relevantHtmlPart);
             menuRawDataHashCache.updateIfNewer(hotspotRestaurantId, relevantHtmlPartHash);
 
             if (relevantHtmlPartPreviousHash === null || relevantHtmlPartPreviousHash !== relevantHtmlPartHash) {
@@ -482,7 +483,7 @@ async function parseBitsAndBytes(html) {
 
         if (relevantHtmlPart) {
             let relevantHtmlPartPreviousHash = await menuRawDataHashCache.getHash(bitsAndBytesRestaurantId);
-            let relevantHtmlPartHash = hashUtils.hashWithSHA256(bitsAndBytesRestaurantId);
+            let relevantHtmlPartHash = hashUtils.hashWithSHA256(relevantHtmlPart);
             menuRawDataHashCache.updateIfNewer(bitsAndBytesRestaurantId, relevantHtmlPartHash);
 
             if (relevantHtmlPartPreviousHash === null || relevantHtmlPartPreviousHash !== relevantHtmlPartHash) {
@@ -539,7 +540,7 @@ async function getIntersparWeekPlan() {
 
     if (pdfAsBase64Image) {
         let imagePreviousHash = await menuRawDataHashCache.getHash(intersparRestaurantId);
-        let imageHash = hashUtils.hashWithSHA256(intersparRestaurantId);
+        let imageHash = hashUtils.hashWithSHA256(pdfAsBase64Image);
         menuRawDataHashCache.updateIfNewer(intersparRestaurantId, imageHash);
 
         if (imagePreviousHash === null || imagePreviousHash !== imageHash) {
@@ -613,7 +614,7 @@ async function parseDaMario(html) {
 
     if (relevantHtmlPart) {
         let relevantHtmlPartPreviousHash = await menuRawDataHashCache.getHash(daMarioRestaurantId);
-        let relevantHtmlPartHash = hashUtils.hashWithSHA256(daMarioRestaurantId);
+        let relevantHtmlPartHash = hashUtils.hashWithSHA256(relevantHtmlPart);
         menuRawDataHashCache.updateIfNewer(daMarioRestaurantId, relevantHtmlPartHash);
 
         if (relevantHtmlPartPreviousHash === null || relevantHtmlPartPreviousHash !== relevantHtmlPartHash) {
