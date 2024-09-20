@@ -555,7 +555,7 @@ async function getIntersparWeekPlan() {
 
                 for (let dish of gptJsonAnswer.dishes) {
                     if (dish.day === dayString) {
-                        let title = `Menü ${++menuct === 0 ? 'Klassisch' : 'Vegetarisch'}`;
+                        let title = `Menü ${menuct++ === 0 ? 'Klassisch' : 'Vegetarisch'}`;
                         let main = new Food(title, dish.price, true);
 
                         let food = new Food(`${dish.name}${dish.description ? ' ' + dish.description : ''}`,
