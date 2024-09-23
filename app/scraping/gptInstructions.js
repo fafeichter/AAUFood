@@ -2,6 +2,8 @@ const restaurants = {
     interspar: () => `
         use the following openapi yaml schema - while using the specified hints on how to get the desired data - to parse the provided image into a response containing only valid json without any other text or explanations
         
+        the image contains a table where each row is a day. each column represents a dish. unter the table is the monthly special.
+        
         definitions:
           required: [dishes, monthly_special]
           dishes:
@@ -22,33 +24,49 @@ const restaurants = {
                 type: array
                 items:
                   type: string
+                  minLength: 1
                   maxLength: 1
               price:
                 type: double
               day: # must be always one of ["MO", "DI", "MI", "DO", "FR", "SA", "SO"]
                 type: string
+                minLength: 2
                 maxLength: 2`,
 
     uniWirt: (htmlText) => `
         use the following openapi yaml schema - while using the specified hints on how to get the desired data - to parse the text afterwards into a response containing only valid json without any other text or explanations
         
         definitions:
-          required: [dishes, soups, weekly_special]
-          dishes: # put soups which are typically one line before the dish name into the "soups" array and not to dishes
-            type: array
-            items:
-              $ref: #/definitions/dish
+          required: [soups, dishes, pizzas, weekly_special]
           soups:
             type: array
             items:
               $ref: #/definitions/soup
+          dishes:
+            type: array
+            items:
+              $ref: #/definitions/dish
+          pizzas:
+            type: array
+            items:
+              $ref: #/definitions/pizza
           weekly_special:
               $ref: #/definitions/dish # no day in this dish required as it is a weekly dish
+          soup:
+            type: object
+            required: [name, day]
+            properties:
+              name:
+                type: string
+              day: # must be always one of ["MO", "DI", "MI", "DO", "FR", "SA", "SO"]
+                type: string
+                minLength: 2
+                maxLength: 2
           dish:
             type: object
             required: [name, description, allergens, price, day]
             properties:
-              name: keep apostrophes, double quotes and round brackets and the text within them; do not include allergens wich are typically at the end e.g. "GLO" or "A,C,G,L,M,O"
+              name: keep apostrophes, double quotes and round brackets and the text within them; do not include allergens wich are typically at the end e.g. "GLO" or "A,C,G,L,M,O"; remove leading list numbers
                 type: string
               description: # this is the side dish e.g. "mit Kartoffelschmarrn und Sauerkraut", otherwise set this property to null; keep apostrophes, double quotes and round brackets and the text within them; do not include allergens wich are typically at the end e.g. "GLO" or "A,C,G,L,M,O"
                 type: string
@@ -56,20 +74,33 @@ const restaurants = {
                 type: array
                 items:
                   type: string
+                  minLength: 1
                   maxLength: 1
               price:
-                type: double
+                type: double # the price is found near the soup
               day: # must be always one of ["MO", "DI", "MI", "DO", "FR", "SA", "SO"]
                 type: string
+                minLength: 2
                 maxLength: 2
-          soup:
+          pizza:
             type: object
-            required: [name, day]
+            required: [name, description, allergens, price, day]
             properties:
-              name: # e.g. "Klare Rindsuppe"; remove word "dazu" at the beginning; keep apostrophes, double quotes and round brackets and the text within them
+              name: keep apostrophes, double quotes and round brackets and the text within them; do not include allergens wich are typically at the end e.g. "GLO" or "A,C,G,L,M,O";
                 type: string
+              description: # keep apostrophes, double quotes and round brackets and the text within them; do not include allergens wich are typically at the end e.g. "GLO" or "A,C,G,L,M,O", e.g. "(Tomaten, Mozzarella, Gemischtes Gemüse, Oregano)"
+                type: string
+              allergens: # if you have trouble finding the allergens then you may find them immediately after the names of the dishes, e.g. "GLO" or "A,C,G,L,M,O", otherwise set this property to an empty array; transform them always into an array containing single uppercase characters
+                type: array
+                items:
+                  type: string
+                  minLength: 1
+                  maxLength: 1
+              price:
+                type: double # the price is found near the soup
               day: # must be always one of ["MO", "DI", "MI", "DO", "FR", "SA", "SO"]
                 type: string
+                minLength: 2
                 maxLength: 2
                 
         ${htmlText}`,
@@ -78,15 +109,25 @@ const restaurants = {
         use the following openapi yaml schema - while using the specified hints on how to get the desired data - to parse the provided image into a response containing only valid json without any other text or explanations
         
         definitions:
-          required: [dishes, salats]
-          dishes:
-            type: array
-            items:
-              $ref: #/definitions/dish
+          required: [salats, dishes] # salats and dishes are strictly separated by a horizontal line, first is the salat then the dish. if a dish contains a salat it should be part of the dish and not the list of salats
           salats:
             type: array
             items:
               $ref: #/definitions/salat
+          dishes:
+            type: array
+            items:
+              $ref: #/definitions/dish
+          salat: 
+            type: object
+            required: [name, day]
+            properties:
+              name: # keep apostrophes, double quotes and round brackets and the text within them; do not include allergens wich are typically at the end e.g. "GLO" or "A,C,G,L,M,O"
+                type: string
+              day: # must be always one of ["MO", "DI", "MI", "DO", "FR", "SA", "SO"]
+                type: string
+                minLength: 2
+                maxLength: 2
           dish:
             type: object
             required: [name, description, allergens, price, day]
@@ -99,20 +140,13 @@ const restaurants = {
                 type: array
                 items:
                   type: string
+                  minLength: 1
                   maxLength: 1
               price:
                 type: double
               day: # must be always one of ["MO", "DI", "MI", "DO", "FR", "SA", "SO"]
                 type: string
-                maxLength: 2
-          salat: 
-            type: object
-            required: [name, day]
-            properties:
-              name: # keep apostrophes, double quotes and round brackets and the text within them; do not include allergens wich are typically at the end e.g. "GLO" or "A,C,G,L,M,O"
-                type: string
-              day: # must be always one of ["MO", "DI", "MI", "DO", "FR", "SA", "SO"]
-                type: string
+                minLength: 2
                 maxLength: 2
                 
         ${htmlText}`,
@@ -138,6 +172,7 @@ const restaurants = {
                 type: array
                 items:
                   type: string
+                  minLength: 1
                   maxLength: 1
               price:
                 type: double
@@ -161,7 +196,7 @@ const restaurants = {
             type: object
             required: [name, price]
             properties:
-              name: # keep apostrophes, double quotes and round brackets and the text within them; do not include allergens wich are typically at the end e.g. "GLO" or "A,C,G,L,M,O"; remove all Roman numerals at the start
+              name: # keep apostrophes, double quotes and round brackets and the text within them; do not include allergens wich are typically at the end e.g. "GLO" or "A,C,G,L,M,O"; remove leading roman numerals
                 type: string
               price:
                 type: double

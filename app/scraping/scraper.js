@@ -97,6 +97,26 @@ async function parseUniwirt(html) {
                         }
                     }
 
+                    for (let pizza of gptJsonAnswer.pizzas) {
+                        if (pizza.day === dayString) {
+                            let title = `Menü ${++menuct}`;
+                            let main = new Food(title, pizza.price, true);
+
+                            let food = new Food(`${pizza.name}${pizza.description ? ' ' + pizza.description : ''}`,
+                                null, false, false, pizza.allergens);
+                            if (gptJsonAnswer.soups) {
+                                for (let soup of gptJsonAnswer.soups) {
+                                    if (soup.day === dayString) {
+                                        main.entries.push(new Food(`${soup.name}`));
+                                        break;
+                                    }
+                                }
+                            }
+                            main.entries.push(food);
+                            menuForDay.mains.push(main);
+                        }
+                    }
+
                     let weeklySpecial = gptJsonAnswer.weekly_special;
                     if (weeklySpecial) {
                         let title = `Wochengericht`;
