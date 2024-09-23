@@ -113,6 +113,7 @@ var server = app.listen(config.settings.nodePort, function () {
 
     cron.schedule('0 0 * * MON', () => {
         menuCache.resetAll();
+        menuRawDataHashCache.resetAll();
     });
     winston.debug("Successfully registered menu cache resetter");
 
