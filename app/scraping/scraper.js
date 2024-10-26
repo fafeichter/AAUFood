@@ -77,6 +77,16 @@ async function parseUniwirt(html) {
                     var menuForDay = new Menu();
                     var menuct = 0;
 
+                    if (gptJsonAnswer.soups) {
+                        for (let soup of gptJsonAnswer.soups) {
+                            if (soup.day === dayString) {
+                                let starterFood = new Food(`${soup.name}`);
+                                menuForDay.starters.push(starterFood);
+                                break;
+                            }
+                        }
+                    }
+
                     for (let dish of gptJsonAnswer.dishes) {
                         if (dish.day === dayString) {
                             let title = `Menü ${++menuct}`;
@@ -84,14 +94,6 @@ async function parseUniwirt(html) {
 
                             let food = new Food(`${dish.name}${dish.description ? ' ' + dish.description : ''}`,
                                 null, false, false, dish.allergens);
-                            if (gptJsonAnswer.soups) {
-                                for (let soup of gptJsonAnswer.soups) {
-                                    if (soup.day === dayString) {
-                                        main.entries.push(new Food(`${soup.name}`));
-                                        break;
-                                    }
-                                }
-                            }
                             main.entries.push(food);
                             menuForDay.mains.push(main);
                         }
@@ -104,14 +106,6 @@ async function parseUniwirt(html) {
 
                             let food = new Food(`${pizza.name}${pizza.description ? ' ' + pizza.description : ''}`,
                                 null, false, false, pizza.allergens);
-                            if (gptJsonAnswer.soups) {
-                                for (let soup of gptJsonAnswer.soups) {
-                                    if (soup.day === dayString) {
-                                        main.entries.push(new Food(`${soup.name}`));
-                                        break;
-                                    }
-                                }
-                            }
                             main.entries.push(food);
                             menuForDay.mains.push(main);
                         }
@@ -645,6 +639,9 @@ async function parseDaMario(html) {
 
             for (let dayInWeek = 0; dayInWeek < 5; dayInWeek++) {
                 var menuForDay = new Menu();
+
+                let starterFood = new Food("Salat mit Essig-Öl Dressing");
+                menuForDay.starters.push(starterFood)
 
                 let titlePizza = 'Pizza';
                 let mainCoursePizza = new Food(titlePizza, null, true);
