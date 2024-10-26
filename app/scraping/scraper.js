@@ -440,9 +440,18 @@ async function parseHotspot(html) {
         }
     }
 
+    // Friday
+    let fridayMenu = new Menu();
+    let surpriseMenu = new Food("Überraschungsmenü");
+    let food = new Food("Jeden Freitag erwartet Euch ein Überraschungsmenü.");
+    surpriseMenu.entries.push(food)
+    fridayMenu.mains.push(surpriseMenu)
+    result[4] = fridayMenu;
+
+    // Saturday + Sunday
     let closedMenu = new Menu();
     closedMenu.closed = true;
-    result[4] = result[5] = result[6] = closedMenu;
+    result[5] = result[6] = closedMenu;
 
     return result;
 }
