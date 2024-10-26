@@ -23,7 +23,7 @@ async function pdf2Base64Image(pdfUrl, restaurantId) {
     fs.writeFileSync(pdfFilePath, Buffer.from(pdfBuffer), 'binary');
 
     const pdf2JpegOptions = {
-        density: 300,
+        density: 600,
         saveFilename: restaurantId,
         savePath: downloadDirectory,
         format: "jpeg",

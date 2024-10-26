@@ -72,7 +72,7 @@ function defaultPayload(input) {
 
 function payloadForTextFromImage(input, base64Image) {
     return {
-        model: "gpt-4o-mini",
+        model: "gpt-4o",
         response_format: {
             type: "json_object"
         },

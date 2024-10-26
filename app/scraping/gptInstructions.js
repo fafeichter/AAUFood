@@ -2,7 +2,7 @@ const restaurants = {
     interspar: () => `
         use the following openapi yaml schema - while using the specified hints on how to get the desired data - to parse the provided image into a response containing only valid json without any other text or explanations
         
-        the image contains a table where each row is a day. each column represents a dish. unter the table is the monthly special.
+        the image contains a table where each row is a day. each column represents a dish. unter the table is the monthly special. the language of the text in the image is german.
         
         definitions:
           required: [dishes, monthly_special]
@@ -16,7 +16,7 @@ const restaurants = {
             type: object
             required: [name, description, allergens, price, day]
             properties:
-              name: # include also the dishes on the right column called "Menü Vegetarisch"; keep apostrophes, double quotes and round brackets and the text within them; do not include allergens wich are typically at the end e.g. "GLO" or "A,C,G,L,M,O"
+              name: # include also the dishes on the right column called "Menü Vegetarisch"; keep apostrophes, double quotes and round brackets and the text within them; do not include allergens wich are typically at the end e.g. "GLO" or "A,C,G,L,M,O", do not apply changes regarding grammar and spelling to the original dish name parsed from the image
                 type: string
               description: # this is the side dish e.g. "mit Kartoffelschmarrn und Sauerkraut"; keep apostrophes, double quotes and round brackets and the text within them; do not include allergens wich are typically at the end e.g. "GLO" or "A,C,G,L,M,O"
                 type: string
