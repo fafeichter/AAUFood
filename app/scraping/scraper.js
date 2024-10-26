@@ -685,7 +685,7 @@ function getBurgerBoutiquePlan() {
     // Monday
     let mondayMenu = new Menu();
     let mondayMain = new Food("Menü 1", 9.9, true);
-    let mondayFood = new Food("Burrritos", null, false, false, null);
+    let mondayFood = new Food("Burritos + Pommes und Sauce", null, false, false, null);
 
     mondayMain.entries.push(mondayFood);
     mondayMenu.mains.push(mondayMain);
@@ -704,7 +704,7 @@ function getBurgerBoutiquePlan() {
     let wednesdayMenu = new Menu();
     let wednesdayMain = new Food("Menü 1", 9.9, true);
     let wednesdayFood = new Food();
-    wednesdayFood.name = "Burger (ausgenommen Burger ab 15 Euro)";
+    wednesdayFood.name = "Burger (außer New Jersey, Route 66 und Surf and Turf)";
 
     wednesdayMain.entries.push(wednesdayFood);
     wednesdayMenu.mains.push(wednesdayMain);
@@ -713,7 +713,7 @@ function getBurgerBoutiquePlan() {
     // Thursday
     let thursdayMenu = new Menu();
     let thursdayMain = new Food("Menü 1", 8.9, true);
-    let thursdayFood = new Food("Wraps", null, false, false, null);
+    let thursdayFood = new Food("Wraps + Pommes und Sauce", null, false, false, null);
 
     thursdayMain.entries.push(thursdayFood);
     thursdayMenu.mains.push(thursdayMain);
@@ -722,9 +722,19 @@ function getBurgerBoutiquePlan() {
     // Friday
     menu[4] = wednesdayMenu;
 
+    // Saturday
     let aLaCarteMenu = new Menu();
     aLaCarteMenu.alacarte = true;
-    menu[5] = menu[6] = aLaCarteMenu;
+    menu[5] = aLaCarteMenu;
+
+    // Sunday
+    let sundayMenu = new Menu();
+    let sundayMain = new Food("Sonntagsspecial", 4.9, true);
+    let sundayFood = new Food("Kidsmenü + Pommes und Apfelsaft", null, false, false, null);
+
+    sundayMain.entries.push(sundayFood);
+    sundayMenu.mains.push(sundayMain);
+    menu[6] = sundayMenu;
 
     return Promise.resolve(menu);
 }
