@@ -112,8 +112,8 @@ async function parseUniwirt(html) {
                     }
 
                     let weeklySpecial = gptJsonAnswer.weekly_special;
-                    if (weeklySpecial) {
-                        let title = `Wochengericht`;
+                    if (weeklySpecial && menuForDay.mains.length > 0) {
+                        let title = `Vegan die ganze Woche`;
                         let main = new Food(title, weeklySpecial.price, true);
 
                         let name = `${weeklySpecial.name}${weeklySpecial.description ? ' ' + weeklySpecial.description : ''}`;
@@ -590,7 +590,7 @@ async function getIntersparWeekPlan() {
                 }
 
                 let monthlySpecial = gptJsonAnswer.monthly_special;
-                if (monthlySpecial) {
+                if (monthlySpecial && menuForDay.mains.length > 0) {
                     let title = `Monats-Hit`;
                     let main = new Food(title, monthlySpecial.price, true);
 
