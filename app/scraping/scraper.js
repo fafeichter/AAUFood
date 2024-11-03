@@ -237,7 +237,7 @@ async function getMensaWeekPlan() {
         }
     }
 
-    menu[5].closed = true;
+    menu[5].alacarte = true;
     menu[6].closed = true;
 
     return menu;
