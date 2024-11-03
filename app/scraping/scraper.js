@@ -243,48 +243,6 @@ async function getMensaWeekPlan() {
     return menu;
 }
 
-function createMensaFoodMenuFromElement($, e, name) {
-    e = $(e);
-
-    // If Mensa changes to splitting foods by <br> again, look in git history for this section how to handle this
-
-    let foodNameElements = e.find("> p:not(:contains(€))").toArray();
-    // Filter short delimiter lines
-    foodNameElements = foodNameElements.filter(x => $(x).text().trim().length > 4);
-    let foodNames = foodNameElements.map(x => $(x).text().trim().replace("&nbsp;", " "));
-
-    // remove additional entries that does not contain dishes (= everything from "ohne Suppe und Salat" on)
-    let removeStartingFromIndex = foodNames.findIndex(n => n.toLowerCase().includes("ohne suppe und salat") || n.includes('(*) ='));
-    if (removeStartingFromIndex >= 0) {
-        foodNameElements.splice(removeStartingFromIndex, foodNameElements.length - removeStartingFromIndex);
-        foodNames.splice(removeStartingFromIndex, foodNames.length - removeStartingFromIndex);
-    }
-
-    let foodInfos = foodNameElements.map(x => $(x).next().text());
-    let hasMultiplePrices = e.find("> p:contains(€)").length > 1;
-
-    let price = hasMultiplePrices ? null : scraperHelper.parsePrice(e.find("> p:contains(€)").text());
-
-    let food = new Food(name, price);
-    if (!hasMultiplePrices && (!food.allergens || !food.allergens.length)) {
-        let allergenText = foodInfos.join(' ').split('€')[0].trim();
-        food.extractAllergens(allergenText);
-    }
-
-    food.entries = foodNames.map((foodName, i) => {
-        let individualPrice = hasMultiplePrices ? scraperHelper.parsePrice(foodInfos[i]) : null;
-
-        let foodEntry = new Food(foodName, individualPrice)
-        if (hasMultiplePrices && (!foodEntry.allergens || !foodEntry.allergens.length)) {
-            let allergenText = foodInfos[i].split('€')[0].trim();
-            foodEntry.extractAllergens(allergenText);
-        }
-        return foodEntry;
-    });
-
-    return food;
-}
-
 /**
  * Changes the order of a menu to "Veggie - Herzhaft - Wochen-Angebote".
  */
