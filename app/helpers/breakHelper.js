@@ -12,7 +12,7 @@ function isOnBreak(restaurantId, day = moment().weekday()) {
 
 function getBreakInfo(restaurantId, day) {
     let breakInfo = null;
-    const dayOfWeek = moment().day(day + 1);
+    const dayOfWeek = moment().weekday(day);
 
     if (restaurantId != null) {
         const breakInfos = config.onBreak[restaurantId];
