@@ -31,7 +31,7 @@ module.exports = {
             new BreakInfo("Wir haben vom", moment("25.03.2024", "DD.MM.YYYY"), moment("29.03.2024", "DD.MM.YYYY"), "geschlossen.", "fas fa-frown")
         ],
         "uni-wirt": [
-            new BreakInfo("Wir haben wegen Umbau vom", moment("01.11.2024", "DD.MM.YYYY"), moment("10.11.2024", "DD.MM.YYYY"), "geschlossen.", "fas fa-truck-pickup"),
+            new BreakInfo("Wir haben wegen Umbau vom", moment("01.11.2024", "DD.MM.YYYY"), moment("10.11.2024", "DD.MM.YYYY"), "geschlossen.", "fas fa-paint-roller"),
         ],
     },
     cache: {
