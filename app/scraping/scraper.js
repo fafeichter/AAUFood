@@ -145,81 +145,102 @@ async function parseUniwirt(html) {
     return menu;
 }
 
-function getMensaWeekPlan() {
-    return urlCache.getUrls(restaurants.mensa.id)
-        .then(urls => request.getAsync({url: JSON.parse(urls).scraperUrl, jar: true}))
-        .then(res => res.body)
-        .then(body => parseMensa(body));
-}
-
-async function parseMensa(html) {
+async function getMensaWeekPlan() {
     winston.debug(`Parsing of "${mensaRestaurantId}" started ...`);
-    var result = new Array(7);
 
-    var $ = cheerio.load(html);
+    let menu = scraperHelper.getWeekEmptyModel();
 
-    let mondayDateString = $(".weekdays .date").first().text();
-    let mondayDate = moment(mondayDateString, "DD.MM.");
-    if (mondayDate.isValid() && mondayDate.week() !== moment().week()) {
-        winston.debug(`Menu of "${mensaRestaurantId}" is outdated`);
-        for (let i = 0; i < 5; i++) {
-            let outdatedMenu = new Menu();
-            outdatedMenu.outdated = true;
-            result[i] = outdatedMenu;
-        }
-    } else {
-        winston.debug(`Menu of "${mensaRestaurantId}" is not outdated`);
-        var leftMenuElements = $("#leftColumn .menu-left .menu-category > *");
-        var rightMenuElements = $("#middleColumn .menu-category > *");
+    const scraperUrl = await urlCache.getUrls(mensaRestaurantId)
+        .then(urls => JSON.parse(urls).scraperUrl)
 
-        var menuElements = $.merge(leftMenuElements, rightMenuElements);
-        let relevantHtmlPart = $.html(menuElements);
-        winston.debug(`Relevant HTML content of "${mensaRestaurantId}": ${relevantHtmlPart}`);
+    const pdfAsBase64Image = await fileUtils.pdf2Base64Image(scraperUrl, mensaRestaurantId);
 
-        let relevantHtmlPartPreviousHash = await menuRawDataHashCache.getHash(mensaRestaurantId);
-        let relevantHtmlPartHash = hashUtils.hashWithSHA256(relevantHtmlPart);
-        menuRawDataHashCache.updateIfNewer(mensaRestaurantId, relevantHtmlPartHash);
+    if (pdfAsBase64Image) {
+        let imagePreviousHash = await menuRawDataHashCache.getHash(mensaRestaurantId);
+        let imageHash = hashUtils.hashWithSHA256(pdfAsBase64Image);
+        menuRawDataHashCache.updateIfNewer(mensaRestaurantId, imageHash);
 
-        if (relevantHtmlPartPreviousHash === null || relevantHtmlPartPreviousHash !== relevantHtmlPartHash) {
-            var menuElementsGroupedByName = _.groupBy(menuElements, e => $(e).find("> :header").text());
+        if (imagePreviousHash === null || imagePreviousHash !== imageHash) {
+            const gptResponse = await gptHelper.letMeChatGptThatForYou(pdfAsBase64Image, mensaRestaurantId);
+            const gptResponseContent = gptResponse.data.choices[0].message.content;
+            winston.debug(`ChatGPT response of "${mensaRestaurantId}": ${gptResponseContent}`);
+            const gptJsonAnswer = JSON.parse(gptResponseContent);
 
-            var foodsPerWeekday = [[], [], [], [], [], [], []]; //.fill only works with primitive values
-            _.forOwn(menuElementsGroupedByName, (menusForWeek, name) => {
-                var foodsForWeek = menusForWeek.map(m => createMensaFoodMenuFromElement($, m, name));
-                for (let i = 0; i < foodsForWeek.length; i++) {
-                    let dayEntry = foodsPerWeekday[i];
-                    if (!dayEntry)
-                        continue;
+            ["MO", "DI", "MI", "DO", "FR"].forEach(function (dayString, dayInWeek) {
+                var menuForDay = new Menu();
 
-                    dayEntry.push(foodsForWeek[i]);
+                // Menü Veggie
+                for (let menuVeggie of gptJsonAnswer.menu_veggie) {
+                    if (menuVeggie.day === dayString) {
+                        let title = 'Menü Veggie';
+                        let main = new Food(title, menuVeggie.price, true);
+
+                        let menuVeggieSoup = menuVeggie.soup;
+                        if (menuVeggieSoup) {
+                            let soup = new Food(menuVeggieSoup.name);
+                            main.entries.push(soup);
+                        }
+
+                        let food = new Food(`${menuVeggie.name}${menuVeggie.description ? ' '
+                            + menuVeggie.description : ''}`, null, false, false, menuVeggie.allergens);
+
+                        main.entries.push(food);
+                        menuForDay.mains.push(main);
+                    }
+                }
+
+                // Menü Herzhaft
+                for (let menuHerzhaft of gptJsonAnswer.menu_herzhaft) {
+                    if (menuHerzhaft.day === dayString) {
+                        let title = 'Menü Herzhaft';
+                        let main = new Food(title, menuHerzhaft.price, true);
+
+                        let menuHerzhaftSoup = menuHerzhaft.soup;
+                        if (menuHerzhaftSoup) {
+                            let soup = new Food(menuHerzhaftSoup.name);
+                            main.entries.push(soup);
+                        }
+
+                        let food = new Food(`${menuHerzhaft.name}${menuHerzhaft.description ? ' ' + menuHerzhaft.description : ''}`,
+                            null, false, false, menuHerzhaft.allergens);
+
+                        main.entries.push(food);
+                        menuForDay.mains.push(main);
+                    }
+                }
+
+                // Wochen-Angebote
+                let weeklyDishTitle = 'Wochen-Angebote';
+                let weeklyDishMain = new Food(weeklyDishTitle, null, true);
+                for (let weeklyDish of gptJsonAnswer.weekly_dishes) {
+                    if (weeklyDish.day === null || weeklyDish.day === dayString) {
+                        let food = new Food(`${weeklyDish.name}${weeklyDish.description ? ' ' + weeklyDish.description : ''}`,
+                            weeklyDish.price, false, false, weeklyDish.allergens);
+
+                        weeklyDishMain.entries.push(food);
+                    }
+                }
+
+                if (weeklyDishMain.entries.length > 0) {
+                    menuForDay.mains.push(weeklyDishMain);
+                }
+
+                if (menuForDay.mains.length > 0) {
+                    menu[dayInWeek] = menuForDay;
+                } else {
+                    winston.debug(`There is no menu for "${restaurants.interspar.id}" on day with index ${dayInWeek}`);
+                    scraperHelper.setDayToError(menu, dayInWeek);
                 }
             });
-
-            for (let i = 0; i < 5; i++) {
-                let menu = new Menu();
-                result[i] = menu;
-
-                for (let food of foodsPerWeekday[i]) {
-                    menu.mains.push(food);
-                }
-
-                orderMensaMenusOfDay(menu, i);
-
-                menu.starters = menu.starters.filter(m => m && m.name);
-                menu.mains = menu.mains.filter(m => m && m.name);
-
-                scraperHelper.setErrorOnEmpty(menu);
-            }
         } else {
             return PARSING_SKIPPED;
         }
     }
 
-    let closedMenu = new Menu();
-    closedMenu.closed = true;
-    result[5] = result[6] = closedMenu;
+    menu[5].closed = true;
+    menu[6].closed = true;
 
-    return result;
+    return menu;
 }
 
 function createMensaFoodMenuFromElement($, e, name) {

@@ -1,8 +1,11 @@
 "use strict";
 
 const fs = require('fs');
+const os = require('os');
 const pdf2pic = require('pdf2pic');
-const winston = require("winston");
+const Promise = require('bluebird');
+const exec = Promise.promisify(require("child_process").exec);
+const {restaurants} = require("../config");
 
 async function pdf2Base64Image(pdfUrl, restaurantId) {
     let downloadDirectory = `/tmp`;
@@ -21,6 +24,22 @@ async function pdf2Base64Image(pdfUrl, restaurantId) {
         .then(pdfResponse => pdfResponse.arrayBuffer());
 
     fs.writeFileSync(pdfFilePath, Buffer.from(pdfBuffer), 'binary');
+
+    // Mensa's PDF has a newline character at the start, which results in a corrupted JPEG → remove it
+    if (restaurantId === restaurants.mensa.id) {
+        // Determine the appropriate sed command based on the operating system
+        let command;
+        if (os.platform() === 'darwin') {
+            // macOS uses an empty string for in-place editing
+            command = `sed -i '' '1d' ${pdfFilePath}`;
+        } else {
+            // Unix/Linux uses sed with -i without an empty string
+            command = `sed -i '1d' ${pdfFilePath}`;
+        }
+
+        // Execute the command to remove the first line from the PDF
+        await exec(command);
+    }
 
     const pdf2JpegOptions = {
         density: 600,

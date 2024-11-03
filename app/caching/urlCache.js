@@ -25,10 +25,6 @@ class UrlCache {
 
     _setStaticUrls() {
         winston.debug('Updating static url caches ...');
-        this._updateIfNewer(restaurants.mensa.id, {
-            scraperUrl: "https://menu.mensen.at/index/index/locid/45",
-            userFriendlyUrl: "https://menu.mensen.at/index/index/locid/45"
-        });
         this._updateIfNewer(restaurants.uniWirt.id, {
             scraperUrl: "https://www.uniwirt.at/",
             userFriendlyUrl: "https://www.uniwirt.at/#menue"
@@ -49,8 +45,30 @@ class UrlCache {
 
     _setDynamicUrls() {
         this._updateIntersparUrl();
+        this._updateMensaUrl();
         this._updateUniPizzeriaUrl();
         this._updateBurgerBoutiqueUrl();
+    }
+
+    _updateIntersparUrl() {
+        let currentWeekNumber = moment().format('WW');
+        this._updateIfNewer(restaurants.interspar.id, {
+            scraperUrl: `https://flugblatt.interspar.at/menuplane/menuplan-kw${currentWeekNumber}/GetPDF.ashx`,
+            userFriendlyUrl: `https://flugblatt.interspar.at/menuplane/menuplan-kw${currentWeekNumber}/`,
+            secondaryFriendlyUrl: `https://flugblatt.interspar.at/happy-hour/happy-hour-kw${currentWeekNumber}/`
+        });
+    }
+
+    _updateMensaUrl() {
+        let now = moment();
+
+        const currentYear = now.year();
+        const currentWeek = now.week();
+
+        this._updateIfNewer(restaurants.mensa.id, {
+            scraperUrl: `https://menu.mensen.at/index/menu-pdf/locid/45?woy=${currentWeek}&year=${currentYear}`,
+            userFriendlyUrl: 'https://menu.mensen.at/index/index/locid/45'
+        });
     }
 
     _updateUniPizzeriaUrl() {
@@ -90,15 +108,6 @@ class UrlCache {
     _parseUniPizzeriaUrl(html) {
         var $ = cheerio.load(html);
         return $(".elementor-button.elementor-button-link.elementor-size-md").attr("href");
-    }
-
-    _updateIntersparUrl() {
-        let currentWeekNumber = moment().format('WW');
-        this._updateIfNewer(restaurants.interspar.id, {
-            scraperUrl: `https://flugblatt.interspar.at/menuplane/menuplan-kw${currentWeekNumber}/GetPDF.ashx`,
-            userFriendlyUrl: `https://flugblatt.interspar.at/menuplane/menuplan-kw${currentWeekNumber}/`,
-            secondaryFriendlyUrl: `https://flugblatt.interspar.at/happy-hour/happy-hour-kw${currentWeekNumber}/`
-        });
     }
 
     _updateBurgerBoutiqueUrl() {

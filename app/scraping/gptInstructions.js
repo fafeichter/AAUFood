@@ -33,6 +33,53 @@ const restaurants = {
                 minLength: 2
                 maxLength: 2`,
 
+    mensa: () => `
+        use the following openapi yaml schema - while using the specified hints on how to get the desired data - to parse the provided image into a response containing only valid json without any other text or explanations
+        
+        the image contains a table where each row is a day. each column represents the dishes. the first column contains the daily menu 'Veggie', the second the daily menu 'Herzhaft', the third column are weekly dishes, some of them can be restricted to a day. the language of the text in the image is german.
+        
+        definitions:
+          required: [menu_veggie, menu_herzhaft, weekly_dishes]
+          menu_veggie:
+            type: array
+            items:
+              $ref: #/definitions/dish
+          menu_herzhaft:
+            type: array
+            items:
+              $ref: #/definitions/dish
+          weekly_dishes:
+            type: array
+            items:
+              $ref: #/definitions/dish
+          dish:
+            type: object
+            required: [name, description, allergens, price, soup, day]
+            properties:
+              name: # keep apostrophes, double quotes and round brackets and the text within them; do not include allergens wich are typically at the end e.g. "GLO" or "A,C,G,L,M,O", do not apply changes regarding grammar and spelling to the original dish name parsed from the image; remove any occurrences of "(*)" from name
+                type: string
+              description: # this is the side dish e.g. "mit Tomatensalsa und Rucola"; keep apostrophes, double quotes and round brackets and the text within them; do not include allergens wich are typically at the end e.g. "GLO" or "A,C,G,L,M,O"
+                type: string
+              allergens: # if you have trouble finding the allergens then you may find them immediately after the names of the dishes, e.g. "GLO" or "A,C,G,L,M,O", otherwise set this property to an empty array; transform them always into an array containing single uppercase characters
+                type: array
+                items:
+                  type: string
+                  minLength: 1
+                  maxLength: 1
+              price:
+                type: double
+              soup: # if there is no soup set this property to null
+                name:
+                  type: string
+                  day: # if the dish is not restricted to a day set this property to null
+                    $ref: #/definitions/day
+              day: 
+                $ref: #/definitions/day
+           day: # must be always one of ["MO", "DI", "MI", "DO", "FR", "SA", "SO"]
+                type: string
+                minLength: 2
+                maxLength: 2`,
+
     uniWirt: (htmlText) => `
         use the following openapi yaml schema - while using the specified hints on how to get the desired data - to parse the text afterwards into a response containing only valid json without any other text or explanations
         
