@@ -101,7 +101,7 @@ async function parseUniwirt(html) {
 
                     for (let pizza of gptJsonAnswer.pizzas) {
                         if (pizza.day === dayString) {
-                            let title = `Menü Pizza`;
+                            let title = `Menü ${++menuct}`;
                             let main = new Food(title, pizza.price, true);
 
                             let food = new Food(`${pizza.name}${pizza.description ? ' ' + pizza.description : ''}`,
