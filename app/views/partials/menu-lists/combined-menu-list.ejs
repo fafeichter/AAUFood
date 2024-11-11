@@ -4,12 +4,11 @@
 <ul class="list-group combined-menu-list-group">
     <% (menu.mains || []).forEach((singleMenu, index) => { %>
         <li class="menu-title">
-            <div>
-                <%= singleMenu.name %>
-                <% if(singleMenu.allergens && singleMenu.allergens.length) { %>
-                    <span class="allergens"><%= singleMenu.allergens %></span>
-                <% } %>
-            </div>
+            <%= singleMenu.name %>
+
+            <% if(singleMenu.allergens && singleMenu.allergens.length) { %>
+                <span class="allergens"><%= singleMenu.allergens %></span>
+            <% } %>
 
             <% if(singleMenu.price && !singleMenu.isInfo) { %>
                 <div class="price-tag">
@@ -20,19 +19,13 @@
 
         <% (singleMenu.entries || []).forEach(function(menuItem){ %>
             <li class="list-group-item">
-                <div>
-                    <%= menuItem.name %>
-                    <% if(menuItem.allergens) { %>
-                        <span class="allergens"><%= menuItem.allergens %></span>
-                    <% } %>
-                </div>
+                <%= menuItem.name %>
+                <% if(menuItem.allergens) { %>
+                    <span class="allergens"><%= menuItem.allergens %></span>
+                <% } %>
                 <% if(menuItem.price && !menuItem.isInfo) { %>
                     <div class="price-tag">
                         <%= menuItem.price + " €" %>
-                    </div>
-                <% } else { %>
-                    <div class="price-tag invisible">
-                        0.0 €
                     </div>
                 <% } %>
             </li>

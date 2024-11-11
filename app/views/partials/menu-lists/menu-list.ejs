@@ -18,12 +18,10 @@
                 <% } %>
             </li>
             <li class="list-group-item">
-                <div>
-                    <%= main.name %>
-                    <% if(main.allergens) { %>
-                        <span class="allergens"><%= main.allergens %></span>
-                    <% } %>
-                </div>
+                <%= main.name %>
+                <% if(main.allergens) { %>
+                    <span class="allergens"><%= main.allergens %></span>
+                <% } %>
             </li>
         <% }); %>
     </ul>

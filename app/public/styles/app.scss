@@ -59,8 +59,8 @@ body {
   }
 
   .price-tag {
-    flex-shrink: 0;
-    margin-left: 10px;
+    float: right;
+    font-style: normal;
   }
 }
 
@@ -93,9 +93,6 @@ body {
     font-size: 14px;
     font-weight: 600;
     color: $bgColor;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
   }
 }
 
@@ -156,9 +153,6 @@ ul.combined-menu-list-group {
 
   li.list-group-item {
     margin-top: $menuItemSpacing;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
   }
 
   li.menu-title + li.list-group-item {
