@@ -54,7 +54,7 @@ winston.add(winston.transports.Console, {
         return new Date(now.getTime() - now.getTimezoneOffset() * 60 * 1000).toISOString().slice(0, 23);
     }, colorize: true
 });
-winston.level = 'debug';
+winston.level = process.env.FOOD_LOG_LEVEL || 'debug';
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
