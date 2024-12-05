@@ -66,8 +66,8 @@ class UrlCache {
         const currentWeek = now.week();
 
         this._updateIfNewer(restaurants.mensa.id, {
-            scraperUrl: `https://menu.mensen.at/index/menu-pdf/locid/45?woy=${currentWeek}&year=${currentYear}`,
-            userFriendlyUrl: 'https://menu.mensen.at/index/index/locid/45'
+            scraperUrl: `https://backend.mensen.at/menuplan/Menuplan-902002-${currentWeek}-${currentYear}.pdf`,
+            userFriendlyUrl: 'https://www.mensen.at/standort/mensa-alpe-adria-universitaet/'
         });
     }
 

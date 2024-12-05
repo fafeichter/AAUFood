@@ -169,48 +169,24 @@ async function getMensaWeekPlan() {
             ["MO", "DI", "MI", "DO", "FR"].forEach(function (dayString, dayInWeek) {
                 var menuForDay = new Menu();
 
-                // Menü Veggie
-                for (let menuVeggie of gptJsonAnswer.menu_veggie) {
-                    if (menuVeggie.day === dayString) {
-                        let title = 'Menü Veggie';
-                        let main = new Food(title, menuVeggie.price, true);
+                // Tagesangebot
+                let dailyDishTitle = 'Tagesangebot';
+                let dailyDishMain = new Food(dailyDishTitle, null, true);
+                for (let dailyDish of gptJsonAnswer.daily_dishes) {
+                    if (dailyDish.day === null || dailyDish.day === dayString) {
+                        let food = new Food(`${dailyDish.name}${dailyDish.description ? ' ' + dailyDish.description : ''}`,
+                            dailyDish.price, false, false, dailyDish.allergens);
 
-                        let menuVeggieSoup = menuVeggie.soup;
-                        if (menuVeggieSoup) {
-                            let soup = new Food(menuVeggieSoup.name);
-                            main.entries.push(soup);
-                        }
-
-                        let food = new Food(`${menuVeggie.name}${menuVeggie.description ? ' '
-                            + menuVeggie.description : ''}`, null, false, false, menuVeggie.allergens);
-
-                        main.entries.push(food);
-                        menuForDay.mains.push(main);
+                        dailyDishMain.entries.push(food);
                     }
                 }
 
-                // Menü Herzhaft
-                for (let menuHerzhaft of gptJsonAnswer.menu_herzhaft) {
-                    if (menuHerzhaft.day === dayString) {
-                        let title = 'Menü Herzhaft';
-                        let main = new Food(title, menuHerzhaft.price, true);
-
-                        let menuHerzhaftSoup = menuHerzhaft.soup;
-                        if (menuHerzhaftSoup) {
-                            let soup = new Food(menuHerzhaftSoup.name);
-                            main.entries.push(soup);
-                        }
-
-                        let food = new Food(`${menuHerzhaft.name}${menuHerzhaft.description ? ' ' + menuHerzhaft.description : ''}`,
-                            null, false, false, menuHerzhaft.allergens);
-
-                        main.entries.push(food);
-                        menuForDay.mains.push(main);
-                    }
+                if (dailyDishMain.entries.length > 0) {
+                    menuForDay.mains.push(dailyDishMain);
                 }
 
-                // Wochen-Angebote
-                let weeklyDishTitle = 'Wochen-Angebote';
+                // Wochenangebot
+                let weeklyDishTitle = 'Wochenangebot';
                 let weeklyDishMain = new Food(weeklyDishTitle, null, true);
                 for (let weeklyDish of gptJsonAnswer.weekly_dishes) {
                     if (weeklyDish.day === null || weeklyDish.day === dayString) {
@@ -223,6 +199,16 @@ async function getMensaWeekPlan() {
 
                 if (weeklyDishMain.entries.length > 0) {
                     menuForDay.mains.push(weeklyDishMain);
+                }
+
+                if ([49, 50].includes(moment().week())) {
+                    let devInfo = new Food('::::: GraphQL Experte gesucht! :::::', null, true);
+                    let devInfoSubtitle = new Food('Liebe Mitmenschen, die Mensa kann gut panieren und ' +
+                        'frittieren - sie kann jetzt aber auch GraphQL. 🙉 LOL. 😅 Wenn jemand GraphQL in dieses ' +
+                        'Hobbyprojekt integrieren will → PR an https://github.com/fafeichter/AAUFood. Ihr Devs seid die ' +
+                        'Besten! 🤓', null, true);
+                    devInfo.entries.push(devInfoSubtitle);
+                    menuForDay.mains.push(devInfo);
                 }
 
                 if (menuForDay.mains.length > 0) {
