@@ -36,15 +36,15 @@ const restaurants = {
     mensa: () => `
         use the following openapi yaml schema - while using the specified hints on how to get the desired data - to parse the provided image into a response containing only valid json without any other text or explanations
         
-        the image contains a table where each row is a day. each column represents the dishes. the first column contains the daily menu 'Wochenangebot' and the second the daily menu 'Tagesangebot' the language of the text in the image is german.
+        the image contains a table where each row is a day. each column represents the dishes. the first column contains the daily menu 'Veggie' and the second the daily menu 'Herzhaft' the language of the text in the image is german.
         
         definitions:
-          required: [daily_dishes, weekly_dishes]
-          daily_dishes:
+          required: [menu_veggie, menu_herzhaft]
+          menu_veggie:
             type: array
             items:
               $ref: #/definitions/dish
-          weekly_dishes:
+          menu_herzhaft:
             type: array
             items:
               $ref: #/definitions/dish
