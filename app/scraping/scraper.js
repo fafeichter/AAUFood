@@ -201,16 +201,6 @@ async function getMensaWeekPlan() {
                     menuForDay.mains.push(weeklyDishMain);
                 }
 
-                if ([49, 50].includes(moment().week())) {
-                    let devInfo = new Food('::::: GraphQL Experte gesucht! :::::', null, true);
-                    let devInfoSubtitle = new Food('Liebe Mitmenschen, die Mensa kann gut panieren und ' +
-                        'frittieren - sie kann jetzt aber auch GraphQL. 🙉 LOL. 😅 Wenn jemand GraphQL in dieses ' +
-                        'Hobbyprojekt integrieren will → PR an https://github.com/fafeichter/AAUFood. Ihr Devs seid die ' +
-                        'Besten! 🤓', null, true);
-                    devInfo.entries.push(devInfoSubtitle);
-                    menuForDay.mains.push(devInfo);
-                }
-
                 if (menuForDay.mains.length > 0) {
                     menu[dayInWeek] = menuForDay;
                 } else {
