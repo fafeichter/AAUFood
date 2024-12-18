@@ -21,17 +21,28 @@ module.exports = {
     onBreak: {
         mensa: [
             new BreakInfo("Wir haben vom", moment("22.12.2023", "DD.MM.YYYY"), moment("05.01.2024", "DD.MM.YYYY"), "geschlossen.", "fas fa-snowboarding"),
-            new BreakInfo("Wir haben vom", moment("05.08.2024", "DD.MM.YYYY"), moment("16.08.2024", "DD.MM.YYYY"), "geschlossen.", "fas fa-frown")
+            new BreakInfo("Wir haben vom", moment("05.08.2024", "DD.MM.YYYY"), moment("16.08.2024", "DD.MM.YYYY"), "geschlossen.", "fas fa-frown"),
+            new BreakInfo("Wir haben vom", moment("23.12.2024", "DD.MM.YYYY"), moment("06.01.2025", "DD.MM.YYYY"), "geschlossen.", "fas fa-snowboarding")
         ],
         "bits-and-bytes": [
-            new BreakInfo("Wir haben vom", moment("27.12.2023", "DD.MM.YYYY"), moment("28.12.2023", "DD.MM.YYYY"), "geschlossen.", "fas fa-snowboarding")
+            new BreakInfo("Wir haben vom", moment("27.12.2023", "DD.MM.YYYY"), moment("28.12.2023", "DD.MM.YYYY"), "geschlossen.", "fas fa-snowboarding"),
+            new BreakInfo("Wir haben vom", moment("24.12.2024", "DD.MM.YYYY"), moment("27.12.2024", "DD.MM.YYYY"), "geschlossen.", "fas fa-snowboarding"),
+            new BreakInfo("Wir haben vom", moment("01.01.2025", "DD.MM.YYYY"), moment("01.01.2025", "DD.MM.YYYY"), "geschlossen.", "fas fa-snowboarding")
         ],
         hotspot: [
             new BreakInfo("Wir haben vom", moment("27.12.2023", "DD.MM.YYYY"), moment("04.01.2024", "DD.MM.YYYY"), "geschlossen.", "fas fa-snowboarding"),
-            new BreakInfo("Wir haben vom", moment("25.03.2024", "DD.MM.YYYY"), moment("29.03.2024", "DD.MM.YYYY"), "geschlossen.", "fas fa-frown")
+            new BreakInfo("Wir haben vom", moment("25.03.2024", "DD.MM.YYYY"), moment("29.03.2024", "DD.MM.YYYY"), "geschlossen.", "fas fa-frown"),
+            new BreakInfo("Wir haben vom", moment("24.12.2024", "DD.MM.YYYY"), moment("27.12.2024", "DD.MM.YYYY"), "geschlossen.", "fas fa-snowboarding"),
+            new BreakInfo("Wir haben vom", moment("31.12.2024", "DD.MM.YYYY"), moment("03.01.2025", "DD.MM.YYYY"), "geschlossen.", "fas fa-snowboarding")
+
         ],
         "uni-wirt": [
             new BreakInfo("Wir haben wegen Umbau vom", moment("01.11.2024", "DD.MM.YYYY"), moment("10.11.2024", "DD.MM.YYYY"), "geschlossen.", "fas fa-paint-roller"),
+            new BreakInfo("Wir haben vom", moment("24.12.2024", "DD.MM.YYYY"), moment("26.12.2024", "DD.MM.YYYY"), "geschlossen.", "fas fa-snowboarding"),
+            new BreakInfo("Wir haben vom", moment("31.12.2024", "DD.MM.YYYY"), moment("01.01.2025", "DD.MM.YYYY"), "geschlossen.", "fas fa-snowboarding")
+        ],
+        interspar: [
+            new BreakInfo("Wir haben vom", moment("25.12.2024", "DD.MM.YYYY"), moment("25.12.2024", "DD.MM.YYYY"), "geschlossen.", "fas fa-snowboarding")
         ],
     },
     cache: {
