@@ -1,5 +1,6 @@
 /*about.scss*/
 #about {
+  min-height: 100%;
 
   /* All cards */
   .card {
@@ -128,9 +129,4 @@
 
 #philipp {
   @include name(#3f77d8);
-}
-
-#mail {
-  font-weight: bold;
-
 }

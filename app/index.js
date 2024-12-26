@@ -6,16 +6,14 @@ const bodyParser = require('body-parser');
 const compression = require('compression');
 const menuCache = require('./caching/menuCache');
 const urlCache = require('./caching/urlCache');
-const menuRawDataHashCache = require('./caching/menuRawDataHashCache');
+const menuHashCache = require('./caching/menuHashCache');
 const visitorCache = require('./caching/visitorCache');
 const config = require('./config');
 const indexRoutes = require('./routes/index');
-const foodRoutes = require('./routes/food');
 const winston = require('winston');
 const timeHelper = require('./helpers/timeHelper');
 const footerPunHelper = require('./helpers/footerPunHelper');
 const breakHelper = require('./helpers/breakHelper');
-const placeKittenHelper = require('./helpers/placeKittenHelper');
 const menuStateHelper = require('./helpers/menuStateHelper');
 const moment = require('moment');
 const cron = require('node-cron');
@@ -76,7 +74,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 
 app.use('/', indexRoutes);
-app.use('/food', foodRoutes);
 
 app.use(function (err, req, res, next) {
     winston.error(err);
@@ -95,7 +92,6 @@ app.locals.getFooterPun = footerPunHelper.getFooterPun;
 app.locals.isOnBreak = breakHelper.isOnBreak;
 app.locals.getBreakInfo = breakHelper.getBreakInfo;
 app.locals.menuStateHelper = menuStateHelper;
-app.locals.catFactHeaderUrl = placeKittenHelper.catFactHeaderUrl;
 app.locals.isWinterThemeActive = () => {
     const [from, to] = config.settings.winterTheme.map(date => moment(date, "DD.MM"));
     return !moment().isBetween(to, from);
@@ -108,12 +104,12 @@ var server = app.listen(config.settings.nodePort, function () {
 
     urlCache.init(redisClient);
     menuCache.init(redisClient);
-    menuRawDataHashCache.init(redisClient);
+    menuHashCache.init(redisClient);
     visitorCache.init(redisClient, io);
 
     cron.schedule('0 0 * * MON', () => {
         menuCache.resetAll();
-        menuRawDataHashCache.resetAll();
+        menuHashCache.resetAll();
     });
     winston.debug("Successfully registered menu cache resetter");
 

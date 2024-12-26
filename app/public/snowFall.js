@@ -87,7 +87,7 @@ function initSnowFall() {
         flake.x = Math.floor(Math.random() * canvas.width);
         flake.y = 0;
         flake.size = Math.random() * 3 + 2;
-        flake.speed = Math.random() * 1 + 0.5;
+        flake.speed = Math.random() + 0.5;
         flake.velY = flake.speed;
         flake.velX = 0;
         flake.opacity = Math.random() * 0.5 + 0.3;
@@ -98,7 +98,7 @@ function initSnowFall() {
             var x = Math.floor(Math.random() * canvas.width),
                 y = Math.floor(Math.random() * canvas.height),
                 size = Math.random() * 3 + 2,
-                speed = Math.random() * 1 + 0.5,
+                speed = Math.random() + 0.5,
                 opacity = Math.random() * 0.5 + 0.3;
 
             flakes.push({

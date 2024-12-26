@@ -31,14 +31,6 @@ chatGptPowered (optional), restaurantSecondaryFriendlyUrl (optional), isNew (opt
             <%- include('infos/infos', { restaurantId, restaurantFriendlyUrl, menuState }) %>
         <% } else if(combinedMenuList){ %>
             <%- include('menu-lists/combined-menu-list', { menu }) %>
-            <!--<% if(restaurantId === 'hotspot' && day === moment().day() - 1) { %>
-                <ul class="list-group combined-menu-list-group">
-                    <li class="list-group-item">
-                        <%- include('hotspot-special/image') %>
-                        <%- include('hotspot-special/upload') %>
-                    </li>
-                </ul>
-            <% } %>-->
         <% } else { %>
             <%- include('menu-lists/menu-list', { menu }) %>
         <% } %>

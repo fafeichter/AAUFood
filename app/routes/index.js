@@ -3,38 +3,27 @@ const router = express.Router();
 const Promise = require("bluebird");
 const menuCache = require('../caching/menuCache');
 const urlCache = require('../caching/urlCache');
-const externalApis = require('../externals/externalApis');
 const counter = require('../middleware/visitorCounter');
 const restaurants = require('../config').restaurants;
+const uniWirt = restaurants.uniWirt.id;
+const mensa = restaurants.mensa.id;
+const hotspot = restaurants.hotspot.id;
+const uniPizzeria = restaurants.uniPizzeria.id;
+const bitsAndBytes = restaurants.bitsAndBytes.id;
+const interspar = restaurants.interspar.id;
+const daMario = restaurants.daMario.id;
+const burgerBoutique = restaurants.burgerBoutique.id;
 
-router.get('/:day(-?\\d*)?', counter.countVisitors, function (req, res, next) {
-    var uniwirtPlan = menuCache.getMenu(restaurants.uniWirt.id);
-    var mensaPlan = menuCache.getMenu(restaurants.mensa.id);
-    var hotspotPlan = menuCache.getMenu(restaurants.hotspot.id);
-    var uniPizzeriaPlan = menuCache.getMenu(restaurants.uniPizzeria.id);
-    var bitsAndBytesPlan = menuCache.getMenu(restaurants.bitsAndBytes.id);
-    var intersparPlan = menuCache.getMenu(restaurants.interspar.id);
-    var daMarioPlan = menuCache.getMenu(restaurants.daMario.id);
-    var burgerBoutiquePlan = menuCache.getMenu(restaurants.burgerBoutique.id);
-
-    var uniWirtUrls = urlCache.getUrls(restaurants.uniWirt.id);
-    var mensaUrls = urlCache.getUrls(restaurants.mensa.id);
-    var hotspotUrls = urlCache.getUrls(restaurants.hotspot.id);
-    var uniPizzeriaUrls = urlCache.getUrls(restaurants.uniPizzeria.id);
-    var bitsAndBytesUrls = urlCache.getUrls(restaurants.bitsAndBytes.id);
-    var intersparUrls = urlCache.getUrls(restaurants.interspar.id);
-    var daMarioUrls = urlCache.getUrls(restaurants.daMario.id);
-    var burgerBoutiqueUrls = urlCache.getUrls(restaurants.burgerBoutique.id);
-
+router.get('/', counter.countVisitors, function (req, res, next) {
     Promise.all([
-        uniwirtPlan, uniWirtUrls,
-        mensaPlan, mensaUrls,
-        hotspotPlan, hotspotUrls,
-        uniPizzeriaPlan, uniPizzeriaUrls,
-        bitsAndBytesPlan, bitsAndBytesUrls,
-        intersparPlan, intersparUrls,
-        daMarioPlan, daMarioUrls,
-        burgerBoutiquePlan, burgerBoutiqueUrls])
+        menuCache.getMenu(uniWirt), urlCache.getUrls(uniWirt),
+        menuCache.getMenu(mensa), urlCache.getUrls(mensa),
+        menuCache.getMenu(hotspot), urlCache.getUrls(hotspot),
+        menuCache.getMenu(uniPizzeria), urlCache.getUrls(uniPizzeria),
+        menuCache.getMenu(bitsAndBytes), urlCache.getUrls(bitsAndBytes),
+        menuCache.getMenu(interspar), urlCache.getUrls(interspar),
+        menuCache.getMenu(daMario), urlCache.getUrls(daMario),
+        menuCache.getMenu(burgerBoutique), urlCache.getUrls(burgerBoutique)])
         .then(results => {
             res.render('index', {
                 title: 'AAU Food',
@@ -77,66 +66,11 @@ router.get('/:day(-?\\d*)?', counter.countVisitors, function (req, res, next) {
         });
 });
 
-router.get('/city/:day(-?\\d*)?', counter.countVisitors, function (req, res, next) {
-    var lapastaPlan = menuCache.getMenu('lapasta');
-    var princsPlan = menuCache.getMenu('princs');
-
-    Promise.all([lapastaPlan, princsPlan])
-        .then(results => {
-            res.render('cityfood', {
-                title: 'City Food',
-                lapasta: JSON.parse(results[0]) || [],
-                princs: JSON.parse(results[1]) || [],
-                visitorStats: req.visitorStats,
-            });
-        });
-});
-
 router.get('/about', counter.countVisitors, function (req, res, next) {
-    var dailyVisitors = req.visitorStats.dailyVisitors;
-    var overallVisitors = req.visitorStats.overallVisitors;
-
-    var dailyVisitorsFact = externalApis.getNumberFact(dailyVisitors);
-    var overallVisitiorsFact = externalApis.getNumberFact(overallVisitors);
-    var catFact = externalApis.getCatFact();
-
-    Promise.all([dailyVisitorsFact, overallVisitiorsFact, catFact])
-        .then(facts => {
-            res.render('about', {
-                title: 'AAU Food: About',
-                dailyVisitorsFact: facts[0],
-                overallVisitiorsFact: facts[1],
-                catFact: facts[2],
-                visitorStats: req.visitorStats,
-            });
-        });
+    res.render('about', {
+        title: 'AAU Food: About',
+        visitorStats: req.visitorStats,
+    });
 });
-router.get('/print', counter.countVisitors, function (req, res, next) {
-    var uniwirtPlan = menuCache.getMenu(restaurants.uniWirt.id);
-    var mensaPlan = menuCache.getMenu(restaurants.mensa.id);
-    var hotspotPlan = menuCache.getMenu(restaurants.hotspot.id);
-    var uniPizzeriaPlan = menuCache.getMenu(restaurants.uniPizzeria.id);
-    var bitsAndBytesPlan = menuCache.getMenu(restaurants.bitsAndBytes.id);
-    var intersparPlan = menuCache.getMenu(restaurants.interspar.id);
-    var daMarioPlan = menuCache.getMenu(restaurants.daMario.id);
-    var burgerBoutiquePlan = menuCache.getMenu(restaurants.burgerBoutique.id);
-
-    Promise.all([uniwirtPlan, mensaPlan, hotspotPlan, uniPizzeriaPlan, bitsAndBytesPlan, intersparPlan, daMarioPlan, burgerBoutiquePlan])
-        .then(results => {
-            res.render('print', {
-                title: 'AAU Food: Wochenplan',
-                uniWirt: JSON.parse(results[0]),
-                mensa: JSON.parse(results[1]),
-                hotspot: JSON.parse(results[2]),
-                uniPizzeria: JSON.parse(results[3]),
-                bitsAndBytes: JSON.parse(results[4]),
-                interspar: JSON.parse(results[5]),
-                daMario: JSON.parse(results[6]),
-                burgerBoutique: JSON.parse(results[7]),
-                restaurants
-            });
-        });
-});
-
 
 module.exports = router;

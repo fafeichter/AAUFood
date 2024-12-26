@@ -1,4 +1,5 @@
 "use strict";
+
 const config = require('../config');
 
 var footerPuns = config.footerPuns;
@@ -9,7 +10,6 @@ for (let footerPun of footerPuns) {
 }
 
 var defaultPun = getFooterPunByName(config.settings.defaultFooterPun);
-
 
 function formatFooterPun(footerPun) {
     var iconLink = footerPun.iconLink || "/about";
@@ -45,7 +45,5 @@ function getFooterPun() {
 }
 
 module.exports = {
-    getRandomFooterPun: getRandomFooterPun,
-    getFooterPunByName: getFooterPunByName,
     getFooterPun: getFooterPun
 };

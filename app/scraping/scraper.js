@@ -17,7 +17,7 @@ const scraperHelper = require('./scraperHelper')
 const gptHelper = require('./gptHelper')
 const hashUtils = require('./hashUtils');
 const urlCache = require('../caching/urlCache');
-const menuRawDataHashCache = require('../caching/menuRawDataHashCache');
+const menuHashCache = require('../caching/menuHashCache');
 const fileUtils = require("./fileUtils");
 
 const uniWirtRestaurantId = restaurants.uniWirt.id;
@@ -63,9 +63,9 @@ async function parseUniwirt(html) {
         winston.debug(`Relevant HTML content of "${uniWirtRestaurantId}": ${relevantHtmlPart}`);
 
         if (relevantHtmlPart) {
-            let relevantHtmlPartPreviousHash = await menuRawDataHashCache.getHash(uniWirtRestaurantId);
+            let relevantHtmlPartPreviousHash = await menuHashCache.getHash(uniWirtRestaurantId);
             let relevantHtmlPartHash = hashUtils.hashWithSHA256(relevantHtmlPart);
-            menuRawDataHashCache.updateIfNewer(uniWirtRestaurantId, relevantHtmlPartHash);
+            menuHashCache.updateIfNewer(uniWirtRestaurantId, relevantHtmlPartHash);
 
             if (relevantHtmlPartPreviousHash === null || relevantHtmlPartPreviousHash !== relevantHtmlPartHash) {
                 const gptResponse = await gptHelper.letMeChatGptThatForYou(relevantHtmlPart, uniWirtRestaurantId);
@@ -156,9 +156,9 @@ async function getMensaWeekPlan() {
     const pdfAsBase64Image = await fileUtils.pdf2Base64Image(scraperUrl, mensaRestaurantId);
 
     if (pdfAsBase64Image) {
-        let imagePreviousHash = await menuRawDataHashCache.getHash(mensaRestaurantId);
+        let imagePreviousHash = await menuHashCache.getHash(mensaRestaurantId);
         let imageHash = hashUtils.hashWithSHA256(pdfAsBase64Image);
-        menuRawDataHashCache.updateIfNewer(mensaRestaurantId, imageHash);
+        menuHashCache.updateIfNewer(mensaRestaurantId, imageHash);
 
         if (imagePreviousHash === null || imagePreviousHash !== imageHash) {
             const gptResponse = await gptHelper.letMeChatGptThatForYou(pdfAsBase64Image, mensaRestaurantId);
@@ -252,9 +252,9 @@ async function getUniPizzeriaWeekPlan() {
     const pdfAsBase64Image = await fileUtils.pdf2Base64Image(scraperUrl, uniPizzeriaRestaurantId);
 
     if (pdfAsBase64Image) {
-        let imagePreviousHash = await menuRawDataHashCache.getHash(uniPizzeriaRestaurantId)
+        let imagePreviousHash = await menuHashCache.getHash(uniPizzeriaRestaurantId)
         let imageHash = hashUtils.hashWithSHA256(pdfAsBase64Image);
-        menuRawDataHashCache.updateIfNewer(uniPizzeriaRestaurantId, imageHash);
+        menuHashCache.updateIfNewer(uniPizzeriaRestaurantId, imageHash);
 
         if (imagePreviousHash === null || imagePreviousHash !== imageHash) {
             const gptResponse = await gptHelper.letMeChatGptThatForYou(pdfAsBase64Image, uniPizzeriaRestaurantId);
@@ -356,9 +356,9 @@ async function parseHotspot(html) {
         winston.debug(`Relevant HTML content of "${hotspotRestaurantId}": ${relevantHtmlPart}`);
 
         if (relevantHtmlPart) {
-            let relevantHtmlPartPreviousHash = await menuRawDataHashCache.getHash(hotspotRestaurantId);
+            let relevantHtmlPartPreviousHash = await menuHashCache.getHash(hotspotRestaurantId);
             let relevantHtmlPartHash = hashUtils.hashWithSHA256(relevantHtmlPart);
-            menuRawDataHashCache.updateIfNewer(hotspotRestaurantId, relevantHtmlPartHash);
+            menuHashCache.updateIfNewer(hotspotRestaurantId, relevantHtmlPartHash);
 
             if (relevantHtmlPartPreviousHash === null || relevantHtmlPartPreviousHash !== relevantHtmlPartHash) {
                 const gptResponse = await gptHelper.letMeChatGptThatForYou(relevantHtmlPart, hotspotRestaurantId);
@@ -452,9 +452,9 @@ async function parseBitsAndBytes(html) {
         winston.debug(`Relevant HTML content of "${bitsAndBytesRestaurantId}": ${relevantHtmlPart}`);
 
         if (relevantHtmlPart) {
-            let relevantHtmlPartPreviousHash = await menuRawDataHashCache.getHash(bitsAndBytesRestaurantId);
+            let relevantHtmlPartPreviousHash = await menuHashCache.getHash(bitsAndBytesRestaurantId);
             let relevantHtmlPartHash = hashUtils.hashWithSHA256(relevantHtmlPart);
-            menuRawDataHashCache.updateIfNewer(bitsAndBytesRestaurantId, relevantHtmlPartHash);
+            menuHashCache.updateIfNewer(bitsAndBytesRestaurantId, relevantHtmlPartHash);
 
             if (relevantHtmlPartPreviousHash === null || relevantHtmlPartPreviousHash !== relevantHtmlPartHash) {
                 const gptResponse = await gptHelper.letMeChatGptThatForYou(relevantHtmlPart, bitsAndBytesRestaurantId);
@@ -509,9 +509,9 @@ async function getIntersparWeekPlan() {
     const pdfAsBase64Image = await fileUtils.pdf2Base64Image(scraperUrl, intersparRestaurantId);
 
     if (pdfAsBase64Image) {
-        let imagePreviousHash = await menuRawDataHashCache.getHash(intersparRestaurantId);
+        let imagePreviousHash = await menuHashCache.getHash(intersparRestaurantId);
         let imageHash = hashUtils.hashWithSHA256(pdfAsBase64Image);
-        menuRawDataHashCache.updateIfNewer(intersparRestaurantId, imageHash);
+        menuHashCache.updateIfNewer(intersparRestaurantId, imageHash);
 
         if (imagePreviousHash === null || imagePreviousHash !== imageHash) {
             const gptResponse = await gptHelper.letMeChatGptThatForYou(pdfAsBase64Image, intersparRestaurantId);
@@ -583,9 +583,9 @@ async function parseDaMario(html) {
     winston.debug(`Relevant HTML content of "${daMarioRestaurantId}": ${relevantHtmlPart}`);
 
     if (relevantHtmlPart) {
-        let relevantHtmlPartPreviousHash = await menuRawDataHashCache.getHash(daMarioRestaurantId);
+        let relevantHtmlPartPreviousHash = await menuHashCache.getHash(daMarioRestaurantId);
         let relevantHtmlPartHash = hashUtils.hashWithSHA256(relevantHtmlPart);
-        menuRawDataHashCache.updateIfNewer(daMarioRestaurantId, relevantHtmlPartHash);
+        menuHashCache.updateIfNewer(daMarioRestaurantId, relevantHtmlPartHash);
 
         if (relevantHtmlPartPreviousHash === null || relevantHtmlPartPreviousHash !== relevantHtmlPartHash) {
             const gptResponse = await gptHelper.letMeChatGptThatForYou(relevantHtmlPart, daMarioRestaurantId);

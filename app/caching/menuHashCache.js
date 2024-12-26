@@ -5,10 +5,10 @@
 'use strict';
 
 const winston = require('winston');
-const {restaurants} = require("../config");
+const restaurants = require("../config");
 const keyPrefix = "raw-data-cache";
 
-class MenuRawDataHashCache {
+class MenuHashCache {
     init(redisClient) {
         this.client = redisClient;
     }
@@ -45,4 +45,4 @@ class MenuRawDataHashCache {
     }
 }
 
-module.exports = new MenuRawDataHashCache();
+module.exports = new MenuHashCache();

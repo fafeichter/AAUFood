@@ -16,5 +16,5 @@ function countVisitors(req, res, next) {
 }
 
 module.exports = {
-    countVisitors: countVisitors
+    countVisitors
 };

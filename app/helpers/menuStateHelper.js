@@ -1,4 +1,5 @@
 "use strict";
+
 const breakHelper = require('./breakHelper');
 
 const MenuState = {
