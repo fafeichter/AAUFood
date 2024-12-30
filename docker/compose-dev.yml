@@ -1,7 +1,6 @@
-version: '2'
 services:
   redis:
-    image: "redis:alpine"
+    image: redis:${REDIS_VERSION}
     restart: always
     ports:
       - "6379:6379"

@@ -1,11 +1,10 @@
-version: '2'
 services:
   redis:
-    image: "redis:alpine"
+    image: redis:${REDIS_VERSION}
     restart: always
 
   node:
-    build: .
+    build: ..
     restart: always
     ports:
       - "3000:3000"
