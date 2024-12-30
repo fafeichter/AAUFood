@@ -51,7 +51,7 @@ class UrlCache {
     }
 
     _updateIntersparUrl() {
-        let currentWeekNumber = moment().format('WW');
+        let currentWeekNumber = moment().format('W');
         this._updateIfNewer(restaurants.interspar.id, {
             scraperUrl: `https://flugblatt.interspar.at/menuplane/menuplan-kw${currentWeekNumber}/GetPDF.ashx`,
             userFriendlyUrl: `https://flugblatt.interspar.at/menuplane/menuplan-kw${currentWeekNumber}/`,
