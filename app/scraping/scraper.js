@@ -169,36 +169,34 @@ async function getMensaWeekPlan() {
             ["MO", "DI", "MI", "DO", "FR"].forEach(function (dayString, dayInWeek) {
                 var menuForDay = new Menu();
 
-                // Menü Veggie
-                let veggieDishTitle = 'Menü Veggie';
-                let veggieDishMain = new Food(veggieDishTitle, null, true);
-                for (let veggieDish of gptJsonAnswer.menu_veggie) {
-                    if (veggieDish.day === null || veggieDish.day === dayString) {
-                        let food = new Food(`${veggieDish.name}${veggieDish.description ? ' ' + veggieDish.description : ''}`,
-                            veggieDish.price, false, false, veggieDish.allergens);
+                // Tagesangebot
+                let dailyDishTitle = 'Tagesangebot';
+                let dailyDishMain = new Food(dailyDishTitle, null, true);
+                for (let dailyDish of gptJsonAnswer.daily_dishes) {
+                    if (dailyDish.day === null || dailyDish.day === dayString) {
+                        let food = new Food(`${dailyDish.name}${dailyDish.description ? ' ' + dailyDish.description : ''}`,
+                            dailyDish.price, false, false, dailyDish.allergens);
 
-                        veggieDishMain.entries.push(food);
+                        dailyDishMain.entries.push(food);
                     }
                 }
 
-                if (veggieDishMain.entries.length > 0) {
-                    menuForDay.mains.push(veggieDishMain);
+                if (dailyDishMain.entries.length > 0) {
+                    menuForDay.mains.push(dailyDishMain);
                 }
 
-                // Menü Herzhaft
-                let herzhaftDishTitle = 'Menü Herzhaft';
-                let herzhaftDishMain = new Food(herzhaftDishTitle, null, true);
-                for (let herzhaftDish of gptJsonAnswer.menu_herzhaft) {
-                    if (herzhaftDish.day === null || herzhaftDish.day === dayString) {
-                        let food = new Food(`${herzhaftDish.name}${herzhaftDish.description ? ' ' + herzhaftDish.description : ''}`,
-                            herzhaftDish.price, false, false, herzhaftDish.allergens);
+                // Wochenangebot
+                let weeklyDishTitle = 'Wochenangebot';
+                let weeklyDishMain = new Food(weeklyDishTitle, null, true);
+                for (let weeklyDish of gptJsonAnswer.weekly_dishes) {
+                    let food = new Food(`${weeklyDish.name}${weeklyDish.description ? ' ' + weeklyDish.description : ''}`,
+                        weeklyDish.price, false, false, weeklyDish.allergens);
 
-                        herzhaftDishMain.entries.push(food);
-                    }
+                    weeklyDishMain.entries.push(food);
                 }
 
-                if (herzhaftDishMain.entries.length > 0) {
-                    menuForDay.mains.push(herzhaftDishMain);
+                if (weeklyDishMain.entries.length > 0) {
+                    menuForDay.mains.push(weeklyDishMain);
                 }
 
                 if (menuForDay.mains.length > 0) {
