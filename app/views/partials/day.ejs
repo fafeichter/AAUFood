@@ -23,6 +23,7 @@
         </div>
         <div class="col-xl-3 col-lg-6 col-md-12">
             <%- include('restaurant', {restaurantId: restaurants.hotspot.id, restaurantName: restaurants.hotspot.name, restaurantFriendlyUrl: hotspot.userFriendlyUrl, menu: hotspot.menu ? hotspot.menu[day] : null, combinedMenuList: true, day: day, chatGptPowered: true}) %>
+            <%- include('restaurant', {restaurantId: restaurants.felsenkeller.id, restaurantName: restaurants.felsenkeller.name, restaurantFriendlyUrl: felsenkeller.userFriendlyUrl, menu: felsenkeller.menu ? felsenkeller.menu[day] : null, combinedMenuList: true, day: day, chatGptPowered: true}) %>
         </div>
     </div>
 </div>

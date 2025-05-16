@@ -38,6 +38,10 @@ async function letMeChatGptThatForYou(input, restaurantId) {
             prompt = gptInstructions.restaurants.daMario(input);
             break;
         }
+        case restaurants.felsenkeller.id: {
+            prompt = gptInstructions.restaurants.felsenkeller();
+            break;
+        }
         default: {
             throw new Error(`Restaurant with id "${restaurantId}" is not supported for parsing with ChatGPT`);
         }
@@ -52,7 +56,8 @@ function payload(restaurantId, prompt, base64Image) {
     switch (restaurantId) {
         case restaurants.interspar.id:
         case restaurants.mensa.id:
-        case restaurants.uniPizzeria.id: {
+        case restaurants.uniPizzeria.id:
+        case restaurants.felsenkeller.id: {
             return payloadForTextFromImage(prompt, base64Image);
         }
         default:

@@ -131,6 +131,10 @@ body {
   @include restaurantColors($burgerBoutiqueGold, white)
 }
 
+.felsenkeller {
+  @include restaurantColors($felsenkellerTerracotta, white)
+}
+
 /* Menu Lists */
 .restaurant ul li {
   padding: 0;

@@ -85,6 +85,10 @@ module.exports = {
         burgerBoutique: {
             id: "burger-boutique",
             name: "Burger Boutique"
+        },
+        felsenkeller: {
+            id: "felsenkeller",
+            name: "Felsenkeller"
         }
 
     },

@@ -28,6 +28,7 @@ const bitsAndBytesRestaurantId = restaurants.bitsAndBytes.id;
 const intersparRestaurantId = restaurants.interspar.id;
 const daMarioRestaurantId = restaurants.daMario.id;
 const burgerBoutiqueRestaurantId = restaurants.burgerBoutique.id;
+const felsenkellerRestaurantId = restaurants.felsenkeller.id;
 
 const PARSING_SKIPPED = null;
 
@@ -690,6 +691,71 @@ function getBurgerBoutiquePlan() {
     return Promise.resolve(menu);
 }
 
+async function getFelsenkellerPlan() {
+    winston.debug(`Parsing of "${felsenkellerRestaurantId}" started ...`);
+
+    let menu = scraperHelper.getWeekEmptyModel();
+
+    const scraperUrl = await urlCache.getUrls(felsenkellerRestaurantId)
+        .then(urls => JSON.parse(urls).scraperUrl)
+
+    const pdfAsBase64Image = await fileUtils.pdf2Base64Image(scraperUrl, felsenkellerRestaurantId);
+
+    if (pdfAsBase64Image) {
+        let imagePreviousHash = await menuHashCache.getHash(felsenkellerRestaurantId);
+        let imageHash = hashUtils.hashWithSHA256(pdfAsBase64Image);
+        menuHashCache.updateIfNewer(felsenkellerRestaurantId, imageHash);
+
+        if (imagePreviousHash === null || imagePreviousHash !== imageHash) {
+            const gptResponse = await gptHelper.letMeChatGptThatForYou(pdfAsBase64Image, felsenkellerRestaurantId);
+            const gptResponseContent = gptResponse.data.choices[0].message.content;
+            winston.debug(`ChatGPT response of "${felsenkellerRestaurantId}": ${gptResponseContent}`);
+            const gptJsonAnswer = JSON.parse(gptResponseContent);
+
+            ["MO", "DI", "MI", "DO", "FR"].forEach(function (dayString, dayInWeek) {
+                var menuForDay = new Menu();
+                var menuct = 0;
+
+                if (gptJsonAnswer.soups) {
+                    for (let soup of gptJsonAnswer.soups) {
+                        if (soup.day === dayString) {
+                            let starterFood = new Food(`${soup.name}`);
+                            menuForDay.starters.push(starterFood);
+                            break;
+                        }
+                    }
+                }
+
+                for (let dish of gptJsonAnswer.dishes) {
+                    if (dish.day === dayString) {
+                        let title = `Menü ${++menuct}`;
+                        let main = new Food(title, dish.price, true);
+
+                        let food = new Food(`${dish.name}${dish.description ? ' ' + dish.description : ''}`,
+                            null, false, false, dish.allergens);
+                        main.entries.push(food);
+                        menuForDay.mains.push(main);
+                    }
+                }
+
+                if (menuForDay.mains.length > 0) {
+                    menu[dayInWeek] = menuForDay;
+                } else {
+                    winston.debug(`There is no menu for "${felsenkellerRestaurantId}" on day with index ${dayInWeek}`);
+                    scraperHelper.setDayToError(menu, dayInWeek);
+                }
+            });
+        } else {
+            return PARSING_SKIPPED;
+        }
+    }
+
+    menu[5].alacarte = true;
+    menu[6].closed = true;
+
+    return menu;
+}
+
 module.exports = {
     getUniWirtWeekPlan,
     getHotspotWeekPlan,
@@ -699,5 +765,6 @@ module.exports = {
     getIntersparWeekPlan,
     getDaMarioWeekPlan,
     getBurgerBoutiquePlan,
+    getFelsenkellerPlan,
     PARSING_SKIPPED
 };

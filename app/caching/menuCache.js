@@ -29,6 +29,7 @@ class MenuCache {
             this._updateMenu(restaurants.daMario.id);
             this._updateMenu(restaurants.interspar.id);
             this._updateMenu(restaurants.uniPizzeria.id);
+            this._updateMenu(restaurants.felsenkeller.id);
         }, 10000);
     }
 
@@ -68,6 +69,10 @@ class MenuCache {
             }
             case restaurants.burgerBoutique.id: {
                 weekPlan = scraper.getBurgerBoutiquePlan();
+                break;
+            }
+            case restaurants.felsenkeller.id: {
+                weekPlan = scraper.getFelsenkellerPlan();
                 break;
             }
             default: {

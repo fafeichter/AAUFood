@@ -240,6 +240,44 @@ const restaurants = {
                 type: double
                 
         ${htmlText}`,
+
+    felsenkeller: () => `
+        use the following openapi yaml schema - while using the specified hints on how to get the desired data - to parse the text afterwards into a response containing only valid json without any other text or explanations
+        
+        definitions:
+          required: [soups, dishes]
+          soups:
+            type: array
+            items:
+              $ref: #/definitions/soup
+          dishes:
+            type: array
+            items:
+              $ref: #/definitions/dish
+          soup:
+            type: object
+            required: [name, day]
+            properties:
+              name:
+                type: string
+              day: # must be always one of ["MO", "DI", "MI", "DO", "FR", "SA", "SO"]
+                type: string
+                minLength: 2
+                maxLength: 2
+          dish:
+            type: object
+            required: [name, description, price, day]
+            properties:
+              name: keep apostrophes, double quotes and round brackets and the text within them; do not include allergens wich are typically at the end e.g. "GLO" or "A,C,G,L,M,O"; remove leading list numbers
+                type: string
+              description: # this is the side dish e.g. "mit Kartoffelschmarrn und Sauerkraut", otherwise set this property to null; keep apostrophes, double quotes and round brackets and the text within them; do not include allergens wich are typically at the end e.g. "GLO" or "A,C,G,L,M,O"
+                type: string
+              price:
+                type: double # the price is found in the header and applies to all dishes
+              day: # must be always one of ["MO", "DI", "MI", "DO", "FR", "SA", "SO"]
+                type: string
+                minLength: 2
+                maxLength: 2`,
 }
 
 module.exports = {

@@ -41,6 +41,10 @@ class UrlCache {
             scraperUrl: "https://da-mario.at/klagenfurt/speisen/",
             userFriendlyUrl: "https://da-mario.at/klagenfurt/speisen/"
         });
+        this._updateIfNewer(restaurants.felsenkeller.id, {
+            scraperUrl: "https://www.felsen-keller.at/wp-content/plugins/upload_karte/files/tageskarte.pdf",
+            userFriendlyUrl: "https://www.felsen-keller.at/wp-content/plugins/upload_karte/files/tageskarte.pdf"
+        });
     }
 
     _setDynamicUrls() {
