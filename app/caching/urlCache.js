@@ -62,8 +62,8 @@ class UrlCache {
     _updateMensaUrl() {
         let now = moment();
 
-        const currentYear = now.year();
-        const currentWeek = now.week();
+        const currentYear = now.format('YYYY');
+        const currentWeek = now.format('WW');
 
         this._updateIfNewer(restaurants.mensa.id, {
             scraperUrl: `https://backend.mensen.at/menuplan/Menuplan-902002-${currentWeek}-${currentYear}.pdf`,
