@@ -5,7 +5,7 @@
 'use strict';
 
 const winston = require('winston');
-const restaurants = require("../config");
+const restaurants = require("../config").restaurants;
 const keyPrefix = "raw-data-cache";
 
 class MenuHashCache {
