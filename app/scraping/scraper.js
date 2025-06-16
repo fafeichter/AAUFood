@@ -636,7 +636,7 @@ function getBurgerBoutiquePlan() {
 
     // Monday
     let mondayMenu = new Menu();
-    let mondayMain = new Food("Menü 1", 9.9, true);
+    let mondayMain = new Food("Menü 1", 11.5, true);
     let mondayFood = new Food("Burritos + Pommes und Sauce", null, false, false, null);
 
     mondayMain.entries.push(mondayFood);
@@ -645,7 +645,7 @@ function getBurgerBoutiquePlan() {
 
     // Tuesday
     let tuesdayMenu = new Menu();
-    let tuesdayMain = new Food("Menü 1", 9.9, true);
+    let tuesdayMain = new Food("Menü 1", 11.5, true);
     let tuesdayFood = new Food("Bowls", null, false, false, null);
 
     tuesdayMain.entries.push(tuesdayFood);
@@ -654,7 +654,7 @@ function getBurgerBoutiquePlan() {
 
     // Wednesday
     let wednesdayMenu = new Menu();
-    let wednesdayMain = new Food("Menü 1", 9.9, true);
+    let wednesdayMain = new Food("Menü 1", 11.5, true);
     let wednesdayFood = new Food();
     wednesdayFood.name = "Burger (außer New Jersey, Route 66 und Surf and Turf)";
 
@@ -664,7 +664,7 @@ function getBurgerBoutiquePlan() {
 
     // Thursday
     let thursdayMenu = new Menu();
-    let thursdayMain = new Food("Menü 1", 8.9, true);
+    let thursdayMain = new Food("Menü 1", 11.5, true);
     let thursdayFood = new Food("Wraps + Pommes und Sauce", null, false, false, null);
 
     thursdayMain.entries.push(thursdayFood);
