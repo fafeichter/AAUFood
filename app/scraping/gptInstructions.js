@@ -217,9 +217,11 @@ const restaurants = {
               price:
                 type: double`,
 
-    bitsAndBytes: (htmlText) => `
-        use the following openapi yaml schema - while using the specified hints on how to get the desired data - to parse the text afterwards into a response containing only valid json without any other text or explanations
+    bitsAndBytes: () => `
+        use the following openapi yaml schema - while using the specified hints on how to get the desired data - to parse the provided image into a response containing only valid json without any other text or explanations
         
+        the image contains the menus of two restaurants - one at the left side and one at the right side. consider only the one on the right and only the dishes under the section "HEISSE THEKE" excluding "PIZZA DER WOCHE", "WOK" and "WURST VOM KÄRNTNER FLEISCHER". the language of the text in the image is german.
+                
         definitions:
           required: [dishes]
           dishes:
@@ -241,9 +243,7 @@ const restaurants = {
                   minLength: 1
                   maxLength: 1
               price:
-                type: double
-                
-        ${htmlText}`,
+                type: double`,
 
     daMario: (htmlText) => `
         use the following openapi yaml schema - while using the specified hints on how to get the desired data - to parse the text afterwards into a response containing only valid json without any other text or explanations

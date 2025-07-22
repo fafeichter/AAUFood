@@ -29,10 +29,6 @@ class UrlCache {
             scraperUrl: "https://www.uniwirt.at/",
             userFriendlyUrl: "https://www.uniwirt.at/#menue"
         });
-        this._updateIfNewer(restaurants.bitsAndBytes.id, {
-            scraperUrl: "https://www.lakeside-scitec.com/services/gastronomie/bits-bytes",
-            userFriendlyUrl: "https://www.lakeside-scitec.com/services/gastronomie/bits-bytes"
-        });
         this._updateIfNewer(restaurants.daMario.id, {
             scraperUrl: "https://da-mario.at/klagenfurt/speisen/",
             userFriendlyUrl: "https://da-mario.at/klagenfurt/speisen/"
@@ -45,6 +41,7 @@ class UrlCache {
 
     _setDynamicUrls() {
         this._updateHotspotUrl();
+        this._updateBitsAndBytesUrl();
         this._updateIntersparUrl();
         this._updateMensaUrl();
         this._updateUniPizzeriaUrl();
@@ -59,6 +56,17 @@ class UrlCache {
         this._updateIfNewer(restaurants.hotspot.id, {
             scraperUrl: `https://lakeside-scitec.com/fileadmin/lakesidepark/08_Leben/Gastronomie/Men%C3%BCplan_bitsundhot_KW${currentWeekNumber}_${currentYear}.pdf`,
             userFriendlyUrl: `https://lakeside-scitec.com/leben/hotspot`,
+        });
+    }
+
+    _updateBitsAndBytesUrl() {
+        const now = moment();
+        const currentYear = now.format('YY');
+        const currentWeekNumber = now.format('WW');
+
+        this._updateIfNewer(restaurants.bitsAndBytes.id, {
+            scraperUrl: `https://lakeside-scitec.com/fileadmin/lakesidepark/08_Leben/Gastronomie/Men%C3%BCplan_bitsundhot_KW${currentWeekNumber}_${currentYear}.pdf`,
+            userFriendlyUrl: `https://lakeside-scitec.com/leben/bits-bytes`,
         });
     }
 

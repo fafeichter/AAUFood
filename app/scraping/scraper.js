@@ -360,99 +360,58 @@ async function getHotspotWeekPlan() {
     return menu;
 }
 
-function getBitsAndBytesWeekPlan() {
-    return urlCache.getUrls(restaurants.bitsAndBytes.id)
-        .then(urls => request.getAsync(JSON.parse(urls).scraperUrl))
-        .then(res => res.body)
-        .then(body => parseBitsAndBytes(body));
-}
-
-async function parseBitsAndBytes(html) {
+async function getBitsAndBytesWeekPlan() {
     winston.debug(`Parsing of "${bitsAndBytesRestaurantId}" started ...`);
-    var result = new Array(7);
 
-    var $ = cheerio.load(html);
+    let menu = scraperHelper.getWeekEmptyModel();
 
-    var mainContent = $("section > .content");
-    var heading = mainContent.find("h1:contains(Bits & Bytes Marketplace)").eq(-1).text() || "";
-    var weekIsOutdated = !timeHelper.checkInputForCurrentWeek(heading)
+    const scraperUrl = await urlCache.getUrls(bitsAndBytesRestaurantId)
+        .then(urls => JSON.parse(urls).scraperUrl)
 
-    if (weekIsOutdated) {
-        winston.debug(`Menu of "${bitsAndBytesRestaurantId}" is outdated`);
-        result = scraperHelper.setWeekPlanToOutdated(result);
-    } else {
-        winston.debug(`Menu of "${bitsAndBytesRestaurantId}" is not outdated`);
-        var contentTable = mainContent.find("> table > tbody");
+    const pdfAsBase64Image = await fileUtils.pdf2Base64Image(scraperUrl, bitsAndBytesRestaurantId);
 
-        // Hauptspeisen
-        const contentTableDict = []
-        let isMainDish = false;
-        contentTable.find('tr').each((ind, itm) => {
-            // filter out pizza and wok
-            if ($(itm).find("td:contains(WOK)").length === 1) {
-                isMainDish = false;
-            } else {
-                if (isMainDish) {
-                    if ($(itm).text().trim() !== "" && ($(itm).has('li').length) ||
-                        ($(itm).has('p').length)) {
-                        contentTableDict.push(itm);
-                    }
+    if (pdfAsBase64Image) {
+        let imagePreviousHash = await menuHashCache.getHash(bitsAndBytesRestaurantId);
+        let imageHash = hashUtils.hashWithSHA256(pdfAsBase64Image);
+        menuHashCache.updateIfNewer(bitsAndBytesRestaurantId, imageHash);
+
+        if (imagePreviousHash === null || imagePreviousHash !== imageHash) {
+            const gptResponse = await gptHelper.letMeChatGptThatForYou(pdfAsBase64Image, bitsAndBytesRestaurantId);
+            const gptResponseContent = gptResponse.data.choices[0].message.content;
+            winston.debug(`ChatGPT response of "${bitsAndBytesRestaurantId}": ${gptResponseContent}`);
+            const gptJsonAnswer = JSON.parse(gptResponseContent);
+
+            for (let dayInWeek = 0; dayInWeek < 5; dayInWeek++) {
+                var menuForDay = new Menu();
+                var menuct = 0;
+
+                for (let dish of gptJsonAnswer.dishes) {
+                    let title = `Menü ${++menuct}`;
+                    let mainCourse = new Food(title, dish.price, true);
+                    let food = new Food(`${dish.name}${dish.description ? ' ' + dish.description : ''}`,
+                        null, false, false, dish.allergens);
+                    mainCourse.entries = [food];
+                    menuForDay.mains.push(mainCourse);
+                }
+
+                if (menuForDay.mains.length > 0) {
+                    menu[dayInWeek] = menuForDay;
                 } else {
-                    if ($(itm).find("td:contains(HEISSE THEKE)").length > 0) {
-                        isMainDish = true;
-                    }
+                    winston.debug(`There is no menu for "${bitsAndBytesRestaurantId}" on day with index ${dayInWeek}`);
+                    scraperHelper.setDayToError(menu, dayInWeek);
                 }
-            }
-        })
-
-        let relevantHtmlPart = $.html(contentTableDict);
-        winston.debug(`Relevant HTML content of "${bitsAndBytesRestaurantId}": ${relevantHtmlPart}`);
-
-        if (relevantHtmlPart) {
-            let relevantHtmlPartPreviousHash = await menuHashCache.getHash(bitsAndBytesRestaurantId);
-            let relevantHtmlPartHash = hashUtils.hashWithSHA256(relevantHtmlPart);
-            menuHashCache.updateIfNewer(bitsAndBytesRestaurantId, relevantHtmlPartHash);
-
-            if (relevantHtmlPartPreviousHash === null || relevantHtmlPartPreviousHash !== relevantHtmlPartHash) {
-                const gptResponse = await gptHelper.letMeChatGptThatForYou(relevantHtmlPart, bitsAndBytesRestaurantId);
-                const gptResponseContent = gptResponse.data.choices[0].message.content;
-                const gptJsonAnswer = JSON.parse(gptResponseContent);
-                winston.debug(`ChatGPT response of "${bitsAndBytesRestaurantId}": ${gptResponseContent}`);
-
-                for (let dayInWeek = 0; dayInWeek < 5; dayInWeek++) {
-                    var menuForDay = new Menu();
-                    var menuct = 0;
-
-                    for (let dish of gptJsonAnswer.dishes) {
-                        let title = `Menü ${++menuct}`;
-                        let mainCourse = new Food(title, dish.price, true);
-                        let food = new Food(`${dish.name}${dish.description ? ' ' + dish.description : ''}`,
-                            null, false, false, dish.allergens);
-                        mainCourse.entries = [food];
-                        menuForDay.mains.push(mainCourse);
-                    }
-
-                    if (menuForDay.mains.length > 0) {
-                        result[dayInWeek] = menuForDay;
-                    } else {
-                        winston.debug(`There is no menu for "${bitsAndBytesRestaurantId}" on day with index ${dayInWeek}`);
-                        scraperHelper.setDayToError(result, dayInWeek);
-                    }
-                }
-            } else {
-                return PARSING_SKIPPED;
             }
         } else {
-            winston.debug(`Menu of "${bitsAndBytesRestaurantId}" is outdated`);
-            result = scraperHelper.setWeekPlanToOutdated(result);
+            return PARSING_SKIPPED;
         }
     }
 
+    // Saturday + Sunday
     let closedMenu = new Menu();
     closedMenu.closed = true;
-    result[5] = result[6] = closedMenu;
+    menu[5] = menu[6] = closedMenu;
 
-    return result;
+    return menu;
 }
 
 async function getIntersparWeekPlan() {
