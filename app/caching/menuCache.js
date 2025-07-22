@@ -16,21 +16,28 @@ class MenuCache {
         this.client = redisClient;
     }
 
-    update() {
+    async update() {
         // wait for url cache to update (... avoid the hell of nested promises)
-        setTimeout(() => {
-            winston.debug('Updating menu caches ...');
+        await this._sleep(10000);
+        winston.debug('Updating menu caches ...');
 
-            this._updateMenu(restaurants.mensa.id);
-            this._updateMenu(restaurants.burgerBoutique.id);
-            this._updateMenu(restaurants.uniWirt.id);
-            this._updateMenu(restaurants.bitsAndBytes.id);
-            this._updateMenu(restaurants.hotspot.id);
-            this._updateMenu(restaurants.daMario.id);
-            this._updateMenu(restaurants.interspar.id);
-            this._updateMenu(restaurants.uniPizzeria.id);
-            this._updateMenu(restaurants.felsenkeller.id);
-        }, 10000);
+        this._updateMenu(restaurants.mensa.id);
+        await this._sleep(5000);
+        this._updateMenu(restaurants.burgerBoutique.id);
+        await this._sleep(5000);
+        this._updateMenu(restaurants.uniWirt.id);
+        await this._sleep(5000);
+        this._updateMenu(restaurants.bitsAndBytes.id);
+        await this._sleep(5000);
+        this._updateMenu(restaurants.hotspot.id);
+        await this._sleep(5000);
+        this._updateMenu(restaurants.daMario.id);
+        await this._sleep(5000);
+        this._updateMenu(restaurants.interspar.id);
+        await this._sleep(5000);
+        this._updateMenu(restaurants.uniPizzeria.id);
+        await this._sleep(5000);
+        this._updateMenu(restaurants.felsenkeller.id);
     }
 
     _updateMenu(restaurantId) {
@@ -142,6 +149,10 @@ class MenuCache {
     getMenu(menuName, day) {
         var key = day != null ? `${menuKeyPrefix}:${menuName}:${day}` : `${menuKeyPrefix}:${menuName}`;
         return this.client.getAsync(key);
+    }
+
+    _sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
     }
 }
 
