@@ -29,8 +29,11 @@ async function letMeChatGptThatForYou(input, restaurantId) {
             prompt = gptInstructions.restaurants.uniPizzeria();
             break;
         }
-        case restaurants.bitsAndBytes.id:
         case restaurants.hotspot.id: {
+            prompt = gptInstructions.restaurants.hotspot();
+            break;
+        }
+        case restaurants.bitsAndBytes.id: {
             prompt = gptInstructions.restaurants.bitsAndBytes(input);
             break;
         }
@@ -54,6 +57,7 @@ async function letMeChatGptThatForYou(input, restaurantId) {
 
 function payload(restaurantId, prompt, base64Image) {
     switch (restaurantId) {
+        case restaurants.hotspot.id:
         case restaurants.interspar.id:
         case restaurants.mensa.id:
         case restaurants.uniPizzeria.id:

@@ -189,6 +189,34 @@ const restaurants = {
                 
         ${htmlText}`,
 
+    hotspot: () => `
+        use the following openapi yaml schema - while using the specified hints on how to get the desired data - to parse the provided image into a response containing only valid json without any other text or explanations
+        
+        the image contains the menus of two restaurants - one at the left side and one at the right side. consider only the one on the left and only the dishes under the section "HAUPTSPEISEN serviert". the language of the text in the image is german.
+                
+        definitions:
+          required: [dishes]
+          dishes:
+            type: array
+            items:
+              $ref: #/definitions/dish
+          dish:
+            type: object
+            required: [name, description, allergens, price]
+            properties:
+              name: # keep apostrophes, double quotes and round brackets and the text within them; do not include allergens wich are typically at the end e.g. "GLO" or "A,C,G,L,M,O"; include also daily or weekly special dishes including additional info like "(täglich wechselnd, unsere MitarbeiterInnen informieren Sie gerne!)" if available
+                type: string
+              description: # this is the side dish e.g. "mit Kartoffelschmarrn und Sauerkraut", otherwise set this property to null; keep apostrophes, double quotes and round brackets and the text within them; do not include allergens wich are typically at the end e.g. "GLO" or "A,C,G,L,M,O"
+                type: string
+              allergens: # if you have trouble finding the allergens then you may find them immediately after the names of the dishes, e.g. "GLO" or "A,C,G,L,M,O", otherwise set this property to an empty array; transform them always into an array containing single uppercase characters
+                type: array
+                items:
+                  type: string
+                  minLength: 1
+                  maxLength: 1
+              price:
+                type: double`,
+
     bitsAndBytes: (htmlText) => `
         use the following openapi yaml schema - while using the specified hints on how to get the desired data - to parse the text afterwards into a response containing only valid json without any other text or explanations
         
