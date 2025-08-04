@@ -21,26 +21,26 @@ class MenuCache {
         await this._sleep(10000);
         winston.debug('Updating menu caches ...');
 
-        this._updateMenu(restaurants.mensa.id);
-        await this._sleep(5000);
-        this._updateMenu(restaurants.burgerBoutique.id);
-        await this._sleep(5000);
-        this._updateMenu(restaurants.uniWirt.id);
-        await this._sleep(5000);
-        this._updateMenu(restaurants.bitsAndBytes.id);
-        await this._sleep(5000);
-        this._updateMenu(restaurants.hotspot.id);
-        await this._sleep(5000);
-        this._updateMenu(restaurants.daMario.id);
-        await this._sleep(5000);
-        this._updateMenu(restaurants.interspar.id);
-        await this._sleep(5000);
-        this._updateMenu(restaurants.uniPizzeria.id);
-        await this._sleep(5000);
-        this._updateMenu(restaurants.felsenkeller.id);
+        await this._updateMenu(restaurants.mensa.id);
+        await this._sleep(20000);
+        await this._updateMenu(restaurants.burgerBoutique.id);
+        await this._sleep(20000);
+        await this._updateMenu(restaurants.uniWirt.id);
+        await this._sleep(20000);
+        await this._updateMenu(restaurants.bitsAndBytes.id);
+        await this._sleep(20000);
+        await this._updateMenu(restaurants.hotspot.id);
+        await this._sleep(20000);
+        await this._updateMenu(restaurants.daMario.id);
+        await this._sleep(20000);
+        await this._updateMenu(restaurants.interspar.id);
+        await this._sleep(20000);
+        await this._updateMenu(restaurants.uniPizzeria.id);
+        await this._sleep(20000);
+        await this._updateMenu(restaurants.felsenkeller.id);
     }
 
-    _updateMenu(restaurantId) {
+    async _updateMenu(restaurantId) {
         winston.debug(`Getting week plan for "${restaurantId}"`);
 
         let weekPlan = undefined;
