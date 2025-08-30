@@ -22,21 +22,13 @@ class MenuCache {
         winston.debug('Updating menu caches ...');
 
         await this._updateMenu(restaurants.mensa.id);
-        await this._sleep(20000);
         await this._updateMenu(restaurants.burgerBoutique.id);
-        await this._sleep(20000);
         await this._updateMenu(restaurants.uniWirt.id);
-        await this._sleep(20000);
         await this._updateMenu(restaurants.bitsAndBytes.id);
-        await this._sleep(20000);
         await this._updateMenu(restaurants.hotspot.id);
-        await this._sleep(20000);
         await this._updateMenu(restaurants.daMario.id);
-        await this._sleep(20000);
         await this._updateMenu(restaurants.interspar.id);
-        await this._sleep(20000);
         await this._updateMenu(restaurants.uniPizzeria.id);
-        await this._sleep(20000);
         await this._updateMenu(restaurants.felsenkeller.id);
     }
 
@@ -87,7 +79,7 @@ class MenuCache {
             }
         }
 
-        weekPlan.then(weekPlan => {
+        await weekPlan.then(weekPlan => {
             if (weekPlan !== scraper.PARSING_SKIPPED) {
                 this._updateIfNewer(restaurantId, weekPlan);
             }
