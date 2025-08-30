@@ -1,6 +1,6 @@
 <!-- Parameters: starters -->
 <% if(starters.length) { %>
-    <ul class="list-group menu-list-group starters">
+    <ul class="list-group menu-list-group starters <% if(!menu.mains.length) { %>mb-0<% } %>">
         <% starters.forEach(function (starter) { %>
             <li class="list-group-item">
                 <%= starter.name %>

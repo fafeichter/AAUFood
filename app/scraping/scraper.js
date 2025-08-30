@@ -589,7 +589,11 @@ function getBurgerBoutiquePlan() {
     menu[3] = thursdayMenu;
 
     // Friday
-    menu[4] = wednesdayMenu;
+    let fridayMenu = new Menu();
+    let fridayFood = new Food("Alle Abholungen -20%", null, false, false, null);
+
+    fridayMenu.starters.push(fridayFood);
+    menu[4] = fridayMenu;
 
     // Saturday
     let aLaCarteMenu = new Menu();
