@@ -46,97 +46,79 @@ async function parseUniwirt(html) {
 
     var $ = cheerio.load(html);
 
-    // Get Monday Date
-    const mondayString = $("h3:contains(Montag)").text().split(" ")[1];
-    const mondayDate = moment(mondayString, "DD.MM");
+    let relevantHtmlPart = $.html($("#tab-wochenmenue"));
+    winston.debug(`Relevant HTML content of "${uniWirtRestaurantId}": ${relevantHtmlPart}`);
 
-    // Set outdated
-    if (mondayDate.isValid() && mondayDate.format("DD.MM") !== timeHelper.getMondayDate()) {
-        winston.debug(`Menu of "${uniWirtRestaurantId}" is outdated`);
-        for (let i = 0; i < 6; i++) {
-            let outdatedMenu = new Menu();
-            outdatedMenu.outdated = true;
-            menu[i] = outdatedMenu;
-        }
-    } else {
-        winston.debug(`Menu of "${uniWirtRestaurantId}" is not outdated`);
-        let relevantHtmlPart = $.html($("#tab-wochenmenue"));
-        winston.debug(`Relevant HTML content of "${uniWirtRestaurantId}": ${relevantHtmlPart}`);
+    if (relevantHtmlPart) {
+        let relevantHtmlPartPreviousHash = await menuHashCache.getHash(uniWirtRestaurantId);
+        let relevantHtmlPartHash = hashUtils.hashWithSHA256(relevantHtmlPart);
+        menuHashCache.updateIfNewer(uniWirtRestaurantId, relevantHtmlPartHash);
 
-        if (relevantHtmlPart) {
-            let relevantHtmlPartPreviousHash = await menuHashCache.getHash(uniWirtRestaurantId);
-            let relevantHtmlPartHash = hashUtils.hashWithSHA256(relevantHtmlPart);
-            menuHashCache.updateIfNewer(uniWirtRestaurantId, relevantHtmlPartHash);
+        if (relevantHtmlPartPreviousHash === null || relevantHtmlPartPreviousHash !== relevantHtmlPartHash) {
+            const gptResponse = await gptHelper.letMeChatGptThatForYou(relevantHtmlPart, uniWirtRestaurantId);
+            const gptResponseContent = gptResponse.data.choices[0].message.content;
+            winston.debug(`ChatGPT response of "${uniWirtRestaurantId}": ${gptResponseContent}`);
+            const gptJsonAnswer = JSON.parse(gptResponseContent);
 
-            if (relevantHtmlPartPreviousHash === null || relevantHtmlPartPreviousHash !== relevantHtmlPartHash) {
-                const gptResponse = await gptHelper.letMeChatGptThatForYou(relevantHtmlPart, uniWirtRestaurantId);
-                const gptResponseContent = gptResponse.data.choices[0].message.content;
-                winston.debug(`ChatGPT response of "${uniWirtRestaurantId}": ${gptResponseContent}`);
-                const gptJsonAnswer = JSON.parse(gptResponseContent);
+            ["MO", "DI", "MI", "DO", "FR"].forEach(function (dayString, dayInWeek) {
+                var menuForDay = new Menu();
+                var menuct = 0;
 
-                ["MO", "DI", "MI", "DO", "FR"].forEach(function (dayString, dayInWeek) {
-                    var menuForDay = new Menu();
-                    var menuct = 0;
-
-                    if (gptJsonAnswer.soups) {
-                        for (let soup of gptJsonAnswer.soups) {
-                            if (soup.day === dayString) {
-                                let starterFood = new Food(`${soup.name}`);
-                                menuForDay.starters.push(starterFood);
-                                break;
-                            }
+                if (gptJsonAnswer.soups) {
+                    for (let soup of gptJsonAnswer.soups) {
+                        if (soup.day === dayString) {
+                            let starterFood = new Food(`${soup.name}`);
+                            menuForDay.starters.push(starterFood);
+                            break;
                         }
                     }
+                }
 
-                    for (let dish of gptJsonAnswer.dishes) {
-                        if (dish.day === dayString) {
-                            let title = `Menü ${++menuct}`;
-                            let main = new Food(title, dish.price, true);
+                for (let dish of gptJsonAnswer.dishes) {
+                    if (dish.day === dayString) {
+                        let title = `Menü ${++menuct}`;
+                        let main = new Food(title, dish.price, true);
 
-                            let food = new Food(`${dish.name}${dish.description ? ' ' + dish.description : ''}`,
-                                null, false, false, dish.allergens);
-                            main.entries.push(food);
-                            menuForDay.mains.push(main);
-                        }
-                    }
-
-                    for (let pizza of gptJsonAnswer.pizzas) {
-                        if (pizza.day === dayString) {
-                            let title = `Menü ${++menuct}`;
-                            let main = new Food(title, pizza.price, true);
-
-                            let food = new Food(`${pizza.name}${pizza.description ? ' ' + pizza.description : ''}`,
-                                null, false, false, pizza.allergens);
-                            main.entries.push(food);
-                            menuForDay.mains.push(main);
-                        }
-                    }
-
-                    let weeklySpecial = gptJsonAnswer.weekly_special;
-                    if (weeklySpecial && menuForDay.mains.length > 0) {
-                        let title = `Vegan die ganze Woche`;
-                        let main = new Food(title, weeklySpecial.price, true);
-
-                        let name = `${weeklySpecial.name}${weeklySpecial.description ? ' ' + weeklySpecial.description : ''}`;
-                        let food = new Food(name, null, false, false, weeklySpecial.allergens);
-
+                        let food = new Food(`${dish.name}${dish.description ? ' ' + dish.description : ''}`,
+                            null, false, false, dish.allergens);
                         main.entries.push(food);
                         menuForDay.mains.push(main);
                     }
+                }
 
-                    if (menuForDay.mains.length > 0) {
-                        menu[dayInWeek] = menuForDay;
-                    } else {
-                        winston.debug(`There is no menu for "${uniWirtRestaurantId}" on day with index ${dayInWeek}`);
-                        scraperHelper.setDayToError(menu, dayInWeek);
+                for (let pizza of gptJsonAnswer.pizzas) {
+                    if (pizza.day === dayString) {
+                        let title = `Menü ${++menuct}`;
+                        let main = new Food(title, pizza.price, true);
+
+                        let food = new Food(`${pizza.name}${pizza.description ? ' ' + pizza.description : ''}`,
+                            null, false, false, pizza.allergens);
+                        main.entries.push(food);
+                        menuForDay.mains.push(main);
                     }
-                });
-            } else {
-                return PARSING_SKIPPED;
-            }
+                }
+
+                let weeklySpecial = gptJsonAnswer.weekly_special;
+                if (weeklySpecial && menuForDay.mains.length > 0) {
+                    let title = `Vegan die ganze Woche`;
+                    let main = new Food(title, weeklySpecial.price, true);
+
+                    let name = `${weeklySpecial.name}${weeklySpecial.description ? ' ' + weeklySpecial.description : ''}`;
+                    let food = new Food(name, null, false, false, weeklySpecial.allergens);
+
+                    main.entries.push(food);
+                    menuForDay.mains.push(main);
+                }
+
+                if (menuForDay.mains.length > 0) {
+                    menu[dayInWeek] = menuForDay;
+                } else {
+                    winston.debug(`There is no menu for "${uniWirtRestaurantId}" on day with index ${dayInWeek}`);
+                    scraperHelper.setDayToError(menu, dayInWeek);
+                }
+            });
         } else {
-            winston.debug(`Menu of "${uniWirtRestaurantId}" is outdated`);
-            menu = scraperHelper.setWeekPlanToOutdated(menu);
+            return PARSING_SKIPPED;
         }
     }
 
