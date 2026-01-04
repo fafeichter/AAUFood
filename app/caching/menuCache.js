@@ -33,6 +33,7 @@ class MenuCache {
     }
 
     async _updateMenu(restaurantId) {
+        try {
         winston.debug(`Getting week plan for "${restaurantId}"`);
 
         let weekPlan = undefined;
@@ -84,6 +85,8 @@ class MenuCache {
                 this._updateIfNewer(restaurantId, weekPlan);
             }
         });
+        } catch(error) {
+            winston.error(error);
     }
 
     resetAll() {
