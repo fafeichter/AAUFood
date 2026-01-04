@@ -87,6 +87,7 @@ class MenuCache {
         });
         } catch(error) {
             winston.error(error);
+        }
     }
 
     resetAll() {
