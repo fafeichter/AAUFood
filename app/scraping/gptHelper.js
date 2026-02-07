@@ -72,7 +72,7 @@ function payload(restaurantId, prompt, base64Image) {
 
 function defaultPayload(input) {
     return {
-        model: "gpt-4o-mini",
+        model: "gpt-5-mini",
         response_format: {
             type: "json_object"
         },
@@ -87,7 +87,7 @@ function defaultPayload(input) {
 
 function payloadForTextFromImage(input, base64Image) {
     return {
-        model: "gpt-4o",
+        model: "gpt-5.2",
         response_format: {
             type: "json_object"
         },
