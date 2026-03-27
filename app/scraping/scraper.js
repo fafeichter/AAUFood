@@ -417,7 +417,7 @@ async function getIntersparWeekPlan() {
             winston.debug(`ChatGPT response of "${intersparRestaurantId}": ${gptResponseContent}`);
             const gptJsonAnswer = JSON.parse(gptResponseContent);
 
-            ["MO", "DI", "MI", "DO", "FR"].forEach(function (dayString, dayInWeek) {
+            ["MO", "DI", "MI", "DO", "FR", "SA"].forEach(function (dayString, dayInWeek) {
                 var menuForDay = new Menu();
                 var menuct = 0;
 
@@ -434,18 +434,6 @@ async function getIntersparWeekPlan() {
                     }
                 }
 
-                let monthlySpecial = gptJsonAnswer.monthly_special;
-                if (monthlySpecial && menuForDay.mains.length > 0) {
-                    let title = `Monats-Hit`;
-                    let main = new Food(title, monthlySpecial.price, true);
-
-                    let name = `${monthlySpecial.name}${monthlySpecial.description ? ' ' + monthlySpecial.description : ''}`;
-                    let food = new Food(name, null, false, false, monthlySpecial.allergens);
-
-                    main.entries.push(food);
-                    menuForDay.mains.push(main);
-                }
-
                 if (menuForDay.mains.length > 0) {
                     menu[dayInWeek] = menuForDay;
                 } else {
@@ -458,7 +446,6 @@ async function getIntersparWeekPlan() {
         }
     }
 
-    menu[5].alacarte = true;
     menu[6].closed = true;
 
     return menu;

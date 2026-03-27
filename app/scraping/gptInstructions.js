@@ -5,13 +5,11 @@ const restaurants = {
         the image contains a table where each row is a day. each column represents a dish. unter the table is the monthly special. the language of the text in the image is german.
         
         definitions:
-          required: [dishes, monthly_special]
+          required: [dishes]
           dishes:
             type: array
             items:
               $ref: #/definitions/dish
-          monthly_special:
-              $ref: #/definitions/dish # no day property in this dish required as it is a weekly dish
           dish:
             type: object
             required: [name, description, allergens, price, day]
