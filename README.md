@@ -38,12 +38,12 @@ der Webseiten oder PDFs durch die Restaurants wird dadurch der Wartungsaufwand e
 
 AAUFood läuft innerhalb eines Docker-Containers, um die App lokal laufen zu lassen, muss also `docker`
 sowie `docker-compose` installiert sein. Die Inbetriebnahme erfolgt dann einfach mittels `$ docker-compose up`, wobei
-der Port der App 3000 ist. Für das Parsen mittels ChatGPT muss ein API key in der Umgebungsvariable
+der Port der App 3000 ist. Für das Parsen mittels ChatGPT muss ein API-Key in der Umgebungsvariable
 `FOOD_CHAT_GPT_API_KEY` eingetragen werden. Dieser kann unter https://platform.openai.com/api-keys generiert werden
 (kostenpflichtig).
 
 Mit der Umstellung auf KI Parsing müssen einige Tools installiert werden:
 
 ```bash
-brew install graphicsmagick imagemagick
+brew install graphicsmagick imagemagick ghostscript
 ```
