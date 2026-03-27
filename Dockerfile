@@ -1,4 +1,4 @@
-FROM node:23.5.0-alpine
+FROM node:25.5-alpine
 
 RUN apk update
 RUN apk add --no-cache tzdata ghostscript graphicsmagick
