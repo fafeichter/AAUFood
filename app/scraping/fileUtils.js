@@ -5,9 +5,28 @@ const path = require('path');
 const pdf2pic = require('pdf2pic');
 const sharp = require("sharp");
 const PdfCounter = require("page-count").PdfCounter;
+const downloadDirectory = '/tmp';
+
+async function jpg2Base64Image(jpgUrl, restaurantId) {
+    const jpgFilePath = `${downloadDirectory}/${restaurantId}.jpg`;
+
+    // Fetch JPG from URL and save it locally
+    await fetch(jpgUrl)
+        .then(res => res.arrayBuffer())
+        .then(jpgFile => {
+            fs.writeFileSync(jpgFilePath, Buffer.from(jpgFile), 'binary')
+        });
+
+    // Encode JPEG to base64
+    const base64Image = await fs.promises.readFile(jpgFilePath, 'base64');
+
+    // Clean up temporary files
+    await deleteFiles([jpgFilePath])
+
+    return base64Image;
+}
 
 async function pdf2Base64Image(pdfUrl, restaurantId) {
-    const downloadDirectory = '/tmp';
     const pdfFilePath = `${downloadDirectory}/${restaurantId}.pdf`;
 
     // Fetch PDF from URL and save it locally
@@ -105,5 +124,6 @@ async function combineImages(imagePaths) {
 }
 
 module.exports = {
+    jpg2Base64Image,
     pdf2Base64Image,
 };

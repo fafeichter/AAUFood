@@ -38,7 +38,7 @@ async function letMeChatGptThatForYou(input, restaurantId) {
             break;
         }
         case restaurants.daMario.id: {
-            prompt = gptInstructions.restaurants.daMario(input);
+            prompt = gptInstructions.restaurants.daMario();
             break;
         }
         case restaurants.felsenkeller.id: {
@@ -61,6 +61,7 @@ function payload(restaurantId, prompt, base64Image) {
         case restaurants.bitsAndBytes.id:
         case restaurants.interspar.id:
         case restaurants.mensa.id:
+        case restaurants.daMario.id:
         case restaurants.uniPizzeria.id:
         case restaurants.felsenkeller.id: {
             return payloadForTextFromImage(prompt, base64Image);

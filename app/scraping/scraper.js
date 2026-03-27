@@ -185,7 +185,7 @@ async function getMensaWeekPlan() {
                 if (menuForDay.mains.length > 0) {
                     menu[dayInWeek] = menuForDay;
                 } else {
-                    winston.debug(`There is no menu for "${restaurants.interspar.id}" on day with index ${dayInWeek}`);
+                    winston.debug(`There is no menu for "${mensaRestaurantId}" on day with index ${dayInWeek}`);
                     scraperHelper.setDayToError(menu, dayInWeek);
                 }
             });
@@ -273,7 +273,7 @@ async function getUniPizzeriaWeekPlan() {
                 if (menuForDay.mains.length > 0) {
                     menu[dayInWeek] = menuForDay;
                 } else {
-                    winston.debug(`There is no menu for "${restaurants.uniWirt.id}" on day with index ${dayInWeek}`);
+                    winston.debug(`There is no menu for "${uniPizzeriaRestaurantId}" on day with index ${dayInWeek}`);
                     scraperHelper.setDayToError(menu, dayInWeek);
                 }
             });
@@ -437,7 +437,7 @@ async function getIntersparWeekPlan() {
                 if (menuForDay.mains.length > 0) {
                     menu[dayInWeek] = menuForDay;
                 } else {
-                    winston.debug(`There is no menu for "${restaurants.interspar.id}" on day with index ${dayInWeek}`);
+                    winston.debug(`There is no menu for "${intersparRestaurantId}" on day with index ${dayInWeek}`);
                     scraperHelper.setDayToError(menu, dayInWeek);
                 }
             });
@@ -451,69 +451,77 @@ async function getIntersparWeekPlan() {
     return menu;
 }
 
-function getDaMarioWeekPlan() {
-    return urlCache.getUrls(restaurants.daMario.id)
-        .then(urls => request.getAsync(JSON.parse(urls).scraperUrl))
-        .then(res => res.body)
-        .then(body => parseDaMario(body));
-}
-
-async function parseDaMario(html) {
+async function getDaMarioWeekPlan() {
     winston.debug(`Parsing of "${daMarioRestaurantId}" started ...`);
-    var result = new Array(7);
 
-    var $ = cheerio.load(html);
+    let menu = scraperHelper.getWeekEmptyModel();
 
-    let relevantHtmlPart = $.html($('div.wd-tab-content.wd-active.wd-in'));
-    winston.debug(`Relevant HTML content of "${daMarioRestaurantId}": ${relevantHtmlPart}`);
+    const scraperUrl = await urlCache.getUrls(daMarioRestaurantId)
+        .then(urls => JSON.parse(urls).scraperUrl)
 
-    if (relevantHtmlPart) {
-        let relevantHtmlPartPreviousHash = await menuHashCache.getHash(daMarioRestaurantId);
-        let relevantHtmlPartHash = hashUtils.hashWithSHA256(relevantHtmlPart);
-        menuHashCache.updateIfNewer(daMarioRestaurantId, relevantHtmlPartHash);
+    const pdfAsBase64Image = await fileUtils.jpg2Base64Image(scraperUrl, daMarioRestaurantId);
 
-        if (relevantHtmlPartPreviousHash === null || relevantHtmlPartPreviousHash !== relevantHtmlPartHash) {
-            const gptResponse = await gptHelper.letMeChatGptThatForYou(relevantHtmlPart, daMarioRestaurantId);
+    if (pdfAsBase64Image) {
+        let imagePreviousHash = await menuHashCache.getHash(daMarioRestaurantId)
+        let imageHash = hashUtils.hashWithSHA256(pdfAsBase64Image);
+        menuHashCache.updateIfNewer(daMarioRestaurantId, imageHash);
+
+        if (imagePreviousHash === null || imagePreviousHash !== imageHash) {
+            const gptResponse = await gptHelper.letMeChatGptThatForYou(pdfAsBase64Image, daMarioRestaurantId);
             const gptResponseContent = gptResponse.data.choices[0].message.content;
-            const gptJsonAnswer = JSON.parse(gptResponseContent);
             winston.debug(`ChatGPT response of "${daMarioRestaurantId}": ${gptResponseContent}`);
+            const gptJsonAnswer = JSON.parse(gptResponseContent);
 
-            for (let dayInWeek = 0; dayInWeek < 5; dayInWeek++) {
+            ["MO", "DI", "MI", "DO", "FR"].forEach(function (dayString, dayInWeek) {
                 var menuForDay = new Menu();
+                var menuct = 0;
 
-                let starterFood = new Food("Salat mit Essig-Öl Dressing");
-                menuForDay.starters.push(starterFood)
+                for (let dish of gptJsonAnswer.dishes) {
+                    if (dish.day === dayString) {
+                        let title = `Menü ${++menuct}`;
+                        let main = new Food(title, dish.price, true);
 
-                let titlePizza = 'Pizza';
-                let mainCoursePizza = new Food(titlePizza, null, true);
-                for (let dish of gptJsonAnswer.pizza) {
-                    let food = new Food(`${dish.name}${dish.description ? ' ' + dish.description : ''}`,
-                        dish.price, false, false, dish.allergens);
-                    mainCoursePizza.entries.push(food);
+                        let food = new Food(`${dish.name}${dish.description ? ' ' + dish.description : ''}`,
+                            null, false, false, dish.allergens);
+
+                        let salats = gptJsonAnswer.salats;
+                        if (salats) {
+                            for (let salat of gptJsonAnswer.salats) {
+                                if (salat.day === dayString) {
+                                    main.entries.push(new Food(`${salat.name}`));
+                                    break;
+                                }
+                            }
+                        }
+
+                        main.entries.push(food);
+                        menuForDay.mains.push(main);
+                    }
                 }
-                menuForDay.mains.push(mainCoursePizza);
 
-                let titlePasta = 'Pasta';
-                let mainCoursePasta = new Food(titlePasta, null, true);
-                for (let dish of gptJsonAnswer.pasta) {
-                    let food = new Food(`${dish.name}${dish.description ? ' ' + dish.description : ''}`,
-                        dish.price, false, false, dish.allergens);
-                    mainCoursePasta.entries.push(food);
+                if (menuForDay.mains.length > 0) {
+                    menu[dayInWeek] = menuForDay;
+                } else {
+                    winston.debug(`There is no menu for "${daMarioRestaurantId}" on day with index ${dayInWeek}`);
+                    scraperHelper.setDayToError(menu, dayInWeek);
                 }
-                menuForDay.mains.push(mainCoursePasta);
-
-                result[dayInWeek] = menuForDay;
-            }
+            });
         } else {
             return PARSING_SKIPPED;
         }
     }
 
+    // Tuesday
     let closedMenu = new Menu();
     closedMenu.closed = true;
-    result[0] = result[5] = result[6] = closedMenu;
+    menu[1] = closedMenu;
 
-    return result;
+    // Saturday + Sunday
+    let aLaCarteMenu = new Menu();
+    aLaCarteMenu.alacarte = true;
+    menu[5] = menu[6] = aLaCarteMenu;
+
+    return menu;
 }
 
 function getBurgerBoutiquePlan() {

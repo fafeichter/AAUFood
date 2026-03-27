@@ -30,8 +30,8 @@ class UrlCache {
             userFriendlyUrl: "https://www.uniwirt.at/#menue"
         });
         this._updateIfNewer(restaurants.daMario.id, {
-            scraperUrl: "https://da-mario.at/klagenfurt/speisen/",
-            userFriendlyUrl: "https://da-mario.at/klagenfurt/speisen/"
+            scraperUrl: "https://da-mario.at/wp-content/uploads/Mittagsmenue-pizzeria-damario-1.jpg",
+            userFriendlyUrl: "https://da-mario.at/"
         });
         this._updateIfNewer(restaurants.felsenkeller.id, {
             scraperUrl: "https://www.felsen-keller.at/wp-content/plugins/upload_karte/files/tageskarte.pdf",

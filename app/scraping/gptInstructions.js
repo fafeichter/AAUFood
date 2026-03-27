@@ -243,29 +243,44 @@ const restaurants = {
               price:
                 type: double`,
 
-    daMario: (htmlText) => `
-        use the following openapi yaml schema - while using the specified hints on how to get the desired data - to parse the text afterwards into a response containing only valid json without any other text or explanations
+    daMario: () => `
+        use the following openapi yaml schema - while using the specified hints on how to get the desired data - to parse the provided image into a response containing only valid json without any other text or explanations
+        
+        the image contains the dishes for multiple days. every dish has the same price. the price can be found at the bottom. the language of the text in the image is german. adapt all uppercase texts to title case.
         
         definitions:
-          required: [pizza, pasta]
-          pizza:
+          required: [salats, dishes] # the information about the salat can be found at the bottom, the dishes are in the upper part of the image
+          salats:
+            type: array
+            items:
+              $ref: #/definitions/salat
+          dishes:
             type: array
             items:
               $ref: #/definitions/dish
-          pasta:
-            type: array
-            items:
-              $ref: #/definitions/dish
+          salat: 
+            type: object
+            required: [name, day]
+            properties:
+              name: # keep apostrophes, double quotes and round brackets and the text within them, nominalize the text, e.g. "grünem Salat" to "Grüner Salat"
+                type: string
+              day: # must be always one of ["MO", "DI", "MI", "DO", "FR", "SA", "SO"]
+                type: string
+                minLength: 2
+                maxLength: 2
           dish:
             type: object
-            required: [name, price]
+            required: [name price, day]
             properties:
-              name: # keep apostrophes, double quotes and round brackets and the text within them; do not include allergens wich are typically at the end e.g. "GLO" or "A,C,G,L,M,O"; remove leading roman numerals
+              name: keep apostrophes, double quotes and round brackets and the text within them, do not apply changes regarding grammar and spelling to the original dish name parsed from the image
                 type: string
               price:
                 type: double
-                
-        ${htmlText}`,
+              day: # must be always one of ["MO", "DI", "MI", "DO", "FR", "SA", "SO"]
+                type: string
+                minLength: 2
+                maxLength: 2
+        `,
 
     felsenkeller: () => `
         use the following openapi yaml schema - while using the specified hints on how to get the desired data - to parse the text afterwards into a response containing only valid json without any other text or explanations
