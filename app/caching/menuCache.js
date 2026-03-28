@@ -7,6 +7,7 @@
 const scraper = require('../scraping/scraper');
 const restaurants = require('../config').restaurants;
 const winston = require('winston');
+const moment = require("moment/moment");
 
 const menuKeyPrefix = "menu";
 
@@ -21,7 +22,12 @@ class MenuCache {
         await this._sleep(10000);
         winston.debug('Updating menu caches ...');
 
-        await this._updateMenu(restaurants.mensa.id);
+        const now = moment();
+        const isSundayLateNight = now.day() === 0 && now.hour() === 23 && now.minute() > 5;
+
+        if (isSundayLateNight) {
+            await this._updateMenu(restaurants.mensa.id);
+        }
         await this._updateMenu(restaurants.burgerBoutique.id);
         await this._updateMenu(restaurants.uniWirt.id);
         await this._updateMenu(restaurants.bitsAndBytes.id);
@@ -34,58 +40,58 @@ class MenuCache {
 
     async _updateMenu(restaurantId) {
         try {
-        winston.debug(`Getting week plan for "${restaurantId}"`);
+            winston.debug(`Getting week plan for "${restaurantId}"`);
 
-        let weekPlan = undefined;
+            let weekPlan = undefined;
 
-        switch (restaurantId) {
-            case restaurants.mensa.id: {
-                weekPlan = scraper.getMensaWeekPlan();
-                break;
+            switch (restaurantId) {
+                case restaurants.mensa.id: {
+                    weekPlan = scraper.getMensaWeekPlan();
+                    break;
+                }
+                case restaurants.interspar.id: {
+                    weekPlan = scraper.getIntersparWeekPlan();
+                    break;
+                }
+                case restaurants.uniWirt.id: {
+                    weekPlan = scraper.getUniWirtWeekPlan();
+                    break;
+                }
+                case restaurants.uniPizzeria.id: {
+                    weekPlan = scraper.getUniPizzeriaWeekPlan();
+                    break;
+                }
+                case restaurants.bitsAndBytes.id: {
+                    weekPlan = scraper.getBitsAndBytesWeekPlan();
+                    break;
+                }
+                case restaurants.hotspot.id: {
+                    weekPlan = scraper.getHotspotWeekPlan();
+                    break;
+                }
+                case restaurants.daMario.id: {
+                    weekPlan = scraper.getDaMarioWeekPlan();
+                    break;
+                }
+                case restaurants.burgerBoutique.id: {
+                    weekPlan = scraper.getBurgerBoutiquePlan();
+                    break;
+                }
+                case restaurants.felsenkeller.id: {
+                    weekPlan = scraper.getFelsenkellerPlan();
+                    break;
+                }
+                default: {
+                    throw new Error(`Restaurant with id "${restaurantId}" is not supported for menu sync`);
+                }
             }
-            case restaurants.interspar.id: {
-                weekPlan = scraper.getIntersparWeekPlan();
-                break;
-            }
-            case restaurants.uniWirt.id: {
-                weekPlan = scraper.getUniWirtWeekPlan();
-                break;
-            }
-            case restaurants.uniPizzeria.id: {
-                weekPlan = scraper.getUniPizzeriaWeekPlan();
-                break;
-            }
-            case restaurants.bitsAndBytes.id: {
-                weekPlan = scraper.getBitsAndBytesWeekPlan();
-                break;
-            }
-            case restaurants.hotspot.id: {
-                weekPlan = scraper.getHotspotWeekPlan();
-                break;
-            }
-            case restaurants.daMario.id: {
-                weekPlan = scraper.getDaMarioWeekPlan();
-                break;
-            }
-            case restaurants.burgerBoutique.id: {
-                weekPlan = scraper.getBurgerBoutiquePlan();
-                break;
-            }
-            case restaurants.felsenkeller.id: {
-                weekPlan = scraper.getFelsenkellerPlan();
-                break;
-            }
-            default: {
-                throw new Error(`Restaurant with id "${restaurantId}" is not supported for menu sync`);
-            }
-        }
 
-        await weekPlan.then(weekPlan => {
-            if (weekPlan !== scraper.PARSING_SKIPPED) {
-                this._updateIfNewer(restaurantId, weekPlan);
-            }
-        });
-        } catch(error) {
+            await weekPlan.then(weekPlan => {
+                if (weekPlan !== scraper.PARSING_SKIPPED) {
+                    this._updateIfNewer(restaurantId, weekPlan);
+                }
+            });
+        } catch (error) {
             winston.error(error);
         }
     }

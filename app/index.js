@@ -107,7 +107,7 @@ var server = app.listen(config.settings.nodePort, function () {
     menuHashCache.init(redisClient);
     visitorCache.init(redisClient, io);
 
-    cron.schedule('0 0 * * MON', () => {
+    cron.schedule('25 23 * * SUN', () => {
         menuCache.resetAll();
         menuHashCache.resetAll();
     });
