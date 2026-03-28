@@ -83,10 +83,11 @@ class UrlCache {
         let now = moment();
 
         const currentYear = now.format('YYYY');
-        const currentWeek = now.format('WW');
+        // We must parse Mensa menu one week ahead because the menu of the current week only contains the current day
+        const nextWeek = now.add(1, 'week').format('WW');
 
         this._updateIfNewer(restaurants.mensa.id, {
-            scraperUrl: `https://backend.mensen.at/menuplan/Menuplan-902002-${currentWeek}-${currentYear}.pdf`,
+            scraperUrl: `https://backend.mensen.at/menuplan/Menuplan-902002-${nextWeek}-${currentYear}.pdf`,
             userFriendlyUrl: 'https://www.mensen.at/standort/mensa-alpe-adria-universitaet/'
         });
     }

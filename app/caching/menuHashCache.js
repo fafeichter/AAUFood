@@ -31,16 +31,19 @@ class MenuHashCache {
     }
 
     resetAll() {
-        winston.info("Starting to reset all menu raw data hash caches");
+        winston.info("Starting to reset all menu menu hash caches");
         for (let restaurant in restaurants) {
             const restaurantId = restaurants[restaurant].id;
-            winston.info(`Starting to reset menu raw data hash cache for "${restaurantId}"`);
 
-            let key = `${keyPrefix}:${restaurantId}`;
-            this.client.delAsync(key)
-                .then(() => {
-                    winston.info(`Reset menu raw data hash cache for "${restaurantId}"`)
-                });
+            if (restaurant !== restaurants.mensa.id) {
+                winston.info(`Starting to reset menu menu hash cache for "${restaurantId}"`);
+
+                let key = `${keyPrefix}:${restaurantId}`;
+                this.client.delAsync(key)
+                    .then(() => {
+                        winston.info(`Reset menu menu hash cache for "${restaurantId}"`)
+                    });
+            }
         }
     }
 }
