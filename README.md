@@ -1,3 +1,5 @@
+[![Deployment](https://github.com/fafeichter/AAUFood/actions/workflows/deploy.yml/badge.svg)](https://github.com/fafeichter/AAUFood/actions/workflows/deploy.yml)
+
 # AAU Food
 
 Eine Webseite zum Crawlen und Darstellen der Mittagsmenüs von Lokalen nahe der Alpen-Adria Universität Klagenfurt.
