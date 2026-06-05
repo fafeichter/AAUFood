@@ -24,18 +24,22 @@ class MenuCache {
 
         const now = moment();
         const isSundayLateNight = now.day() === 0 && now.hour() === 23 && now.minute() > 5;
+        const isMonday = now.day() === 1;
 
         if (isSundayLateNight) {
             await this._updateMenu(restaurants.mensa.id);
         }
-        await this._updateMenu(restaurants.burgerBoutique.id);
-        await this._updateMenu(restaurants.uniWirt.id);
-        await this._updateMenu(restaurants.bitsAndBytes.id);
-        await this._updateMenu(restaurants.hotspot.id);
-        await this._updateMenu(restaurants.daMario.id);
-        await this._updateMenu(restaurants.interspar.id);
-        await this._updateMenu(restaurants.uniPizzeria.id);
-        await this._updateMenu(restaurants.felsenkeller.id);
+
+        if (isMonday || now.hour() >= 4 && now.hour() <= 14) {
+            await this._updateMenu(restaurants.burgerBoutique.id);
+            await this._updateMenu(restaurants.uniWirt.id);
+            await this._updateMenu(restaurants.bitsAndBytes.id);
+            await this._updateMenu(restaurants.hotspot.id);
+            await this._updateMenu(restaurants.daMario.id);
+            await this._updateMenu(restaurants.interspar.id);
+            await this._updateMenu(restaurants.uniPizzeria.id);
+            await this._updateMenu(restaurants.felsenkeller.id);
+        }
     }
 
     async _updateMenu(restaurantId) {
