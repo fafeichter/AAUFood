@@ -13,9 +13,9 @@ jobs:
     environment: Production
     steps:
       - name: Checkout git branch
-        uses: actions/checkout@v3
+        uses: actions/checkout@v6
       - name: Log in to private container registry
-        uses: azure/docker-login@v1
+        uses: azure/docker-login@v2
         with:
           login-server: ${{ secrets.REGISTRY_HOST }}
           username: ${{ secrets.REGISTRY_USERNAME }}
@@ -34,7 +34,7 @@ jobs:
     environment: Production
     steps:
       - name: Run deployment script on Droplet on DigitalOcean via SSH
-        uses: garygrossgarten/github-action-ssh@0.7.0
+        uses: garygrossgarten/github-action-ssh@0.9.0
         with:
           host: ${{ secrets.SSH_HOST}}
           username: ${{ secrets.SSH_USERNAME}}

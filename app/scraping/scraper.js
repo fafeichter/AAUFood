@@ -12,7 +12,6 @@ const Food = require("../models/food");
 const Menu = require("../models/menu");
 const config = require('../config');
 const restaurants = config.restaurants;
-const timeHelper = require('../helpers/timeHelper');
 const scraperHelper = require('./scraperHelper')
 const gptHelper = require('./gptHelper')
 const hashUtils = require('./hashUtils');

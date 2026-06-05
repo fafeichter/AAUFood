@@ -35,11 +35,6 @@ async function pdf2Base64Image(pdfUrl, restaurantId) {
         .then(pdfFile => {
             const pdfBuffer = Buffer.from(pdfFile);
 
-            // Check if the file is a valid PDF
-           // if (pdfBuffer.indexOf("%PDF") !== 0) {
-             //   throw new Error(`Restaurant with id "${restaurantId}" has no valid PDF`);
-           // }
-
             fs.writeFileSync(pdfFilePath, pdfBuffer, 'binary')
         });
 
