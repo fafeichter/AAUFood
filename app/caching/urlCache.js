@@ -45,6 +45,10 @@ class UrlCache {
             scraperUrl: "https://ichigoichie.at/",
             userFriendlyUrl: "https://ichigoichie.at/de#klagenfurt"
         });
+        this._updateIfNewer(restaurants.breakPointLunchBar.id, {
+            scraperUrl: "https://klctennis-breakpoint-lunchbar.com/",
+            userFriendlyUrl: "https://klctennis-breakpoint-lunchbar.com/"
+        });
     }
 
     _setDynamicUrls() {

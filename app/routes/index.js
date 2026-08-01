@@ -16,6 +16,7 @@ const burgerBoutique = restaurants.burgerBoutique.id;
 const felsenkeller = restaurants.felsenkeller.id;
 const villaLido = restaurants.villaLido.id;
 const ichiGoIchiE = restaurants.ichiGoIchiE.id;
+const breakPointLunchBar = restaurants.breakPointLunchBar.id;
 
 router.get('/', counter.countVisitors, function (req, res, next) {
     Promise.all([
@@ -29,7 +30,8 @@ router.get('/', counter.countVisitors, function (req, res, next) {
         menuCache.getMenu(burgerBoutique), urlCache.getUrls(burgerBoutique),
         menuCache.getMenu(felsenkeller), urlCache.getUrls(felsenkeller),
         menuCache.getMenu(villaLido), urlCache.getUrls(villaLido),
-        menuCache.getMenu(ichiGoIchiE), urlCache.getUrls(ichiGoIchiE)])
+        menuCache.getMenu(ichiGoIchiE), urlCache.getUrls(ichiGoIchiE),
+        menuCache.getMenu(breakPointLunchBar), urlCache.getUrls(breakPointLunchBar)])
         .then(results => {
             res.render('index', {
                 title: 'AAU Food',
@@ -77,6 +79,10 @@ router.get('/', counter.countVisitors, function (req, res, next) {
                 ichiGoIchiE: {
                     menu: JSON.parse(results[20]) || [],
                     userFriendlyUrl: JSON.parse(results[21]).userFriendlyUrl
+                },
+                breakPointLunchBar: {
+                    menu: JSON.parse(results[22]) || [],
+                    userFriendlyUrl: JSON.parse(results[23]).userFriendlyUrl
                 },
                 visitorStats: req.visitorStats,
                 restaurants

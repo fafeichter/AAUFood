@@ -30,6 +30,7 @@ const burgerBoutiqueRestaurantId = restaurants.burgerBoutique.id;
 const felsenkellerRestaurantId = restaurants.felsenkeller.id;
 const villaLidoRestaurantId = restaurants.villaLido.id;
 const ichiGoIchiERestaurantId = restaurants.ichiGoIchiE.id;
+const breakPointLunchBar = restaurants.breakPointLunchBar.id;
 
 const PARSING_SKIPPED = null;
 
@@ -731,6 +732,18 @@ function getIchiGoIchiEWeekPlan() {
     return Promise.resolve(menu);
 }
 
+function getBreakPointLunchBarWeekPlan() {
+    winston.debug(`Building static menu of "${breakPointLunchBar}" started ...`);
+    let menu = scraperHelper.getWeekEmptyModel();
+
+    // Monday - Sunday
+    let aLaCarteMenu = new Menu();
+    aLaCarteMenu.alacarte = true;
+    menu[0] = menu[1] = menu[2] = menu[3] = menu[4] = menu[5] = menu[6] = aLaCarteMenu;
+
+    return Promise.resolve(menu);
+}
+
 module.exports = {
     getUniWirtWeekPlan,
     getHotspotWeekPlan,
@@ -743,5 +756,6 @@ module.exports = {
     getFelsenkellerPlan,
     getVillaLidoWeekPlan,
     getIchiGoIchiEWeekPlan,
+    getBreakPointLunchBarWeekPlan,
     PARSING_SKIPPED
 };

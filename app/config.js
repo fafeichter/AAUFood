@@ -97,6 +97,10 @@ module.exports = {
         ichiGoIchiE: {
             id: "ichi-go-ichi-e",
             name: "Ichi Go Ichi E"
+        },
+        breakPointLunchBar: {
+            id: "break-point-lunch-bar",
+            name: "Break Point Lunch Bar"
         }
     },
     cookie: {

@@ -41,6 +41,7 @@ class MenuCache {
             await this._updateMenu(restaurants.felsenkeller.id);
             await this._updateMenu(restaurants.villaLido.id);
             await this._updateMenu(restaurants.ichiGoIchiE.id);
+            await this._updateMenu(restaurants.breakPointLunchBar.id);
         }
     }
 
@@ -93,6 +94,10 @@ class MenuCache {
                 }
                 case restaurants.ichiGoIchiE.id: {
                     weekPlan = scraper.getIchiGoIchiEWeekPlan();
+                    break;
+                }
+                case restaurants.breakPointLunchBar.id: {
+                    weekPlan = scraper.getBreakPointLunchBarWeekPlan();
                     break;
                 }
                 default: {

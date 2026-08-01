@@ -11,6 +11,7 @@
         <div class="col-xl-3 col-lg-6 col-md-12">
             <%- include('restaurant', {restaurantId: restaurants.mensa.id, restaurantName: restaurants.mensa.name, restaurantFriendlyUrl: mensa.userFriendlyUrl, menu: mensa.menu ? mensa.menu[day] : null, combinedMenuList: true, day: day, chatGptPowered: true}) %>
             <%- include('restaurant', {restaurantId: restaurants.interspar.id, restaurantName: restaurants.interspar.name, restaurantFriendlyUrl: interspar.userFriendlyUrl, menu: interspar.menu ? interspar.menu[day] : null, combinedMenuList: true, day: day, chatGptPowered: true, restaurantSecondaryFriendlyUrl: interspar.secondaryFriendlyUrl }) %>
+            <%- include('restaurant', {restaurantId: restaurants.breakPointLunchBar.id, restaurantName: restaurants.breakPointLunchBar.name, restaurantFriendlyUrl: breakPointLunchBar.userFriendlyUrl, menu: breakPointLunchBar.menu ? breakPointLunchBar.menu[day] : null, combinedMenuList: true, day: day, chatGptPowered: false}) %>
         </div>
         <div class="col-xl-3 col-lg-6 col-md-12">
             <%- include('restaurant', {restaurantId: restaurants.uniWirt.id, restaurantName: restaurants.uniWirt.name, restaurantFriendlyUrl: uniWirt.userFriendlyUrl, menu: uniWirt.menu ? uniWirt.menu[day] : null, combinedMenuList: true, day: day, chatGptPowered: true}) %>

@@ -143,6 +143,10 @@ body {
   @include restaurantColors($ichiGoIchiEPink, white)
 }
 
+.break-point-lunch-bar {
+  @include restaurantColors($breakPointLunchBarOrange, white)
+}
+
 /* Menu Lists */
 .restaurant ul li {
   padding: 0;
