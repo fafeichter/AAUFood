@@ -49,6 +49,11 @@ class UrlCache {
             scraperUrl: "https://klctennis-breakpoint-lunchbar.com/",
             userFriendlyUrl: "https://klctennis-breakpoint-lunchbar.com/"
         });
+        this._updateIfNewer(restaurants.baburu.id, {
+            // Scraper uses "FlareSolverr" to bypass Cloudflare
+            scraperUrl: "https://baburu.at/baburu/delivery/",
+            userFriendlyUrl: "https://baburu.at/baburu/delivery/"
+        });
     }
 
     _setDynamicUrls() {

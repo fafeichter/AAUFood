@@ -3,9 +3,8 @@
 const Promise = require('bluebird');
 const request = Promise.promisifyAll(require("request"));
 const cheerio = require('cheerio');
+const axios = require('axios');
 global.XMLHttpRequest = require('xhr2');
-const moment = require('moment');
-const _ = require('lodash');
 const winston = require('winston');
 
 const Food = require("../models/food");
@@ -30,7 +29,8 @@ const burgerBoutiqueRestaurantId = restaurants.burgerBoutique.id;
 const felsenkellerRestaurantId = restaurants.felsenkeller.id;
 const villaLidoRestaurantId = restaurants.villaLido.id;
 const ichiGoIchiERestaurantId = restaurants.ichiGoIchiE.id;
-const breakPointLunchBar = restaurants.breakPointLunchBar.id;
+const breakPointLunchBarRestaurantId = restaurants.breakPointLunchBar.id;
+const baburuRestaurantId = restaurants.baburu.id;
 
 const PARSING_SKIPPED = null;
 
@@ -733,7 +733,7 @@ function getIchiGoIchiEWeekPlan() {
 }
 
 function getBreakPointLunchBarWeekPlan() {
-    winston.debug(`Building static menu of "${breakPointLunchBar}" started ...`);
+    winston.debug(`Building static menu of "${breakPointLunchBarRestaurantId}" started ...`);
     let menu = scraperHelper.getWeekEmptyModel();
 
     // Monday - Sunday
@@ -742,6 +742,73 @@ function getBreakPointLunchBarWeekPlan() {
     menu[0] = menu[1] = menu[2] = menu[3] = menu[4] = menu[5] = menu[6] = aLaCarteMenu;
 
     return Promise.resolve(menu);
+}
+
+function getBaburuWeekPlan() {
+    return urlCache.getUrls(baburuRestaurantId)
+        .then(urls =>
+            axios.post(`http://${process.env.FOOD_REDIS_HOST}:8191/v1`, {
+                cmd: 'request.get',
+                url: JSON.parse(urls).scraperUrl,
+                maxTimeout: 60000
+            })
+        )
+        .then(res => res.data.solution.response)
+        .then(body => parseBaburu(body));
+}
+
+async function parseBaburu(html) {
+    winston.debug(`Parsing of "${baburuRestaurantId}" started ...`);
+    let menu = scraperHelper.getWeekEmptyModel();
+
+    let $ = cheerio.load(html);
+
+    let relevantHtmlPart = $.html($("#MenuSelector > div:nth-child(2)"));
+    winston.debug(`Relevant HTML content of "${baburuRestaurantId}": ${relevantHtmlPart}`);
+
+    if (relevantHtmlPart) {
+        let relevantHtmlPartPreviousHash = await menuHashCache.getHash(baburuRestaurantId);
+        let relevantHtmlPartHash = hashUtils.hashWithSHA256(relevantHtmlPart);
+        menuHashCache.updateIfNewer(baburuRestaurantId, relevantHtmlPartHash);
+
+        if (relevantHtmlPartPreviousHash === null || relevantHtmlPartPreviousHash !== relevantHtmlPartHash) {
+            const gptResponse = await gptHelper.letMeChatGptThatForYou(relevantHtmlPart, baburuRestaurantId);
+            const gptResponseContent = gptResponse.data.choices[0].message.content;
+            winston.debug(`ChatGPT response of "${baburuRestaurantId}": ${gptResponseContent}`);
+            const gptJsonAnswer = JSON.parse(gptResponseContent);
+
+            ["MO", "DI", "MI", "DO", "FR"].forEach(function (dayString, dayInWeek) {
+                let menuForDay = new Menu();
+
+                for (let dish of gptJsonAnswer.dishes) {
+                    if (dish.day === dayString) {
+                        let main = new Food(dish.title, dish.price, true);
+
+                        let food = new Food(dish.name, null, false, false, null);
+                        main.entries.push(food);
+                        menuForDay.mains.push(main);
+                    }
+                }
+
+                if (menuForDay.mains.length > 0) {
+                    let starterFood = new Food("Vorspeise nach Wahl");
+                    menuForDay.starters.push(starterFood);
+
+                    menu[dayInWeek] = menuForDay;
+                } else {
+                    winston.debug(`There is no menu for "${baburuRestaurantId}" on day with index ${dayInWeek}`);
+                    scraperHelper.setDayToError(menu, dayInWeek);
+                }
+            });
+        } else {
+            return PARSING_SKIPPED;
+        }
+    }
+
+    menu[5].closed = true;
+    menu[6].alacarte = true;
+
+    return menu;
 }
 
 module.exports = {
@@ -757,5 +824,6 @@ module.exports = {
     getVillaLidoWeekPlan,
     getIchiGoIchiEWeekPlan,
     getBreakPointLunchBarWeekPlan,
+    getBaburuWeekPlan,
     PARSING_SKIPPED
 };

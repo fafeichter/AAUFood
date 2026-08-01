@@ -8,7 +8,7 @@ Verfügbar unter [food.fabian-feichter.at](https://food.fabian-feichter.at/)
 ## Aktuell unterstützte Restaurants
 
 * Mensa Klagenfurt
-* Uniwirt
+* UniWirt
 * Hotspot
 * Bits & Bytes
 * Uni-Pizzeria
@@ -16,6 +16,10 @@ Verfügbar unter [food.fabian-feichter.at](https://food.fabian-feichter.at/)
 * Da Mario
 * Burger Boutique
 * Villa Lido
+* Baburu
+* Ichi Go Ichi E
+* Break Point Lunch Bar
+* Felsenkeller
 
 ## Info
 

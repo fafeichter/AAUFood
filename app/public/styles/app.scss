@@ -147,6 +147,10 @@ body {
   @include restaurantColors($breakPointLunchBarOrange, white)
 }
 
+.baburu {
+  @include restaurantColors($baburuSalmon, white)
+}
+
 /* Menu Lists */
 .restaurant ul li {
   padding: 0;

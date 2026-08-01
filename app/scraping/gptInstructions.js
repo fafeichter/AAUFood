@@ -310,6 +310,34 @@ const restaurants = {
 
         ${htmlText}`,
 
+    baburu: (htmlText) => `
+        use the following openapi yaml schema - while using the specified hints on how to get the desired data - to parse the text afterwards into a response containing only valid json without any other text or explanations
+
+        the text contains a lunch menu ("Mittagsmenü") of an Asian restaurant. for every weekday (Montag, Dienstag, Mittwoch, Donnerstag, Freitag) there is a set of dishes with corresponding prices in euro. the language of the text is german.
+
+        definitions:
+          required: [dishes]
+          dishes:
+            type: array
+            items:
+              $ref: #/definitions/dish
+          dish:
+            type: object
+            required: [title, name, price, day]
+            properties:
+              title: # the title of the dish like "Menü 1" or "Menü 7 - Reis" or "Sushi Maki Teller"
+                type: string
+              name: # the name of the actual dish like "Nudelbox mit Huhn" or "knuspriges Huhn mit gebratenem Reis"; keep apostrophes, double quotes and round brackets and the text within them; do not apply changes regarding grammar and spelling to the original dish name parsed from the text except capitalizing the first character
+                type: string
+              price: # the price in euro; parse "€ 8,90" to 8.90 and "€ 10,20" to 10.20
+                type: double
+              day: # must be always one of ["MO", "DI", "MI", "DO", "FR", "SA", "SO"]
+                type: string
+                minLength: 2
+                maxLength: 2
+
+        ${htmlText}`,
+
     felsenkeller: () => `
         use the following openapi yaml schema - while using the specified hints on how to get the desired data - to parse the text afterwards into a response containing only valid json without any other text or explanations
         

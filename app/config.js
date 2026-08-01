@@ -101,6 +101,10 @@ module.exports = {
         breakPointLunchBar: {
             id: "break-point-lunch-bar",
             name: "Break Point Lunch Bar"
+        },
+        baburu: {
+            id: "baburu",
+            name: "Baburu"
         }
     },
     cookie: {
