@@ -15,6 +15,7 @@ const daMario = restaurants.daMario.id;
 const burgerBoutique = restaurants.burgerBoutique.id;
 const felsenkeller = restaurants.felsenkeller.id;
 const villaLido = restaurants.villaLido.id;
+const ichiGoIchiE = restaurants.ichiGoIchiE.id;
 
 router.get('/', counter.countVisitors, function (req, res, next) {
     Promise.all([
@@ -27,7 +28,8 @@ router.get('/', counter.countVisitors, function (req, res, next) {
         menuCache.getMenu(daMario), urlCache.getUrls(daMario),
         menuCache.getMenu(burgerBoutique), urlCache.getUrls(burgerBoutique),
         menuCache.getMenu(felsenkeller), urlCache.getUrls(felsenkeller),
-        menuCache.getMenu(villaLido), urlCache.getUrls(villaLido)])
+        menuCache.getMenu(villaLido), urlCache.getUrls(villaLido),
+        menuCache.getMenu(ichiGoIchiE), urlCache.getUrls(ichiGoIchiE)])
         .then(results => {
             res.render('index', {
                 title: 'AAU Food',
@@ -71,6 +73,10 @@ router.get('/', counter.countVisitors, function (req, res, next) {
                 villaLido: {
                     menu: JSON.parse(results[18]) || [],
                     userFriendlyUrl: JSON.parse(results[19]).userFriendlyUrl
+                },
+                ichiGoIchiE: {
+                    menu: JSON.parse(results[20]) || [],
+                    userFriendlyUrl: JSON.parse(results[21]).userFriendlyUrl
                 },
                 visitorStats: req.visitorStats,
                 restaurants

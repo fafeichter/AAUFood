@@ -40,6 +40,7 @@ class MenuCache {
             await this._updateMenu(restaurants.uniPizzeria.id);
             await this._updateMenu(restaurants.felsenkeller.id);
             await this._updateMenu(restaurants.villaLido.id);
+            await this._updateMenu(restaurants.ichiGoIchiE.id);
         }
     }
 
@@ -88,6 +89,10 @@ class MenuCache {
                 }
                 case restaurants.villaLido.id: {
                     weekPlan = scraper.getVillaLidoWeekPlan();
+                    break;
+                }
+                case restaurants.ichiGoIchiE.id: {
+                    weekPlan = scraper.getIchiGoIchiEWeekPlan();
                     break;
                 }
                 default: {

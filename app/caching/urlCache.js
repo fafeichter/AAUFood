@@ -41,6 +41,10 @@ class UrlCache {
             scraperUrl: "https://www.villa-lido.at/speise-tageskarte/",
             userFriendlyUrl: "https://www.villa-lido.at/speise-tageskarte/"
         });
+        this._updateIfNewer(restaurants.ichiGoIchiE.id, {
+            scraperUrl: "https://ichigoichie.at/",
+            userFriendlyUrl: "https://ichigoichie.at/de#klagenfurt"
+        });
     }
 
     _setDynamicUrls() {

@@ -93,8 +93,11 @@ module.exports = {
         villaLido: {
             id: "villa-lido",
             name: "Villa Lido"
+        },
+        ichiGoIchiE: {
+            id: "ichi-go-ichi-e",
+            name: "Ichi Go Ichi E"
         }
-
     },
     cookie: {
         // 30 days in milliseconds

@@ -139,6 +139,10 @@ body {
   @include restaurantColors($villaLidoRed, white)
 }
 
+.ichi-go-ichi-e {
+  @include restaurantColors($ichiGoIchiEPink, white)
+}
+
 /* Menu Lists */
 .restaurant ul li {
   padding: 0;
