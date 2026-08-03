@@ -232,15 +232,15 @@ async function getUniPizzeriaWeekPlan() {
     const scraperUrl = await urlCache.getUrls(uniPizzeriaRestaurantId)
         .then(urls => JSON.parse(urls).scraperUrl)
 
-    const pdfAsBase64Image = await fileUtils.pdf2Base64Image(scraperUrl, uniPizzeriaRestaurantId);
+    const menuBase64Image = await fileUtils.jpg2Base64Image(scraperUrl, uniPizzeriaRestaurantId);
 
-    if (pdfAsBase64Image) {
+    if (menuBase64Image) {
         let imagePreviousHash = await menuHashCache.getHash(uniPizzeriaRestaurantId)
-        let imageHash = hashUtils.hashWithSHA256(pdfAsBase64Image);
+        let imageHash = hashUtils.hashWithSHA256(menuBase64Image);
         menuHashCache.updateIfNewer(uniPizzeriaRestaurantId, imageHash);
 
         if (imagePreviousHash === null || imagePreviousHash !== imageHash) {
-            const gptResponse = await gptHelper.letMeChatGptThatForYou(pdfAsBase64Image, uniPizzeriaRestaurantId);
+            const gptResponse = await gptHelper.letMeChatGptThatForYou(menuBase64Image, uniPizzeriaRestaurantId);
             const gptResponseContent = gptResponse.data.choices[0].message.content;
             winston.debug(`ChatGPT response of "${uniPizzeriaRestaurantId}": ${gptResponseContent}`);
             const gptJsonAnswer = JSON.parse(gptResponseContent);
@@ -461,15 +461,15 @@ async function getDaMarioWeekPlan() {
     const scraperUrl = await urlCache.getUrls(daMarioRestaurantId)
         .then(urls => JSON.parse(urls).scraperUrl)
 
-    const pdfAsBase64Image = await fileUtils.jpg2Base64Image(scraperUrl, daMarioRestaurantId);
+    const menuBase64Image = await fileUtils.jpg2Base64Image(scraperUrl, daMarioRestaurantId);
 
-    if (pdfAsBase64Image) {
+    if (menuBase64Image) {
         let imagePreviousHash = await menuHashCache.getHash(daMarioRestaurantId)
-        let imageHash = hashUtils.hashWithSHA256(pdfAsBase64Image);
+        let imageHash = hashUtils.hashWithSHA256(menuBase64Image);
         menuHashCache.updateIfNewer(daMarioRestaurantId, imageHash);
 
         if (imagePreviousHash === null || imagePreviousHash !== imageHash) {
-            const gptResponse = await gptHelper.letMeChatGptThatForYou(pdfAsBase64Image, daMarioRestaurantId);
+            const gptResponse = await gptHelper.letMeChatGptThatForYou(menuBase64Image, daMarioRestaurantId);
             const gptResponseContent = gptResponse.data.choices[0].message.content;
             winston.debug(`ChatGPT response of "${daMarioRestaurantId}": ${gptResponseContent}`);
             const gptJsonAnswer = JSON.parse(gptResponseContent);

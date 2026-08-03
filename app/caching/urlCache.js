@@ -130,8 +130,8 @@ class UrlCache {
                         .then(res => {
                             let urlToPdf = res["download_url"];
                             this._updateIfNewer(restaurants.uniPizzeria.id, {
-                                scraperUrl: urlToPdf,
-                                userFriendlyUrl: urlToPdf
+                                scraperUrl: res["url"],
+                                userFriendlyUrl: res["download_url"]
                             });
                         })
                 } else {

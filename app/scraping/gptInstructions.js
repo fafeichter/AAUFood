@@ -141,7 +141,7 @@ const restaurants = {
                 
         ${htmlText}`,
 
-    uniPizzeria: (htmlText) => `
+    uniPizzeria: () => `
         use the following openapi yaml schema - while using the specified hints on how to get the desired data - to parse the provided image into a response containing only valid json without any other text or explanations
         
         definitions:
@@ -183,9 +183,7 @@ const restaurants = {
               day: # must be always one of ["MO", "DI", "MI", "DO", "FR", "SA", "SO"]
                 type: string
                 minLength: 2
-                maxLength: 2
-                
-        ${htmlText}`,
+                maxLength: 2`,
 
     hotspot: () => `
         use the following openapi yaml schema - while using the specified hints on how to get the desired data - to parse the provided image into a response containing only valid json without any other text or explanations
