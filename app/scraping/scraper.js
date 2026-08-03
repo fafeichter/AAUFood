@@ -750,6 +750,7 @@ function getBaburuWeekPlan() {
             axios.post(`http://${process.env.FOOD_FLARESOLVERR_HOST}:8191/v1`, {
                 cmd: 'request.get',
                 url: JSON.parse(urls).scraperUrl,
+                session: 'baburu_session',
                 maxTimeout: 60000
             })
         )

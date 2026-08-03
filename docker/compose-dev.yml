@@ -22,3 +22,13 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
+
+  flaresolverr-init:
+    image: dhi.io/curl:${CURL_VERSION}
+    depends_on:
+      flaresolverr:
+        condition: service_healthy
+    command: >
+      curl -L -X POST POST http://flaresolverr:8191/v1
+      -H "Content-Type: application/json"
+      -d '{"cmd": "sessions.create", "session": "baburu_session"}'
