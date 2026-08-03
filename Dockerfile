@@ -4,6 +4,12 @@ RUN apk update
 RUN apk add --no-cache tzdata ghostscript graphicsmagick
 ENV TZ="/usr/share/zoneinfo/Europe/Vienna"
 
+# Wrap the real gs binary so known-harmless "TT: undefined function" warnings
+# are filtered out of its output before anything else consumes it.
+RUN mv /usr/bin/gs /usr/bin/gs.real && \
+    printf '#!/bin/sh\nexec /usr/bin/gs.real "$@" 2>&1 | grep -v "TT: undefined function"\n' > /usr/bin/gs && \
+    chmod +x /usr/bin/gs
+
 RUN mkdir -p /usr/src/aaufood/app
 WORKDIR /usr/src/aaufood
 
