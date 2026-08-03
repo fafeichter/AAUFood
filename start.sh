@@ -3,7 +3,7 @@
 echo -e 'Active environment:\t'${FOOD_ENV}
 echo -e 'Log level:\t\t'${FOOD_LOG_LEVEL}
 echo -e 'Redis host:\t\t'${FOOD_REDIS_HOST}
-echo -e 'FlareSolverr host:\t\t'${FOOD_REDIS_HOST}
+echo -e 'FlareSolverr host:\t'${FOOD_FLARESOLVERR_HOST}
 echo -e 'ChatGPT API key:\t'${FOOD_CHAT_GPT_API_KEY}
 
 if [ "${FOOD_ENV}" = "PROD" ]; then

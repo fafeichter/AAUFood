@@ -747,7 +747,7 @@ function getBreakPointLunchBarWeekPlan() {
 function getBaburuWeekPlan() {
     return urlCache.getUrls(baburuRestaurantId)
         .then(urls =>
-            axios.post(`http://${process.env.FOOD_REDIS_HOST}:8191/v1`, {
+            axios.post(`http://${process.env.FOOD_FLARESOLVERR_HOST}:8191/v1`, {
                 cmd: 'request.get',
                 url: JSON.parse(urls).scraperUrl,
                 maxTimeout: 60000
