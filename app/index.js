@@ -31,7 +31,14 @@ const fileUpload = require('express-fileupload');
 const app = express();
 const requestLogger = (req, res, next) => {
     var ip = (req.headers['x-forwarded-for'] || req.connection.remoteAddress || '').split(',')[0].trim();
-    winston.info(` ${req.method} ${req.url} ${ip}`);
+    const logMessage = ` ${req.method} ${req.url} ${ip}`;
+
+    if (req.headers['x-healthcheck'] === 'true') {
+        winston.debug(logMessage);
+    } else {
+        winston.info(logMessage);
+    }
+
     next();
 };
 

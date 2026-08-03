@@ -5,13 +5,19 @@ const visitorCache = require('../caching/visitorCache');
 const winston = require('winston');
 
 function countVisitors(req, res, next) {
-    visitorCache.increment(req.session)
+    const isHealthCheck = req.headers['x-healthcheck'] === 'true';
+
+    // Skip counting if request is coming from Docker health check
+    (isHealthCheck
+        ? visitorCache.getCounters(req.session)
+        : visitorCache.increment(req.session))
         .then((visitorStats) => {
             req.visitorStats = visitorStats;
-            next()
+            next();
         })
         .catch(() => {
             winston.error('Visits could not be updated.');
+            next(); // Pass control forward even if caching fails
         });
 }
 
