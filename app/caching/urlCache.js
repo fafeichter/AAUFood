@@ -71,7 +71,7 @@ class UrlCache {
         const currentWeekNumber = now.format('WW');
 
         this._updateIfNewer(restaurants.hotspot.id, {
-            scraperUrl: `https://lakeside-scitec.com/fileadmin/lakesidepark/08_Leben/Gastronomie/Men%C3%BCplan_bitsundhot_KW${currentWeekNumber}.pdf`,
+            scraperUrl: `https://lakeside-scitec.com/fileadmin/lakesidepark/08_Leben/Gastronomie/Men%C3%BCplan_bitsundhot_KW${currentWeekNumber}_${currentYear}.pdf`,
             userFriendlyUrl: `https://lakeside-scitec.com/leben/hotspot`,
         });
     }
@@ -82,7 +82,7 @@ class UrlCache {
         const currentWeekNumber = now.format('WW');
 
         this._updateIfNewer(restaurants.bitsAndBytes.id, {
-            scraperUrl: `https://lakeside-scitec.com/fileadmin/lakesidepark/08_Leben/Gastronomie/Men%C3%BCplan_bitsundhot_KW${currentWeekNumber}.pdf`,
+            scraperUrl: `https://lakeside-scitec.com/fileadmin/lakesidepark/08_Leben/Gastronomie/Men%C3%BCplan_bitsundhot_KW${currentWeekNumber}_${currentYear}.pdf`,
             userFriendlyUrl: `https://lakeside-scitec.com/leben/bits-bytes`,
         });
     }
