@@ -103,4 +103,11 @@ router.get('/about', counter.countVisitors, function (req, res, next) {
     });
 });
 
+router.get('/imprint', counter.countVisitors, function (req, res, next) {
+    res.render('imprint', {
+        title: 'AAU Food: Imprint',
+        visitorStats: req.visitorStats,
+    });
+});
+
 module.exports = router;

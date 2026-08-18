@@ -27,7 +27,6 @@ bluebird.promisifyAll(redis.Multi.prototype);
 const session = require('express-session');
 const RedisStore = require('connect-redis')(session);
 const redisClient = redis.createClient({host: process.env.FOOD_REDIS_HOST, port: 6379});
-const fileUpload = require('express-fileupload');
 const app = express();
 const requestLogger = (req, res, next) => {
     var ip = (req.headers['x-forwarded-for'] || req.connection.remoteAddress || '').split(',')[0].trim();
@@ -41,16 +40,6 @@ const requestLogger = (req, res, next) => {
 
     next();
 };
-
-// use the express-fileupload middleware
-app.use(
-    fileUpload({
-        limits: {
-            fileSize: 10000000, // 10MB
-        },
-        abortOnLimit: true,
-    })
-);
 
 winston.remove(winston.transports.Console);
 winston.add(winston.transports.Console, {
@@ -69,8 +58,7 @@ app.use(session({
     store: new RedisStore({client: redisClient}),
     secret: 'keyboard cat',
     resave: false,
-    saveUninitialized: true,
-    cookie: config.cookie
+    saveUninitialized: true
 }));
 
 app.use(compression());
@@ -79,6 +67,14 @@ app.use("/modules", express.static(__dirname + "/node_modules"));
 app.use(requestLogger);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
+
+const manifestMiddleware = require('./manifest');
+app.use(manifestMiddleware);
+
+app.use('/dist', express.static(path.join(__dirname, 'app/public/dist'), {
+    maxAge: '1y',
+    immutable: true
+}));
 
 app.use('/', indexRoutes);
 

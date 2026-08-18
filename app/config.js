@@ -107,20 +107,17 @@ module.exports = {
             name: "Baburu"
         }
     },
-    cookie: {
-        // 30 days in milliseconds
-        maxAge: 2592000000
-    },
     footerPuns: [
-        new FooterPun("heart", "Crafted with", "fa fa-heart"),
+        new FooterPun("heart", "Crafted with", "fas fa-heart"),
         new FooterPun("empire", "Constructed for the", "fab fa-empire", "https://starwars.wikia.com/wiki/Galactic_Empire"),
         new FooterPun("rebellion", "Join the", "fab fa-rebel", "https://starwars.wikia.com/wiki/Alliance_to_Restore_the_Republic"),
-        new FooterPun("lizardpaper", '<i class="fa fa-fw fa-hand-lizard"></i> eats', "fa fa-hand-paper"),
-        new FooterPun("got", "Winter is coming", "fa fa-snowflake", "https://gameofthrones.wikia.com/wiki/House_Stark"),
-        new FooterPun("keyboard", "Use your ", "far fa-keyboard", null, " arrows on desktop"),
+        new FooterPun("lizardpaper", '<i class="fas fa-hand-lizard"></i> eats', "fa fa-hand"),
+        new FooterPun("got", "Winter is coming", "fas fa-snowflake", "https://gameofthrones.wikia.com/wiki/House_Stark"),
+        new FooterPun("keyboard", "Use your ", "fas fa-keyboard", null, " arrows on desktop"),
         new FooterPun("infinity", "To infinity ", "fas fa-rocket", null, " and beyond"),
         new FooterPun("christmas", "Merry Christmas", "fas fa-tree", null, null, isChristmas()),
-        new FooterPun("christmas", "Happy New Year", "fas fa-glass-cheers", null, null, isNewYear())
+        new FooterPun("christmas", "Happy New Year", "fas fa-champagne-glasses", null, null, isNewYear()),
+        new FooterPun("mariokart", "Enjoy ", "fas fa-gamepad"),
     ],
     snowFall: {
         particles: 150,

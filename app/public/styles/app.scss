@@ -2,11 +2,15 @@
 @import "_variables.scss";
 @import "about.scss";
 
-/*General definitions*/
+:root {
+  --fa-width: auto;
+}
+
+/* General definitions */
 body {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 
-  background-image: url("../images/woodnew_double.jpg");
+  background-image: url("../images/texture-wood.jpg");
   background-position-y: bottom;
 }
 
@@ -35,7 +39,7 @@ body {
   border: none;
 }
 
-/*Restaurant cards*/
+/* Restaurant cards */
 .restaurant {
   margin-bottom: $outerPadding + 4px;
 
@@ -48,7 +52,7 @@ body {
       font-weight: lighter;
     }
 
-    i {
+    svg {
       float: right;
     }
   }
@@ -83,7 +87,7 @@ body {
       color: $fontColor;
     }
 
-    & > i {
+    & > svg {
       position: relative;
     }
   }
@@ -98,9 +102,6 @@ body {
 
 .hotspot {
   @include restaurantColors($hotspotGreen, white);
-  @include mainsItem {
-    margin-top: $menuItemSpacing * 1.5;
-  }
 }
 
 .bits-and-bytes {
@@ -224,7 +225,7 @@ ul.info-elements {
 
 footer {
   z-index: 9500;
-  position: relative;
+  position: sticky;
   bottom: 0;
   width: 100%;
   height: $footerHeight;
@@ -272,7 +273,7 @@ footer {
       }
     }
 
-    i {
+    svg {
       vertical-align: middle;
       font-size: 1.25em;
 
@@ -288,10 +289,6 @@ footer {
         color: #f1592a;
       }
 
-      &.fa-star {
-        color: gold;
-      }
-
       &.fa-rocket {
         color: #5d87db;
       }
@@ -300,7 +297,7 @@ footer {
         color: #377f31;
       }
 
-      &.fa-hand-paper {
+      &.fa-hand {
         color: #ffe4c4;
       }
 
@@ -312,8 +309,12 @@ footer {
         color: #377e22;
       }
 
-      &.fa-glass-cheers {
+      &.fa-champagne-glasses {
         color: #e3c052;
+      }
+
+      &.fa-gamepad {
+        color: rgb(103, 178, 216);
       }
     }
   }
@@ -434,17 +435,15 @@ footer {
   font-size: 90%;
 }
 
-.hotspot-pasta-des-tages-image-responsive {
-  width: 30%;
-  @include media-breakpoint-down(sm) {
-    width: 45%;
-  }
-}
-
 .new-banner {
   height: 38px;
   position: absolute;
   right: -2px;
   top: -2px;
   transform: rotate(90deg);
+}
+
+hr {
+  margin-top: 0.4rem;
+  margin-bottom: 0.4rem;
 }

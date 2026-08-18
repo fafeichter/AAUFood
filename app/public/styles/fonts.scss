@@ -1,0 +1,6 @@
+/* Raleway font, self-hosted locally instead of loaded from the Google Fonts CDN.
+   Kept as its own bundle (fonts.css) so browsers can cache it independently of
+   app code — the font itself almost never changes between deploys.
+   Only the latin subset is included (covers German incl. äöüß) to keep it small. */
+@import "@fontsource/raleway/latin-400.css";
+@import "@fontsource/raleway/latin-600.css";

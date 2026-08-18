@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://https://food.fabian-feichter.at//sitemap.xml

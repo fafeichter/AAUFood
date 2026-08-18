@@ -1,0 +1,5 @@
+/* Base Font Awesome styles (sizing/layout for the inline SVG icons).
+   Kept as its own bundle (fontawesome.css) so browsers can cache it independently
+   of app code — these vendor styles almost never change between deploys.
+   The icon-loading JS logic itself lives in fontawesome.js. */
+@import "@fortawesome/fontawesome-svg-core/styles.css";

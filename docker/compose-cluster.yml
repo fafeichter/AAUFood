@@ -4,7 +4,7 @@ services:
     restart: always
     healthcheck:
       test: [ "CMD", "redis-cli", "ping" ]
-      interval: 10s
+      interval: 3s
       timeout: 5s
       retries: 3
 
@@ -15,7 +15,7 @@ services:
       - TZ=Europe/Vienna
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8191/health" ]
-      interval: 30s
+      interval: 3s
       timeout: 10s
       retries: 3
 

@@ -25,12 +25,13 @@ class MenuCache {
         const now = moment();
         const isSundayLateNight = now.day() === 0 && now.hour() === 23 && now.minute() > 5;
         const isMonday = now.day() === 1;
+        const forceMenuSync = process.env.FOOD_ENV === 'DEV' || process.env.FOOD_FORCE_SYNC_ON_STARTUP === 'true';
 
-        if (isSundayLateNight) {
+        if (isSundayLateNight || forceMenuSync) {
             await this._updateMenu(restaurants.mensa.id);
         }
 
-        if (isMonday || now.hour() >= 4 && now.hour() <= 14) {
+        if (isMonday || now.hour() >= 4 && now.hour() <= 14 || forceMenuSync) {
             await this._updateMenu(restaurants.burgerBoutique.id);
             await this._updateMenu(restaurants.uniWirt.id);
             await this._updateMenu(restaurants.bitsAndBytes.id);
