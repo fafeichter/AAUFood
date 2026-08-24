@@ -25,7 +25,7 @@ class MenuCache {
         const now = moment();
         const isSundayLateNight = now.day() === 0 && now.hour() === 23 && now.minute() > 5;
         const isMonday = now.day() === 1;
-        const isEarlyMorning = now.hour() >= 3 && now.hour <= 5;
+        const isEarlyMorning = now.hour() >= 0 && now.hour <= 5;
         const forceMenuSync = process.env.FOOD_ENV === 'DEV' || process.env.FOOD_FORCE_SYNC_ON_STARTUP === 'true';
 
         if (isSundayLateNight || forceMenuSync) {
