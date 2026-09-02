@@ -245,7 +245,7 @@ async function getUniPizzeriaWeekPlan() {
             winston.debug(`ChatGPT response of "${uniPizzeriaRestaurantId}": ${gptResponseContent}`);
             const gptJsonAnswer = JSON.parse(gptResponseContent);
 
-            ["MO", "DI", "MI", "DO", "FR"].forEach(function (dayString, dayInWeek) {
+            ["MO", "DI", "DO", "FR"].forEach(function (dayString, dayInWeek) {
                 var menuForDay = new Menu();
                 var menuct = 0;
 
@@ -284,6 +284,7 @@ async function getUniPizzeriaWeekPlan() {
         }
     }
 
+    menu[2].closed = true;
     menu[5].alacarte = true;
     menu[6].alacarte = true;
 
