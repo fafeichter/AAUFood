@@ -67,7 +67,7 @@ class UrlCache {
 
     _updateHotspotUrl() {
         const now = moment();
-        const currentYear = now.format('YY');
+        const currentYear = now.format('YYYY');
         const currentWeekNumber = now.format('WW');
 
         this._updateIfNewer(restaurants.hotspot.id, {
@@ -78,7 +78,7 @@ class UrlCache {
 
     _updateBitsAndBytesUrl() {
         const now = moment();
-        const currentYear = now.format('YY');
+        const currentYear = now.format('YYYY');
         const currentWeekNumber = now.format('WW');
 
         this._updateIfNewer(restaurants.bitsAndBytes.id, {
