@@ -71,6 +71,12 @@ app.use(bodyParser.urlencoded({extended: false}));
 const manifestMiddleware = require('./manifest');
 app.use(manifestMiddleware);
 
+app.use((req, res, next) => {
+    const baseUrl = 'https://food.fabian-feichter.at';
+    res.locals.canonicalUrl = baseUrl + req.path;
+    next();
+});
+
 app.use('/dist', express.static(path.join(__dirname, 'app/public/dist'), {
     maxAge: '1y',
     immutable: true
