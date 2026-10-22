@@ -49,8 +49,9 @@ der Port der App 3000 ist. Für das Parsen mittels ChatGPT muss ein API-Key in d
 `FOOD_CHAT_GPT_API_KEY` eingetragen werden. Dieser kann unter https://platform.openai.com/api-keys generiert werden
 (kostenpflichtig).
 
-Mit der Umstellung auf KI Parsing müssen einige Tools installiert werden:
+Mit der Umstellung auf KI Parsing müssen einige Tools installiert werden. Dazu kann das projektspezifische
+`Brewfile` verwendet werden:
 
 ```bash
-brew install graphicsmagick imagemagick ghostscript
+brew bundle
 ```
