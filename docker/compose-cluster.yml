@@ -44,7 +44,7 @@ services:
       - FOOD_LOG_LEVEL=debug
       - FOOD_REDIS_HOST=redis
       - FOOD_FLARESOLVERR_HOST=flaresolverr
-      - FOOD_CHAT_GPT_API_KEY=${FOOD_CHAT_GPT_API_KEY}
+      - FOOD_OPENAI_API_KEY=${FOOD_OPENAI_API_KEY}
     depends_on:
       redis:
         condition: service_healthy

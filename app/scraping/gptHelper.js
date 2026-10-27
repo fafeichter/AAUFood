@@ -8,7 +8,7 @@ async function letMeChatGptThatForYou(input, restaurantId) {
     const gptUrl = 'https://api.openai.com/v1/chat/completions';
     const headers = {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.FOOD_CHAT_GPT_API_KEY}`,
+        'Authorization': `Bearer ${process.env.FOOD_OPENAI_API_KEY}`,
     };
 
     let prompt = undefined;
